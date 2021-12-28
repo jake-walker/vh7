@@ -1,0 +1,19 @@
+name = "vh7"
+type = "javascript"
+compatibility_date = "2021-12-06"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+kv_namespaces = [
+  { binding = "VH7", id = "ef01102db51a490ba734285fe75f210a", preview_id = "" }
+]
+
+[miniflare]
+kv_persist = true
+
+[build]
+command = "yarn install && yarn run build"
+[build.upload]
+format = "service-worker"
