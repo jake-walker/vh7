@@ -60,7 +60,14 @@ function App() {
       <Container>
         <Box my={30}>
           <Center py={10}>
-            <Heading size="2xl">VH7</Heading>
+            <Heading
+              size="2xl"
+              bgGradient="linear(to-br, #38A169, #4299E1)"
+              bgClip="text"
+              fontWeight="extrabold"
+            >
+              VH7
+            </Heading>
           </Center>
 
           {response && <Alert status="success" my={4}>
@@ -98,7 +105,7 @@ function App() {
                   )}
                 </Field>
                 <Center>
-                  <Button mt={4} colorScheme="purple" isLoading={props.isSubmitting} type="submit">
+                  <Button mt={4} colorScheme="green" isLoading={props.isSubmitting} type="submit">
                     Shorten!
                   </Button>
                 </Center>
