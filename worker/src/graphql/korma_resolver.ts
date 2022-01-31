@@ -11,12 +11,17 @@ export function basicResolver(type: string, attribute: string) {
   };
 }
 
-export function rootResolver(type: string) {
+export function rootResolver(type: string, defaultAttribute: string) {
   return async (_: any, { id }: GraphQLParams) => {
-    if (!(await korma.exists(type, id))) return null;
+    const attr = await korma.getAttribute(type, id, defaultAttribute);
+
+    if (attr === null) {
+      return null;
+    }
 
     return {
       _id: id,
+      [defaultAttribute]: attr,
     };
   };
 }

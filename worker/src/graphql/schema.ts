@@ -26,7 +26,7 @@ export default new GraphQLSchema({
         args: {
           id: { type: new GraphQLNonNull(GraphQLString) },
         },
-        resolve: rootResolver(KVType.ShortLink),
+        resolve: rootResolver(KVType.ShortLink, 'url'),
       },
     },
   }),

@@ -52,10 +52,10 @@ async function graphQLHandler(request: Request): Promise<Response> {
 async function linkHandler(request: Request, url: URL): Promise<Response> {
   const id = url.pathname.slice(1);
 
-  const shortlink = await korma.findOne(KVType.ShortLink, id);
+  const shortlink = await korma.getAttribute(KVType.ShortLink, id, 'url');
 
   if (shortlink !== null) {
-    return Response.redirect(shortlink.url, 301);
+    return Response.redirect(shortlink, 301);
   }
 
   return new Response('Short link not found', {
