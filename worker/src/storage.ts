@@ -1,14 +1,17 @@
-import Korma from 'korma-kv';
-import CloudflareAdapter from 'korma-kv/dist/adapters/cloudflare';
-
-const adapter = new CloudflareAdapter(VH7);
-
-export enum KVType {
-  ShortLink = 'shortlink',
+export async function save(id: string, value: any) {
+  await VH7.put(id, JSON.stringify(value));
 }
 
-export const korma = new Korma.Korma(adapter);
+export async function get(id: string) {
+  const data = await VH7.get(id);
 
-export interface ShortLink {
-  url: string
+  if (data === null) {
+    return null;
+  }
+
+  return JSON.parse(data);
+}
+
+export async function remove(id: string) {
+  await VH7.delete(id);
 }

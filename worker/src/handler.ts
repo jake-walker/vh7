@@ -1,91 +1,141 @@
-import { graphql } from 'graphql';
-import { z } from 'zod';
-import schema from './graphql/schema';
-import { korma, KVType } from './storage';
+import { Router } from 'itty-router';
+import { error, json } from 'itty-router-extras';
+import {
+  createPaste, createShortUrl, createUpload, lookup,
+} from './controller';
+import { getObject } from './s3';
+import { PasteArgs, ShortLinkArgs, UploadArgs } from './schema';
+
+const router = Router();
 
 const headers = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-const requestDataSchema = z.object({
-  query: z.string(),
-  variables: z.optional(z.record(z.any())),
-  operationName: z.optional(z.string()),
+type RequestWithContext = Request & {
+  data: any | null
+};
+
+function wrapCors(response: Response) {
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  return response;
+}
+
+async function withContent(request: RequestWithContext) {
+  const contentType = request.headers.get('content-type') || '';
+  request.data = null;
+
+  if (contentType.includes('application/json')) {
+    request.data = await request.json();
+  } else if (contentType.includes('form')) {
+    const formData = await request.formData();
+    request.data = Object.fromEntries(formData);
+  }
+}
+
+router.post('/api/shorten', withContent, async (req: RequestWithContext) => {
+  const data = await ShortLinkArgs.safeParseAsync(req.data);
+
+  if (!data.success) {
+    return wrapCors(error(400, {
+      error: 'Invalid request body',
+      status: 400,
+      detail: data.error.issues,
+    }));
+  }
+
+  const shortUrl = await createShortUrl(data.data.url);
+  return wrapCors(json(shortUrl));
 });
 
-async function graphQLHandler(request: Request): Promise<Response> {
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({
-      error: 'Method not supported',
-    }), {
-      headers,
+router.post('/api/paste', withContent, async (req: RequestWithContext) => {
+  const data = await PasteArgs.safeParseAsync(req.data);
+
+  if (!data.success) {
+    return wrapCors(error(400, {
+      error: 'Invalid request body',
       status: 400,
-    });
+      detail: data.error.issues,
+    }));
   }
 
-  const requestData = requestDataSchema.safeParse(await request.json());
+  const paste = await createPaste(data.data.code, data.data.language);
+  return wrapCors(json(paste, { headers }));
+});
 
-  if (!requestData.success) {
-    return new Response(JSON.stringify({
-      error: 'Invalid request data',
-    }), {
-      headers,
+router.post('/api/upload', withContent, async (req: RequestWithContext) => {
+  const data = await UploadArgs.safeParseAsync(req.data);
+
+  if (!data.success) {
+    return wrapCors(error(400, {
+      error: 'Invalid request body',
       status: 400,
-    });
+      detail: data.error.issues,
+    }));
   }
 
-  const responseData = await graphql({
-    schema,
-    source: requestData.data.query,
-    variableValues: requestData.data.variables,
-    operationName: requestData.data.operationName,
-  });
+  const upload = await createUpload(data.data.file);
+  return wrapCors(json(upload, { headers }));
+});
 
-  return new Response(JSON.stringify(responseData), {
-    headers,
-  });
-}
+router.get('/:id', async ({ params }) => {
+  if (!params) {
+    return new Response('Short link not found', { status: 404 });
+  }
 
-async function linkHandler(request: Request, url: URL): Promise<Response> {
-  const id = url.pathname.slice(1);
-
-  const shortlink = await korma.getAttribute(KVType.ShortLink, id, 'url');
+  const shortlink = await lookup(params.id);
 
   if (shortlink !== null) {
-    return Response.redirect(shortlink, 301);
+    switch (shortlink.type) {
+      case 'url:1':
+        return Response.redirect(shortlink.url, 301);
+      case 'paste:1':
+        // eslint-disable-next-line no-case-declarations
+        const pasteRes = new Response(shortlink.code);
+        pasteRes.headers.set('Content-Type', 'text/plain');
+        pasteRes.headers.set('Content-Disposition', `attachment; filename="vh7-paste-${shortlink.id}.txt"`);
+        pasteRes.headers.set('Cache-Control', 'max-age=86400');
+        return pasteRes;
+      case 'upload:1':
+        // eslint-disable-next-line no-case-declarations
+        const obj = await getObject(shortlink.id);
+        if (obj.status === 404) {
+          return new Response('Short link not found', { status: 404 });
+        }
+        if (obj.status !== 200) {
+          return new Response('Internal server error', { status: 500 });
+        }
+        // eslint-disable-next-line no-case-declarations
+        const res = new Response(obj.body, obj);
+        res.headers.set('Content-Type', 'application/force-download');
+        res.headers.set('Content-Transfer-Encoding', 'binary');
+        res.headers.set('Content-Disposition', `attachment; filename="${shortlink.filename}"`);
+        res.headers.set('Cache-Control', 'max-age=86400');
+        return res;
+      default:
+        return new Response('Internal server error', { status: 500 });
+    }
   }
 
-  return new Response('Short link not found', {
-    ...headers,
-    status: 404,
-  });
-}
+  return new Response('Short link not found', { status: 404 });
+});
+
+router.all('*', () => new Response('Not found!', { status: 404 }));
 
 export default async function handleRequest(request: Request): Promise<Response> {
-  const url = new URL(request.url);
-
   // Respond to CORS preflight requests
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
         ...headers,
-        Allow: 'OPTIONS, POST',
+        Allow: 'GET, OPTIONS, POST',
       },
       status: 204,
     });
   }
 
-  switch (url.pathname) {
-    case '/':
-      return new Response('Use the /graphql route for the API', {
-        headers,
-      });
-    case '/graphql':
-      return graphQLHandler(request);
-    default:
-      return linkHandler(request, url);
-  }
+  return router.handle(request);
 }

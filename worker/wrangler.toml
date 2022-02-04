@@ -7,11 +7,21 @@ route = ""
 zone_id = ""
 
 kv_namespaces = [
-  { binding = "VH7", id = "ef01102db51a490ba734285fe75f210a", preview_id = "" }
+  { binding = "VH7", id = "52cdf6272a704bc991b5b6e5b98421fe", preview_id = "" }
 ]
+
+# [secrets]
+# AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY
+
+[vars]
+AWS_S3_BUCKET = "uploads"
+AWS_ENDPOINT_URL = "gateway.eu1.storjshare.io"
+AWS_DEFAULT_REGION = ""
 
 [miniflare]
 kv_persist = true
+env_path = ".env"
 
 [build]
 command = "yarn install && yarn run build"
