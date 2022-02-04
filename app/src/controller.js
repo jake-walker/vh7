@@ -18,7 +18,7 @@ export async function shorten(url) {
 export async function paste(code, language) {
   const res = await instance.post('/paste', {
     code,
-    language,
+    // language,
   });
   return res.data;
 }

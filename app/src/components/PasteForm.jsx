@@ -1,12 +1,11 @@
 import { Formik, Field, Form } from "formik";
 import { FormControl, FormLabel, FormErrorMessage, Center, Button, Textarea, Select } from '@chakra-ui/react';
 import * as Yup from 'yup';
-import languages from '../../../languages.json';
 import { paste } from "../controller";
 
 const PasteSchema = Yup.object().shape({
   code: Yup.string().required('Code is required'),
-  languages: Yup.string().oneOf(languages.map((lang) => lang.id)).optional(),
+  // languages: Yup.string().oneOf(languages.map((lang) => lang.id)).optional(),
 });
 
 export function PasteForm({ onResponse, onError }) {
@@ -41,7 +40,7 @@ export function PasteForm({ onResponse, onError }) {
               </FormControl>
             )}
           </Field>
-          <Field name="language">
+          {/* <Field name="language">
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.language && form.touched.language}>
                 <FormLabel htmlFor="language">Language</FormLabel>
@@ -53,7 +52,7 @@ export function PasteForm({ onResponse, onError }) {
                 <FormErrorMessage>{form.errors.language}</FormErrorMessage>
               </FormControl>
             )}
-          </Field>
+          </Field> */}
           <Center>
             <Button mt={4} colorScheme="green" isLoading={props.isSubmitting} type="submit">
               Paste!
