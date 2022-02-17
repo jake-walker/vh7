@@ -1,47 +1,42 @@
-import { Formik, Field, Form } from "formik";
-import { FormControl, FormLabel, Input, FormErrorMessage, Center, Button } from '@chakra-ui/react';
-import * as Yup from 'yup';
+import { useForm } from '@mantine/hooks';
 import { shorten } from "../controller";
-
-const ShortenSchema = Yup.object().shape({
-  url: Yup.string().url('URL must be valid').required('URL is required')
-});
+import { z } from 'zod';
+import { Button, LoadingOverlay, TextInput } from '@mantine/core';
+import { useState } from 'react';
+import { Send } from 'react-feather';
 
 export function ShortenForm({ onResponse, onError }) {
-  const submit = async (values, actions) => {
+  const [loading, setLoading] = useState(false);
+
+  const form = useForm({
+    initialValues: {
+      url: ''
+    },
+    validationRules: {
+      url: (value) => z.string().url().safeParse(value).success
+    }
+  })
+
+  const submit = async (values) => {
     onError(null);
+    setLoading(true);
 
     try {
       const res = await shorten(values.url);
       onResponse(res);
-      actions.resetForm();
+      form.reset();
     } catch (err) {
       onError("Failed to shorten: " + err.message);
     }
 
-    actions.setSubmitting(false);
+    setLoading(false);
   }
 
   return (
-    <Formik initialValues={{ url: '' }} onSubmit={submit} validationSchema={ShortenSchema}>
-      {(props) => (
-        <Form style={{ width: '100%' }}>
-          <Field name="url">
-            {({ field, form }) => (
-              <FormControl isInvalid={form.errors.url && form.touched.url}>
-                <FormLabel htmlFor="url">URL</FormLabel>
-                <Input {...field} id="url" placeholder="https://example.com/a/long/url" />
-                <FormErrorMessage>{form.errors.url}</FormErrorMessage>
-              </FormControl>
-            )}
-          </Field>
-          <Center>
-            <Button mt={4} colorScheme="green" isLoading={props.isSubmitting} type="submit">
-              Shorten!
-            </Button>
-          </Center>
-        </Form>
-      )}
-    </Formik>
+    <form onSubmit={form.onSubmit(submit)} style={{ position: 'relative' }}>
+      <LoadingOverlay visible={loading} />
+      <TextInput required label="URL" placeholder="https://example.com/a/long/url" {...form.getInputProps('url')} />
+      <Button type="submit" mt={10} leftIcon={<Send size={16} />}>Shorten</Button>
+    </form>
   )
 }

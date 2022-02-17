@@ -1,13 +1,13 @@
-import path from 'path';
-import { URL } from 'url';
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url';
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default {
   entry: './src/index.ts',
   output: {
     filename: 'worker.js',
-    path: path.join(__dirname, 'dist'),
+    path: join(__dirname, 'dist'),
   },
   devtool: 'cheap-module-source-map',
   mode: 'production',

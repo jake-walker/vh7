@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "^1.7.3",
-    "@emotion/react": "^11",
-    "@emotion/styled": "^11",
+    "@mantine/core": "^3.6.8",
+    "@mantine/dropzone": "^3.6.8",
+    "@mantine/hooks": "^3.6.8",
+    "@mantine/prism": "^3.6.8",
     "axios": "^0.25.0",
-    "formik": "^2.2.9",
-    "framer-motion": "^5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-feather": "^2.0.9",
     "url-join": "^4.0.1",
-    "yup": "^0.32.11"
+    "zod": "^3.11.6"
   },
   "scripts": {
     "dev": "vite",
