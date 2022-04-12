@@ -3,6 +3,7 @@ import { useColorScheme } from '@mantine/hooks';
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import theme from './theme';
 import store from './store';
@@ -24,7 +25,9 @@ function Base() {
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Base />
+      <BrowserRouter>
+        <Base />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

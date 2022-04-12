@@ -1,16 +1,7 @@
 import { Box, Title, Text, Badge } from "@mantine/core";
 import urljoin from 'url-join';
-import { baseURL } from '../controller';
-
-function shortUrl(u) {
-  if (u.length < 50) {
-    return u.replace('http://', '').replace('https://', '');
-  }
-
-  const uend = u.slice(u.length - 15);
-  const ustart = u.replace('http://', '').replace('https://', '').substr(0, 32);
-  return ustart + '...' + uend;
-}
+import { Link } from 'react-router-dom';
+import { baseURL, shortUrl } from '../controller';
 
 export function HistoryItem({ item }) {
   const url = urljoin(baseURL, item.id);
@@ -44,7 +35,7 @@ export function HistoryItem({ item }) {
         <Badge ml={10}>{type}</Badge>
       </Title>
       <Text color="dimmed">
-        <Text inherit variant="link" href={url} component="a" color="dimmed">{url}</Text>
+        <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed">{url}</Text>
         {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
         &nbsp;&bull;&nbsp;
         {(new Date(item.date)).toLocaleString()}

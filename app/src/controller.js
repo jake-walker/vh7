@@ -8,6 +8,16 @@ const instance = create({
   baseURL: apiURL,
 });
 
+export function shortUrl(u) {
+  if (u.length < 50) {
+    return u.replace('http://', '').replace('https://', '');
+  }
+
+  const uend = u.slice(u.length - 15);
+  const ustart = u.replace('http://', '').replace('https://', '').substr(0, 32);
+  return ustart + '...' + uend;
+}
+
 export async function shorten(url) {
   const res = await instance.post('/shorten', {
     url,
@@ -28,5 +38,10 @@ export async function upload(file) {
   form.append('file', file);
 
   const res = await instance.post('/upload', form);
+  return res.data;
+}
+
+export async function info(id) {
+  const res = await instance.get(`/info/${id}`);
   return res.data;
 }

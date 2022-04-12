@@ -13,6 +13,7 @@
     "react-dom": "^17.0.2",
     "react-feather": "^2.0.9",
     "react-redux": "^7.2.6",
+    "react-router-dom": "6",
     "url-join": "^4.0.1",
     "zod": "^3.11.6"
   },

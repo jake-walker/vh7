@@ -7,4 +7,5 @@ declare global {
   const AWS_DEFAULT_REGION: string;
   const AWS_S3_BUCKET: string;
   const AWS_ENDPOINT_URL: string;
+  const VH7_ENV: string;
 }

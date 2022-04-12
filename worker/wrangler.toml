@@ -18,6 +18,7 @@ kv_namespaces = [
 AWS_S3_BUCKET = "uploads"
 AWS_ENDPOINT_URL = "gateway.eu1.storjshare.io"
 AWS_DEFAULT_REGION = ""
+VH7_ENV = "production"
 
 [miniflare]
 kv_persist = true

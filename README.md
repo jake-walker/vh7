@@ -21,6 +21,7 @@ AWS_SECRET_ACCESS_KEY=[aws key here]
 AWS_DEFAULT_REGION=[aws region here, or leave blank]
 AWS_ENDPOINT_URL=[aws endpoint url]
 AWS_S3_BUCKET=[s3 bucket name]
+VH7_ENV=development
 ```
 
 Then run `yarn run dev` to start a local development server.
