@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid/async';
 import { putObject } from './s3';
-import { PasteType, ShortLinkType, UploadType } from './schema';
+import { PasteItem, ShortLinkItem, UploadItem } from './schema';
 import { get, save } from './storage';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4);
@@ -26,39 +26,38 @@ async function generateId(): Promise<string> {
   throw new Error('Could not generate ID');
 }
 
-export async function createShortUrl(url: string): Promise<ShortLinkType> {
+export async function createShortUrl(url: string, expires: number | null): Promise<ShortLinkItem> {
   const id = await generateId();
-
-  await save(id, {
-    type: 'url:1',
-    url,
-    created: new Date(),
-  });
-
-  return {
+  const item: ShortLinkItem = {
     id,
-    url,
-  };
+    type: "url:1",
+    created: (new Date()).getTime(),
+    expires,
+    data: {
+      url
+    }
+  }
+  await save(item);
+  return item;
 }
 
-export async function createPaste(code: string, language: string | null): Promise<PasteType> {
+export async function createPaste(code: string, language: string | null, expires: number | null): Promise<PasteItem> {
   const id = await generateId();
-
-  await save(id, {
-    type: 'paste:1',
-    code,
-    language,
-    created: new Date(),
-  });
-
-  return {
+  const item: PasteItem = {
     id,
-    language,
-    code,
+    type: "paste:1",
+    created: (new Date()).getTime(),
+    expires,
+    data: {
+      code,
+      language
+    }
   };
+  await save(item);
+  return item;
 }
 
-export async function createUpload(file: File): Promise<UploadType> {
+export async function createUpload(file: File, expires: number | null): Promise<UploadItem> {
   const id = await generateId();
   const hash = await sha256(file);
 
@@ -67,20 +66,25 @@ export async function createUpload(file: File): Promise<UploadType> {
     throw new Error(`Failed to put object (status=${res.status}, msg=${await res.text()})`);
   }
 
-  await save(id, {
-    type: 'upload:1',
-    size: file.size,
-    filename: file.name,
-    hash,
-    created: new Date(),
-  });
+  const maxExpiry = new Date();
+  maxExpiry.setDate(maxExpiry.getDate() + 30);
+  if (expires !== null && expires > maxExpiry.getTime()) {
+    expires = maxExpiry.getTime()
+  }
 
-  return {
+  const item: UploadItem = {
     id,
-    size: file.size,
-    filename: file.name,
-    hash,
-  };
+    type: "upload:1",
+    created: (new Date()).getTime(),
+    expires,
+    data: {
+      filename: file.name,
+      size: file.size,
+      hash
+    }
+  }
+  await save(item);
+  return item;
 }
 
 export async function lookup(id: string): Promise<any> {
@@ -88,13 +92,5 @@ export async function lookup(id: string): Promise<any> {
     return null;
   }
 
-  const data = await get(id);
-  if (data === null) {
-    return null;
-  }
-
-  return {
-    id,
-    ...data,
-  };
+  return get(id);
 }

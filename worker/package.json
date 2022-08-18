@@ -24,6 +24,8 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.150.0",
+    "@aws-sdk/lib-dynamodb": "^3.150.0",
     "aws4fetch": "^1.0.13",
     "itty-router": "^2.4.10",
     "itty-router-extras": "^0.4.2",

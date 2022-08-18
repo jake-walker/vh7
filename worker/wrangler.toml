@@ -15,9 +15,9 @@ kv_namespaces = [
 # AWS_SECRET_ACCESS_KEY
 
 [vars]
-AWS_S3_BUCKET = "uploads"
-AWS_ENDPOINT_URL = "gateway.eu1.storjshare.io"
-AWS_DEFAULT_REGION = ""
+S3_BUCKET = "uploads"
+S3_ENDPOINT_URL = "gateway.eu1.storjshare.io"
+S3_DEFAULT_REGION = ""
 VH7_ENV = "production"
 
 [miniflare]

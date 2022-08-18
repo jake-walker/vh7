@@ -48,7 +48,7 @@ router.post('/api/shorten', withContent, async (req: RequestWithContext) => {
     }));
   }
 
-  const shortUrl = await createShortUrl(data.data.url);
+  const shortUrl = await createShortUrl(data.data.url, data.data.expires);
   return wrapCors(json(shortUrl));
 });
 
@@ -63,7 +63,7 @@ router.post('/api/paste', withContent, async (req: RequestWithContext) => {
     }));
   }
 
-  const paste = await createPaste(data.data.code, data.data.language);
+  const paste = await createPaste(data.data.code, data.data.language, data.data.expires);
   return wrapCors(json(paste, { headers }));
 });
 
@@ -78,7 +78,7 @@ router.post('/api/upload', withContent, async (req: RequestWithContext) => {
     }));
   }
 
-  const upload = await createUpload(data.data.file);
+  const upload = await createUpload(data.data.file, data.data.expires);
   return wrapCors(json(upload, { headers }));
 });
 
