@@ -14,10 +14,13 @@ export function SuccessAlert({ response, clear, ...props }) {
       Your URL has been shortened to {' '}
       <Text
         variant="link"
-        component="span"
+        component="code"
         size="sm"
         onClick={() => clipboard.copy(url)}
         color={clipboard.copied ? 'green' : 'blue'}
+        sx={(theme) => ({
+          fontFamily: theme.fontFamilyMonospace,
+        })}
       >
         {url}
       </Text>
