@@ -2,6 +2,17 @@ import { Box, Title, Text, Badge } from "@mantine/core";
 import urljoin from 'url-join';
 import { Link } from 'react-router-dom';
 import { baseURL, shortUrl } from '../controller';
+import { DateTime } from 'luxon';
+
+function formatDate(date) {
+  date = DateTime.fromMillis(date);
+
+  if (date.toISODate() === DateTime.local().toISODate()) {
+    return `Today at ${date.toLocaleString(DateTime.TIME_SIMPLE)}`;
+  }
+
+  return date.toLocaleString(DateTime.DATE_MED);
+}
 
 export function HistoryItem({ item }) {
   const url = urljoin(baseURL, item.id);
@@ -9,7 +20,7 @@ export function HistoryItem({ item }) {
   let type = "";
   let title = "";
   let description = "";
-  let created = new Date(item.date || item.created);
+  let created = item.date || item.created;
   let expires = null;
 
   switch (item.type) {
@@ -45,7 +56,7 @@ export function HistoryItem({ item }) {
   }
 
   if (item.expires && typeof item.expires === "number") {
-    expires = new Date(item.expires);
+    expires = item.expires;
   }
 
   return (
@@ -58,10 +69,10 @@ export function HistoryItem({ item }) {
         <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed">{url}</Text>
         {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
         &nbsp;&bull;
-        Created: {created.toLocaleString()}
+        Created {formatDate(created)}
         {expires && <Text inherit component="span">
             &nbsp;&bull;
-            Expires: {expires.toLocaleString()}
+            Expires {formatDate(expires)}
           </Text>
         }
       </Text>
