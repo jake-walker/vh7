@@ -18,24 +18,47 @@ export function shortUrl(u) {
   return ustart + '...' + uend;
 }
 
-export async function shorten(url) {
+function parseExpiry(expiryDays) {
+  let expiryDate = null;
+  console.log("days", expiryDays);
+  expiryDays = parseInt(expiryDays);
+  console.log("days", expiryDays);
+  if (expiryDays > 0) {
+    expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + expiryDays);
+    expiryDate = expiryDate.getTime();
+  }
+
+  return expiryDate;
+}
+
+export async function shorten(url, expiryDays) {
+  const expires = parseExpiry(expiryDays);
+
   const res = await instance.post('/shorten', {
     url,
+    expires
   });
   return res.data;
 }
 
-export async function paste(code, language) {
+export async function paste(code, language, expiryDays) {
+  const expires = parseExpiry(expiryDays);
+
   const res = await instance.post('/paste', {
     code,
-    // language,
+    language,
+    expires
   });
   return res.data;
 }
 
-export async function upload(file) {
+export async function upload(file, expiryDays) {
+  const expires = parseExpiry(expiryDays);
+
   const form = new FormData();
   form.append('file', file);
+  form.append('expires', expires);
 
   const res = await instance.post('/upload', form);
   return res.data;

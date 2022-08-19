@@ -19,12 +19,8 @@ function Main() {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
 
-  const onResponse = (res, type) => {
-    dispatch(addItem({
-      ...res,
-      type,
-      date: (new Date()).toISOString()
-    }))
+  const onResponse = (res) => {
+    dispatch(addItem(res));
     setResponse(res);
     setError(null);
   }
@@ -43,13 +39,13 @@ function Main() {
 
         <Tabs variant="pills" tabPadding="lg">
           <Tabs.Tab label="Shorten" icon={<Link size={16} />}>
-            <ShortenForm onResponse={(res) => onResponse(res, "shorten")} onError={onError} />
+            <ShortenForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
           <Tabs.Tab label="Paste" icon={<Clipboard size={16} />}>
-            <PasteForm onResponse={(res) => onResponse(res, "paste")} onError={onError} />
+            <PasteForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
           <Tabs.Tab label="Upload" icon={<File size={16} />}>
-            <UploadForm onResponse={(res) => onResponse(res, "upload")} onError={onError} />
+            <UploadForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
         </Tabs>
 

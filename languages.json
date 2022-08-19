@@ -1,670 +1,172 @@
 [
   {
-    "name": "1C",
-    "id": "1c"
+    "id": "markup",
+    "name": "Markup",
+    "extension": null
   },
   {
-    "name": "ABNF",
-    "id": "abnf"
-  },
-  {
-    "name": "Access logs",
-    "id": "accesslog"
-  },
-  {
-    "name": "Ada",
-    "id": "ada"
-  },
-  {
-    "name": "Arduino (C++ w/Arduino libs)",
-    "id": "arduino"
-  },
-  {
-    "name": "ARM assembler",
-    "id": "armasm"
-  },
-  {
-    "name": "AVR assembler",
-    "id": "avrasm"
-  },
-  {
-    "name": "ActionScript",
-    "id": "actionscript"
-  },
-  {
-    "name": "AngelScript",
-    "id": "angelscript"
-  },
-  {
-    "name": "Apache",
-    "id": "apache"
-  },
-  {
-    "name": "AppleScript",
-    "id": "applescript"
-  },
-  {
-    "name": "Arcade",
-    "id": "arcade"
-  },
-  {
-    "name": "AsciiDoc",
-    "id": "asciidoc"
-  },
-  {
-    "name": "AspectJ",
-    "id": "aspectj"
-  },
-  {
-    "name": "AutoHotkey",
-    "id": "autohotkey"
-  },
-  {
-    "name": "AutoIt",
-    "id": "autoit"
-  },
-  {
-    "name": "Awk",
-    "id": "awk"
-  },
-  {
+    "id": "bash",
     "name": "Bash",
-    "id": "bash"
+    "extension": null
   },
   {
-    "name": "Basic",
-    "id": "basic"
+    "id": "clike",
+    "name": "",
+    "extension": null
   },
   {
-    "name": "BNF",
-    "id": "bnf"
-  },
-  {
-    "name": "Brainfuck",
-    "id": "brainfuck"
-  },
-  {
-    "name": "C#",
-    "id": "csharp"
-  },
-  {
+    "id": "c",
     "name": "C",
-    "id": "c"
+    "extension": null
   },
   {
+    "id": "cpp",
     "name": "C++",
-    "id": "cpp"
+    "extension": null
   },
   {
-    "name": "C/AL",
-    "id": "cal"
-  },
-  {
-    "name": "Cache Object Script",
-    "id": "cos"
-  },
-  {
-    "name": "CMake",
-    "id": "cmake"
-  },
-  {
-    "name": "Coq",
-    "id": "coq"
-  },
-  {
-    "name": "CSP",
-    "id": "csp"
-  },
-  {
+    "id": "css",
     "name": "CSS",
-    "id": "css"
+    "extension": null
   },
   {
-    "name": "Cap’n Proto",
-    "id": "capnproto"
+    "id": "css-extras",
+    "name": "CSS Extras",
+    "extension": null
   },
   {
-    "name": "Clojure",
-    "id": "clojure"
-  },
-  {
-    "name": "CoffeeScript",
-    "id": "coffeescript"
-  },
-  {
-    "name": "Crmsh",
-    "id": "crmsh"
-  },
-  {
-    "name": "Crystal",
-    "id": "crystal"
-  },
-  {
-    "name": "D",
-    "id": "d"
-  },
-  {
-    "name": "DNS Zone file",
-    "id": "dns"
-  },
-  {
-    "name": "DOS",
-    "id": "dos"
-  },
-  {
-    "name": "Dart",
-    "id": "dart"
-  },
-  {
-    "name": "Delphi",
-    "id": "delphi"
-  },
-  {
-    "name": "Diff",
-    "id": "diff"
-  },
-  {
-    "name": "Django",
-    "id": "django"
-  },
-  {
-    "name": "Dockerfile",
-    "id": "dockerfile"
-  },
-  {
-    "name": "dsconfig",
-    "id": "dsconfig"
-  },
-  {
-    "name": "DTS (Device Tree)",
-    "id": "dts"
-  },
-  {
-    "name": "Dust",
-    "id": "dust"
-  },
-  {
-    "name": "EBNF",
-    "id": "ebnf"
-  },
-  {
-    "name": "Elixir",
-    "id": "elixir"
-  },
-  {
-    "name": "Elm",
-    "id": "elm"
-  },
-  {
-    "name": "Erlang",
-    "id": "erlang"
-  },
-  {
-    "name": "Excel",
-    "id": "excel"
-  },
-  {
-    "name": "F#",
-    "id": "fsharp"
-  },
-  {
-    "name": "FIX",
-    "id": "fix"
-  },
-  {
-    "name": "Fortran",
-    "id": "fortran"
-  },
-  {
-    "name": "G-Code",
-    "id": "gcode"
-  },
-  {
-    "name": "Gams",
-    "id": "gams"
-  },
-  {
-    "name": "GAUSS",
-    "id": "gauss"
-  },
-  {
-    "name": "Gherkin",
-    "id": "gherkin"
-  },
-  {
-    "name": "Go",
-    "id": "go"
-  },
-  {
-    "name": "Golo",
-    "id": "golo"
-  },
-  {
-    "name": "Gradle",
-    "id": "gradle"
-  },
-  {
-    "name": "Groovy",
-    "id": "groovy"
-  },
-  {
-    "name": "HTML, XML",
-    "id": "xml"
-  },
-  {
-    "name": "HTTP",
-    "id": "http"
-  },
-  {
-    "name": "Haml",
-    "id": "haml"
-  },
-  {
-    "name": "Handlebars",
-    "id": "handlebars"
-  },
-  {
-    "name": "Haskell",
-    "id": "haskell"
-  },
-  {
-    "name": "Haxe",
-    "id": "haxe"
-  },
-  {
-    "name": "Hy",
-    "id": "hy"
-  },
-  {
-    "name": "Ini, TOML",
-    "id": "ini"
-  },
-  {
-    "name": "Inform7",
-    "id": "inform7"
-  },
-  {
-    "name": "IRPF90",
-    "id": "irpf90"
-  },
-  {
-    "name": "JSON",
-    "id": "json"
-  },
-  {
-    "name": "Java",
-    "id": "java"
-  },
-  {
+    "id": "javascript",
     "name": "JavaScript",
-    "id": "javascript"
+    "extension": null
   },
   {
-    "name": "Julia",
-    "id": "julia"
+    "id": "jsx",
+    "name": "JSX",
+    "extension": null
   },
   {
-    "name": "Kotlin",
-    "id": "kotlin"
+    "id": "js-extras",
+    "name": "JavaScript Extras",
+    "extension": null
   },
   {
-    "name": "LaTeX",
-    "id": "tex"
+    "id": "js-templates",
+    "name": "JavaScript Templates",
+    "extension": null
   },
   {
-    "name": "Leaf",
-    "id": "leaf"
+    "id": "coffeescript",
+    "name": "CoffeeScript",
+    "extension": null
   },
   {
-    "name": "Lasso",
-    "id": "lasso"
+    "id": "diff",
+    "name": "Diff",
+    "extension": null
   },
   {
-    "name": "Less",
-    "id": "less"
+    "id": "git",
+    "name": "Git",
+    "extension": null
   },
   {
-    "name": "LDIF",
-    "id": "ldif"
+    "id": "go",
+    "name": "Go",
+    "extension": null
   },
   {
-    "name": "Lisp",
-    "id": "lisp"
+    "id": "graphql",
+    "name": "GraphQL",
+    "extension": null
   },
   {
-    "name": "LiveCode Server",
-    "id": "livecodeserver"
+    "id": "markup-templating",
+    "name": "Markup Templating",
+    "extension": null
   },
   {
-    "name": "LiveScript",
-    "id": "livescript"
+    "id": "handlebars",
+    "name": "Handlebars",
+    "extension": null
   },
   {
-    "name": "Lua",
-    "id": "lua"
+    "id": "json",
+    "name": "JSON",
+    "extension": null
   },
   {
+    "id": "less",
+    "name": "LESS",
+    "extension": null
+  },
+  {
+    "id": "makefile",
     "name": "Makefile",
-    "id": "makefile"
+    "extension": null
   },
   {
+    "id": "markdown",
     "name": "Markdown",
-    "id": "markdown"
+    "extension": null
   },
   {
-    "name": "Mathematica",
-    "id": "mathematica"
-  },
-  {
-    "name": "Matlab",
-    "id": "matlab"
-  },
-  {
-    "name": "Maxima",
-    "id": "maxima"
-  },
-  {
-    "name": "Maya Embedded Language",
-    "id": "mel"
-  },
-  {
-    "name": "Mercury",
-    "id": "mercury"
-  },
-  {
-    "name": "Mizar",
-    "id": "mizar"
-  },
-  {
-    "name": "Mojolicious",
-    "id": "mojolicious"
-  },
-  {
-    "name": "Monkey",
-    "id": "monkey"
-  },
-  {
-    "name": "Moonscript",
-    "id": "moonscript"
-  },
-  {
-    "name": "N1QL",
-    "id": "n1ql"
-  },
-  {
-    "name": "NSIS",
-    "id": "nsis"
-  },
-  {
-    "name": "Nginx",
-    "id": "nginx"
-  },
-  {
-    "name": "Nim",
-    "id": "nim"
-  },
-  {
-    "name": "Nix",
-    "id": "nix"
-  },
-  {
-    "name": "OCaml",
-    "id": "ocaml"
-  },
-  {
+    "id": "objectivec",
     "name": "Objective C",
-    "id": "objectivec"
+    "extension": null
   },
   {
-    "name": "OpenGL Shading Language",
-    "id": "glsl"
+    "id": "ocaml",
+    "name": "OCaml",
+    "extension": null
   },
   {
-    "name": "OpenSCAD",
-    "id": "openscad"
-  },
-  {
-    "name": "Oracle Rules Language",
-    "id": "ruleslanguage"
-  },
-  {
-    "name": "Oxygene",
-    "id": "oxygene"
-  },
-  {
-    "name": "PF",
-    "id": "pf"
-  },
-  {
-    "name": "PHP",
-    "id": "php"
-  },
-  {
-    "name": "Parser3",
-    "id": "parser3"
-  },
-  {
-    "name": "Perl",
-    "id": "perl"
-  },
-  {
-    "name": "Plaintext",
-    "id": "plaintext"
-  },
-  {
-    "name": "Pony",
-    "id": "pony"
-  },
-  {
-    "name": "PostgreSQL & PL/pgSQL",
-    "id": "pgsql"
-  },
-  {
-    "name": "PowerShell",
-    "id": "powershell"
-  },
-  {
-    "name": "Processing",
-    "id": "processing"
-  },
-  {
-    "name": "Prolog",
-    "id": "prolog"
-  },
-  {
-    "name": "Properties",
-    "id": "properties"
-  },
-  {
-    "name": "Protocol Buffers",
-    "id": "protobuf"
-  },
-  {
-    "name": "Puppet",
-    "id": "puppet"
-  },
-  {
+    "id": "python",
     "name": "Python",
-    "id": "python"
+    "extension": null
   },
   {
-    "name": "Python profiler results",
-    "id": "profile"
+    "id": "reason",
+    "name": "Reason",
+    "extension": null
   },
   {
-    "name": "Python REPL",
-    "id": "python-repl"
+    "id": "sass",
+    "name": "SASS",
+    "extension": null
   },
   {
-    "name": "Q",
-    "id": "k"
-  },
-  {
-    "name": "QML",
-    "id": "qml"
-  },
-  {
-    "name": "R",
-    "id": "r"
-  },
-  {
-    "name": "ReasonML",
-    "id": "reasonml"
-  },
-  {
-    "name": "RenderMan RIB",
-    "id": "rib"
-  },
-  {
-    "name": "RenderMan RSL",
-    "id": "rsl"
-  },
-  {
-    "name": "Roboconf",
-    "id": "graph"
-  },
-  {
-    "name": "Ruby",
-    "id": "ruby"
-  },
-  {
-    "name": "Rust",
-    "id": "rust"
-  },
-  {
-    "name": "SAS",
-    "id": "SAS"
-  },
-  {
+    "id": "scss",
     "name": "SCSS",
-    "id": "scss"
+    "extension": null
   },
   {
+    "id": "sql",
     "name": "SQL",
-    "id": "sql"
+    "extension": null
   },
   {
-    "name": "STEP Part 21",
-    "id": "p21"
-  },
-  {
-    "name": "Scala",
-    "id": "scala"
-  },
-  {
-    "name": "Scheme",
-    "id": "scheme"
-  },
-  {
-    "name": "Scilab",
-    "id": "scilab"
-  },
-  {
-    "name": "Shell",
-    "id": "shell"
-  },
-  {
-    "name": "Smali",
-    "id": "smali"
-  },
-  {
-    "name": "Smalltalk",
-    "id": "smalltalk"
-  },
-  {
-    "name": "SML",
-    "id": "sml"
-  },
-  {
-    "name": "Stan",
-    "id": "stan"
-  },
-  {
-    "name": "Stata",
-    "id": "stata"
-  },
-  {
+    "id": "stylus",
     "name": "Stylus",
-    "id": "stylus"
+    "extension": null
   },
   {
-    "name": "SubUnit",
-    "id": "subunit"
+    "id": "tsx",
+    "name": "TSX",
+    "extension": null
   },
   {
-    "name": "Swift",
-    "id": "swift"
-  },
-  {
-    "name": "Tcl",
-    "id": "tcl"
-  },
-  {
-    "name": "Test Anything Protocol",
-    "id": "tap"
-  },
-  {
-    "name": "Thrift",
-    "id": "thrift"
-  },
-  {
-    "name": "TP",
-    "id": "tp"
-  },
-  {
-    "name": "Twig",
-    "id": "twig"
-  },
-  {
+    "id": "typescript",
     "name": "TypeScript",
-    "id": "typescript"
+    "extension": null
   },
   {
-    "name": "VB.Net",
-    "id": "vbnet"
+    "id": "wasm",
+    "name": "WASM",
+    "extension": null
   },
   {
-    "name": "VBScript",
-    "id": "vbscript"
-  },
-  {
-    "name": "VHDL",
-    "id": "vhdl"
-  },
-  {
-    "name": "Vala",
-    "id": "vala"
-  },
-  {
-    "name": "Verilog",
-    "id": "verilog"
-  },
-  {
-    "name": "Vim Script",
-    "id": "vim"
-  },
-  {
-    "name": "X++",
-    "id": "axapta"
-  },
-  {
-    "name": "x86 Assembly",
-    "id": "x86asm"
-  },
-  {
-    "name": "XL",
-    "id": "xl"
-  },
-  {
-    "name": "XQuery",
-    "id": "xquery"
-  },
-  {
+    "id": "yaml",
     "name": "YAML",
-    "id": "yml"
-  },
-  {
-    "name": "Zephir",
-    "id": "zephir"
+    "extension": null
   }
 ]
