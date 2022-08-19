@@ -1,0 +1,172 @@
+[
+  {
+    "id": "markup",
+    "name": "Markup",
+    "extension": null
+  },
+  {
+    "id": "bash",
+    "name": "Bash",
+    "extension": null
+  },
+  {
+    "id": "clike",
+    "name": "",
+    "extension": null
+  },
+  {
+    "id": "c",
+    "name": "C",
+    "extension": null
+  },
+  {
+    "id": "cpp",
+    "name": "C++",
+    "extension": null
+  },
+  {
+    "id": "css",
+    "name": "CSS",
+    "extension": null
+  },
+  {
+    "id": "css-extras",
+    "name": "CSS Extras",
+    "extension": null
+  },
+  {
+    "id": "javascript",
+    "name": "JavaScript",
+    "extension": null
+  },
+  {
+    "id": "jsx",
+    "name": "JSX",
+    "extension": null
+  },
+  {
+    "id": "js-extras",
+    "name": "JavaScript Extras",
+    "extension": null
+  },
+  {
+    "id": "js-templates",
+    "name": "JavaScript Templates",
+    "extension": null
+  },
+  {
+    "id": "coffeescript",
+    "name": "CoffeeScript",
+    "extension": null
+  },
+  {
+    "id": "diff",
+    "name": "Diff",
+    "extension": null
+  },
+  {
+    "id": "git",
+    "name": "Git",
+    "extension": null
+  },
+  {
+    "id": "go",
+    "name": "Go",
+    "extension": null
+  },
+  {
+    "id": "graphql",
+    "name": "GraphQL",
+    "extension": null
+  },
+  {
+    "id": "markup-templating",
+    "name": "Markup Templating",
+    "extension": null
+  },
+  {
+    "id": "handlebars",
+    "name": "Handlebars",
+    "extension": null
+  },
+  {
+    "id": "json",
+    "name": "JSON",
+    "extension": null
+  },
+  {
+    "id": "less",
+    "name": "LESS",
+    "extension": null
+  },
+  {
+    "id": "makefile",
+    "name": "Makefile",
+    "extension": null
+  },
+  {
+    "id": "markdown",
+    "name": "Markdown",
+    "extension": null
+  },
+  {
+    "id": "objectivec",
+    "name": "Objective C",
+    "extension": null
+  },
+  {
+    "id": "ocaml",
+    "name": "OCaml",
+    "extension": null
+  },
+  {
+    "id": "python",
+    "name": "Python",
+    "extension": null
+  },
+  {
+    "id": "reason",
+    "name": "Reason",
+    "extension": null
+  },
+  {
+    "id": "sass",
+    "name": "SASS",
+    "extension": null
+  },
+  {
+    "id": "scss",
+    "name": "SCSS",
+    "extension": null
+  },
+  {
+    "id": "sql",
+    "name": "SQL",
+    "extension": null
+  },
+  {
+    "id": "stylus",
+    "name": "Stylus",
+    "extension": null
+  },
+  {
+    "id": "tsx",
+    "name": "TSX",
+    "extension": null
+  },
+  {
+    "id": "typescript",
+    "name": "TypeScript",
+    "extension": null
+  },
+  {
+    "id": "wasm",
+    "name": "WASM",
+    "extension": null
+  },
+  {
+    "id": "yaml",
+    "name": "YAML",
+    "extension": null
+  }
+]
