@@ -42,15 +42,15 @@ function View() {
     } else {
       switch (data.type) {
         case "url:1":
-          title = shortUrl(data.url, 30);
+          title = shortUrl(data.data.url, 30);
           content = <>
-            <TimedRedirect href={data.url} />
+            <TimedRedirect href={data.data.url} />
           </>;
           break;
         case "paste:1":
           title = "Paste";
           content = <>
-            <Prism language={data.language}>{data.code}</Prism>
+            <Prism language={data.data.language}>{data.data.code}</Prism>
             <Button
               leftIcon={<Download size={16} />}
               component="a"
@@ -62,12 +62,12 @@ function View() {
           </>;
           break;
         case "upload:1":
-          title = data.filename;
-          let size = `${data.size} bytes`;
-          if (data.size > 1000000) {
-            size = `${(data.size / 1000000).toFixed(1)} MB`
-          } else if (data.size > 1000) {
-            size = `${(data.size / 1000).toFixed(1)} KB`
+          title = data.data.filename;
+          let size = `${data.data.size} bytes`;
+          if (data.data.size > 1000000) {
+            size = `${(data.data.size / 1000000).toFixed(1)} MB`
+          } else if (data.data.size > 1000) {
+            size = `${(data.data.size / 1000).toFixed(1)} KB`
           }
 
           content = <>
@@ -78,7 +78,7 @@ function View() {
 
             <Text style={{ overflowX: "auto" }}>
               <ul>
-                <li><b>SHA256 Hash:</b> {data.hash}</li>
+                <li><b>SHA256 Hash:</b> {data.data.hash}</li>
                 <li><b>File Size:</b> {size}</li>
               </ul>
             </Text>
@@ -88,7 +88,7 @@ function View() {
               component="a"
               href={`${baseURL}${link}?direct=1`}
             >
-              Download {data.filename}
+              Download {data.data.filename}
             </Button>
           </>;
           break;
