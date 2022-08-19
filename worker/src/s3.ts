@@ -1,13 +1,13 @@
 import { AwsClient } from 'aws4fetch';
 
 const aws = new AwsClient({
-  accessKeyId: S3_ACCESS_KEY_ID,
-  secretAccessKey: S3_SECRET_ACCESS_KEY,
-  region: S3_DEFAULT_REGION,
+  accessKeyId: AWS_ACCESS_KEY_ID,
+  secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  region: AWS_DEFAULT_REGION,
 });
 
 async function makeRequest(path: string = '/', options: RequestInit | Request = {}) {
-  const url = new URL(`https://${S3_BUCKET}.${S3_ENDPOINT_URL}${path}`);
+  const url = new URL(`https://${AWS_S3_BUCKET}.${AWS_ENDPOINT_URL}${path}`);
   const signedRequest = await aws.sign(url, {
     aws: {
       service: 's3',

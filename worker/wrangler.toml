@@ -6,19 +6,17 @@ workers_dev = true
 route = ""
 zone_id = ""
 
-kv_namespaces = [
-  { binding = "VH7", id = "52cdf6272a704bc991b5b6e5b98421fe", preview_id = "" }
-]
-
 # [secrets]
 # AWS_ACCESS_KEY_ID
 # AWS_SECRET_ACCESS_KEY
 
 [vars]
-S3_BUCKET = "uploads"
-S3_ENDPOINT_URL = "gateway.eu1.storjshare.io"
-S3_DEFAULT_REGION = ""
+AWS_S3_BUCKET = "uploads"
+AWS_ENDPOINT_URL = "gateway.eu1.storjshare.io"
+AWS_DEFAULT_REGION = ""
 VH7_ENV = "production"
+DYNAMODB_TABLE = "vh7"
+DYNAMODB_DEFAULT_REGION = "eu-west-1"
 
 [miniflare]
 kv_persist = true
