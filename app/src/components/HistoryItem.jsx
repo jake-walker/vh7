@@ -5,7 +5,7 @@ import { baseURL, shortUrl } from '../controller';
 import { DateTime } from 'luxon';
 
 function formatDate(date) {
-  date = DateTime.fromMillis(date);
+  date = DateTime.fromJSDate(new Date(date));
 
   if (date.toISODate() === DateTime.local().toISODate()) {
     return `Today at ${date.toLocaleString(DateTime.TIME_SIMPLE)}`;
