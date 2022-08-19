@@ -24,9 +24,7 @@ const docClient = DynamoDBDocumentClient.from(client, {
 export async function save(item: ShortLinkItem | PasteItem | UploadItem) {
   await docClient.send(new PutCommand({
     TableName: DYNAMODB_TABLE,
-    Item: {
-      ...item
-    }
+    Item: item
   }));
 }
 
