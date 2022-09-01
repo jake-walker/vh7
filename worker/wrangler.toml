@@ -12,11 +12,12 @@ zone_id = ""
 
 [vars]
 AWS_S3_BUCKET = "uploads"
-AWS_ENDPOINT_URL = "gateway.eu1.storjshare.io"
+AWS_ENDPOINT_URL = "https://gateway.eu1.storjshare.io"
 AWS_DEFAULT_REGION = ""
 VH7_ENV = "production"
 DYNAMODB_TABLE = "vh7"
 DYNAMODB_DEFAULT_REGION = "eu-west-1"
+DYNAMODB_ENDPOINT_URL = "https://dynamodb.eu-west-1.amazonaws.com"
 
 [miniflare]
 kv_persist = true

@@ -19,7 +19,7 @@ export function PasteForm({ onResponse, onError }) {
     },
     validationRules: {
       code: (value) => z.string().safeParse(value).success,
-      language: (value) => z.string().refine((val) => languages.map((lang) => lang.id).includes(val)).safeParse(value).success,
+      language: (value) => z.string().nullable().refine((val) => val === null || languages.map((lang) => lang.id).includes(val)).safeParse(value).success,
       ...validationRules
     }
   });
@@ -47,6 +47,7 @@ export function PasteForm({ onResponse, onError }) {
     <form onSubmit={form.onSubmit(submit)} style={{ position: 'relative' }}>
       <LoadingOverlay visible={loading} />
       <Textarea
+        id="paste-code"
         required
         label="Code"
         placeholder="print('Hello World')"
@@ -59,13 +60,13 @@ export function PasteForm({ onResponse, onError }) {
         })}
         {...form.getInputProps('code')}
       />
-      <Select label="Language" data={[
+      <Select id="paste-language" label="Language" data={[
           { label: "None", value: null },
           ...languages.map((lang) => ({ label: lang.name, value: lang.id }))
         ]} {...form.getInputProps('language')} />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="paste" />
-      <Button type="submit" mt={10} leftIcon={<Send size={16}/>}>Paste</Button>
+      <Button id="paste-submit" type="submit" mt={10} leftIcon={<Send size={16}/>}>Paste</Button>
     </form>
   )
 }

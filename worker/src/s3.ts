@@ -7,7 +7,7 @@ const aws = new AwsClient({
 });
 
 async function makeRequest(path: string = '/', options: RequestInit | Request = {}) {
-  const url = new URL(`https://${AWS_S3_BUCKET}.${AWS_ENDPOINT_URL}${path}`);
+  const url = new URL(`${AWS_ENDPOINT_URL}/${AWS_S3_BUCKET}${path}`);
   const signedRequest = await aws.sign(url, {
     aws: {
       service: 's3',

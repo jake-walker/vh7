@@ -7,7 +7,8 @@ const client = new DynamoDBClient({
   credentials: {
     accessKeyId: DYNAMODB_ACCESS_KEY_ID,
     secretAccessKey: DYNAMODB_SECRET_ACCESS_KEY
-  }
+  },
+  endpoint: DYNAMODB_ENDPOINT_URL || undefined
 });
 
 const docClient = DynamoDBDocumentClient.from(client, {

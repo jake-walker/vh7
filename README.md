@@ -11,16 +11,25 @@ VH7 utilises [Cloudflare Workers](https://workers.cloudflare.com/) for hosting t
 
 First, clone this repository and run `yarn --dev` to install the dependendies for all the sub-projects.
 
+### Local Infrastructure
+
+To start local versions of AWS S3 and AWS DynamoDB, you can run `docker-compose -f docker-compose.dev.yml up` and leave the below values the same.
+
 ### Worker
 
 Next, enter the `worker` folder and create a new `.env` file containing the following:
 
 ```
-AWS_ACCESS_KEY_ID=[aws key here]
-AWS_SECRET_ACCESS_KEY=[aws key here]
-AWS_DEFAULT_REGION=[aws region here, or leave blank]
-AWS_ENDPOINT_URL=[aws endpoint url]
-AWS_S3_BUCKET=[s3 bucket name]
+AWS_ACCESS_KEY_ID=minioadmin
+AWS_SECRET_ACCESS_KEY=minioadmin
+AWS_DEFAULT_REGION=eu-west-1
+AWS_ENDPOINT_URL=localhost:9000
+AWS_S3_BUCKET=vh7-uploads
+DYNAMODB_ACCESS_KEY_ID=DUMMYIDEXAMPLE
+DYNAMODB_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY
+DYNAMODB_DEFAULT_REGION=eu-west-1
+DYNAMODB_TABLE=vh7
+DYNAMODB_ENDPOINT_URL=http://localhost:8100
 VH7_ENV=development
 ```
 

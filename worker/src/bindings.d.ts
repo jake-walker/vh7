@@ -11,5 +11,6 @@ declare global {
   const DYNAMODB_SECRET_ACCESS_KEY: string;
   const DYNAMODB_DEFAULT_REGION: string;
   const DYNAMODB_TABLE: string;
+  const DYNAMODB_ENDPOINT_URL: string;
   const VH7_ENV: string;
 }
