@@ -8,7 +8,13 @@ export interface BaseItem {
 };
 
 const BaseArgs = z.object({
-  expires: z.number().int().positive().nullish().refine((val) => {
+  expires: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return parseInt(val, 10);
+    }
+
+    return val;
+  }, z.number().int().positive().nullish().refine((val) => {
     if (val === null || val === undefined) return true;
     const min = new Date();
     const max = new Date();
@@ -18,7 +24,7 @@ const BaseArgs = z.object({
     const d = new Date();
     d.setDate(d.getDate() + 60);
     return d.getTime();
-  })
+  }))
 });
 
 const BaseShortLinkArgs = z.object({
