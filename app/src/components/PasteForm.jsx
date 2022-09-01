@@ -19,7 +19,7 @@ export function PasteForm({ onResponse, onError }) {
     },
     validationRules: {
       code: (value) => z.string().safeParse(value).success,
-      language: (value) => z.string().refine((val) => languages.map((lang) => lang.id).includes(val)).safeParse(value).success,
+      language: (value) => z.string().nullable().refine((val) => val === null || languages.map((lang) => lang.id).includes(val)).safeParse(value).success,
       ...validationRules
     }
   });
