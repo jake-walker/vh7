@@ -9,7 +9,7 @@ import config from './config';
 
 const router = Router();
 
-const headers = {
+const globalHeaders = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -64,7 +64,7 @@ router.post('/api/paste', withContent, async (req: RequestWithContext) => {
   }
 
   const paste = await createPaste(data.data.code, data.data.language, data.data.expires);
-  return wrapCors(json(paste, { headers }));
+  return wrapCors(json(paste, { headers: globalHeaders }));
 });
 
 router.post('/api/upload', withContent, async (req: RequestWithContext) => {
@@ -79,7 +79,7 @@ router.post('/api/upload', withContent, async (req: RequestWithContext) => {
   }
 
   const upload = await createUpload(data.data.file, data.data.expires);
-  return wrapCors(json(upload, { headers }));
+  return wrapCors(json(upload, { headers: globalHeaders }));
 });
 
 router.get('/api/info/:id', async ({ params }) => {
@@ -87,7 +87,7 @@ router.get('/api/info/:id', async ({ params }) => {
     const shortlink = await lookup(params.id);
 
     if (shortlink !== null) {
-      return wrapCors(json(shortlink, { headers }));
+      return wrapCors(json(shortlink, { headers: globalHeaders }));
     }
   }
 
@@ -95,10 +95,10 @@ router.get('/api/info/:id', async ({ params }) => {
     error: 'Short link not found',
     status: 404,
   }));
-})
+});
 
 router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, query: Obj }) => {
-  let direct = 'direct' in (query || {}) || config.checkDirectUserAgent(headers.get("User-Agent"));
+  const direct = 'direct' in (query || {}) || config.checkDirectUserAgent(headers.get('User-Agent'));
 
   if (direct === false) {
     if (!params) {
@@ -106,47 +106,47 @@ router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, q
     }
 
     return Response.redirect(`${config.frontendUrl}/view/${params.id}`, 301);
-  } else {
-    if (!params) {
-      return new Response('Short link not found', { status: 404 });
-    }
+  }
 
-    const shortlink = await lookup(params.id);
-
-    if (shortlink !== null) {
-      switch (shortlink.type) {
-        case 'url:1':
-          return Response.redirect(shortlink.url, 301);
-        case 'paste:1':
-          // eslint-disable-next-line no-case-declarations
-          const pasteRes = new Response(shortlink.code);
-          pasteRes.headers.set('Content-Type', 'text/plain');
-          pasteRes.headers.set('Content-Disposition', `attachment; filename="vh7-paste-${shortlink.id}.txt"`);
-          pasteRes.headers.set('Cache-Control', 'max-age=86400');
-          return pasteRes;
-        case 'upload:1':
-          // eslint-disable-next-line no-case-declarations
-          const obj = await getObject(shortlink.id);
-          if (obj.status === 404) {
-            return new Response('Short link not found', { status: 404 });
-          }
-          if (obj.status !== 200) {
-            return new Response('Internal server error', { status: 500 });
-          }
-          // eslint-disable-next-line no-case-declarations
-          const res = new Response(obj.body, obj);
-          res.headers.set('Content-Type', 'application/force-download');
-          res.headers.set('Content-Transfer-Encoding', 'binary');
-          res.headers.set('Content-Disposition', `attachment; filename="${shortlink.filename}"`);
-          res.headers.set('Cache-Control', 'max-age=86400');
-          return res;
-        default:
-          return new Response('Internal server error', { status: 500 });
-      }
-    }
-
+  if (!params) {
     return new Response('Short link not found', { status: 404 });
   }
+
+  const shortlink = await lookup(params.id);
+
+  if (shortlink !== null) {
+    switch (shortlink.type) {
+      case 'url:1':
+        return Response.redirect(shortlink.url, 301);
+      case 'paste:1':
+        // eslint-disable-next-line no-case-declarations
+        const pasteRes = new Response(shortlink.code);
+        pasteRes.headers.set('Content-Type', 'text/plain');
+        pasteRes.headers.set('Content-Disposition', `attachment; filename="vh7-paste-${shortlink.id}.txt"`);
+        pasteRes.headers.set('Cache-Control', 'max-age=86400');
+        return pasteRes;
+      case 'upload:1':
+        // eslint-disable-next-line no-case-declarations
+        const obj = await getObject(shortlink.id);
+        if (obj.status === 404) {
+          return new Response('Short link not found', { status: 404 });
+        }
+        if (obj.status !== 200) {
+          return new Response('Internal server error', { status: 500 });
+        }
+        // eslint-disable-next-line no-case-declarations
+        const res = new Response(obj.body, obj);
+        res.headers.set('Content-Type', 'application/force-download');
+        res.headers.set('Content-Transfer-Encoding', 'binary');
+        res.headers.set('Content-Disposition', `attachment; filename="${shortlink.filename}"`);
+        res.headers.set('Cache-Control', 'max-age=86400');
+        return res;
+      default:
+        return new Response('Internal server error', { status: 500 });
+    }
+  }
+
+  return new Response('Short link not found', { status: 404 });
 });
 
 router.all('*', () => new Response('Not found!', { status: 404 }));
@@ -156,7 +156,7 @@ export default async function handleRequest(request: Request): Promise<Response>
   if (request.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
-        ...headers,
+        ...globalHeaders,
         Allow: 'GET, OPTIONS, POST',
       },
       status: 204,

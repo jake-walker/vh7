@@ -30,34 +30,35 @@ export async function createShortUrl(url: string, expires: number | null): Promi
   const id = await generateId();
   const item: ShortLinkItem = {
     id,
-    type: "url:1",
+    type: 'url:1',
     created: (new Date()).getTime(),
     expires,
     data: {
-      url
-    }
-  }
-  await save(item);
-  return item;
-}
-
-export async function createPaste(code: string, language: string | null, expires: number | null): Promise<PasteItem> {
-  const id = await generateId();
-  const item: PasteItem = {
-    id,
-    type: "paste:1",
-    created: (new Date()).getTime(),
-    expires,
-    data: {
-      code,
-      language
-    }
+      url,
+    },
   };
   await save(item);
   return item;
 }
 
-export async function createUpload(file: File, expires: number | null): Promise<UploadItem> {
+export async function createPaste(code: string, language: string | null, expires: number | null):
+Promise<PasteItem> {
+  const id = await generateId();
+  const item: PasteItem = {
+    id,
+    type: 'paste:1',
+    created: (new Date()).getTime(),
+    expires,
+    data: {
+      code,
+      language,
+    },
+  };
+  await save(item);
+  return item;
+}
+
+export async function createUpload(file: File, rawExpires: number | null): Promise<UploadItem> {
   const id = await generateId();
   const hash = await sha256(file);
 
@@ -68,21 +69,22 @@ export async function createUpload(file: File, expires: number | null): Promise<
 
   const maxExpiry = new Date();
   maxExpiry.setDate(maxExpiry.getDate() + 30);
+  let expires = rawExpires;
   if (expires !== null && expires > maxExpiry.getTime()) {
-    expires = maxExpiry.getTime()
+    expires = maxExpiry.getTime();
   }
 
   const item: UploadItem = {
     id,
-    type: "upload:1",
+    type: 'upload:1',
     created: (new Date()).getTime(),
     expires,
     data: {
       filename: file.name,
       size: file.size,
-      hash
-    }
-  }
+      hash,
+    },
+  };
   await save(item);
   return item;
 }
