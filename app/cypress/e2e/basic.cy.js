@@ -10,18 +10,18 @@ describe('Home Page', () => {
   });
 
   it('pastes', () => {
-    const code = "def add(a, b):\n  return a + b";
+    cy.fixture('paste').then((code) => {
+      cy.visit('/');
 
-    cy.visit('/');
+      cy.get('#paste-tab').click();
 
-    cy.get('#paste-tab').click();
+      cy.get("#paste-code").type(code).should("have.value", code);
+      cy.get("#paste-language").click()
+      cy.contains("Python").click();
+      cy.get("#paste-submit").click();
 
-    cy.get("#paste-code").type(code).should("have.value", code);
-    cy.get("#paste-language").click()
-    cy.contains("Python").click();
-    cy.get("#paste-submit").click();
-
-    cy.get("#success-alert").should("be.visible");
+      cy.get("#success-alert").should("be.visible");
+    });
   });
 
   it('uploads', () => {
