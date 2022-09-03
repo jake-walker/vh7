@@ -5,7 +5,7 @@ export default {
       || ua.includes('bot ') || ua.includes('bot;') || ua.includes('bot/') // chat & url preview services
       || ua.includes('whatsapp')); // whatsapp & signal
   },
-  frontendUrl: (VH7_ENV === 'development'
+  frontendUrl: (VH7_ENV === 'development' || VH7_ENV === 'testing'
     ? 'http://localhost:3000'
     : 'http://vh7.uk'),
 };

@@ -1,8 +1,7 @@
 import { create } from 'axios';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const apiURL = isProduction ? 'https://vh7.uk/api' : 'http://localhost:8787/api';
-export const baseURL = isProduction ? 'https://vh7.uk/' : 'http://localhost:8787/';
+const apiURL = import.meta.env.PROD ? 'https://vh7.uk/api' : 'http://localhost:8787/api';
+export const baseURL = import.meta.env.PROD ? 'https://vh7.uk/' : 'http://localhost:8787/';
 
 const instance = create({
   baseURL: apiURL,

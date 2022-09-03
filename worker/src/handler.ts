@@ -37,6 +37,8 @@ async function withContent(request: RequestWithContext) {
   }
 }
 
+router.get('/', async () => new Response('VH7'));
+
 router.post('/api/shorten', withContent, async (req: RequestWithContext) => {
   const data = await ShortLinkArgs.safeParseAsync(req.data);
 
