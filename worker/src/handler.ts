@@ -119,10 +119,10 @@ router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, q
   if (shortlink !== null) {
     switch (shortlink.type) {
       case 'url:1':
-        return Response.redirect(shortlink.url, 301);
+        return Response.redirect(shortlink.data.url, 301);
       case 'paste:1':
         // eslint-disable-next-line no-case-declarations
-        const pasteRes = new Response(shortlink.code);
+        const pasteRes = new Response(shortlink.data.code);
         pasteRes.headers.set('Content-Type', 'text/plain');
         pasteRes.headers.set('Content-Disposition', `attachment; filename="vh7-paste-${shortlink.id}.txt"`);
         pasteRes.headers.set('Cache-Control', 'max-age=86400');
@@ -140,7 +140,7 @@ router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, q
         const res = new Response(obj.body, obj);
         res.headers.set('Content-Type', 'application/force-download');
         res.headers.set('Content-Transfer-Encoding', 'binary');
-        res.headers.set('Content-Disposition', `attachment; filename="${shortlink.filename}"`);
+        res.headers.set('Content-Disposition', `attachment; filename="${shortlink.data.filename}"`);
         res.headers.set('Cache-Control', 'max-age=86400');
         return res;
       default:
