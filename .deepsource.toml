@@ -1,6 +1,9 @@
 version = 1
 
-test_patterns = ["worker/test/**/*.spec.ts"]
+test_patterns = [
+  "worker/test/**/*.spec.ts",
+  "app/cypress/e2e/**/*.cy.js"
+]
 
 exclude_patterns = [".github/**"]
 
