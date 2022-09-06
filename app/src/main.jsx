@@ -4,9 +4,17 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import App from './App';
 import theme from './theme';
 import store from './store';
+
+Sentry.init({
+  dsn: "https://8312fbcf256d4384b11dc1c8f6f569df@o170830.ingest.sentry.io/6724288",
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 0.1,
+});
 
 function Base() {
   const preferredColorScheme = useColorScheme();

@@ -8,6 +8,8 @@
     "@mantine/hooks": "^3.6.8",
     "@mantine/prism": "^3.6.8",
     "@reduxjs/toolkit": "^1.7.2",
+    "@sentry/react": "^7.12.1",
+    "@sentry/tracing": "^7.12.1",
     "axios": "^0.25.0",
     "luxon": "^3.0.1",
     "react": "^17.0.2",
