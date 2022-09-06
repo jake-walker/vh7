@@ -206,3 +206,4 @@ $RECYCLE.BIN/
 
 accessgrant.txt
 cleanup/backup-*
+app/cypress/downloads

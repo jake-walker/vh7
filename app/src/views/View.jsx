@@ -50,7 +50,7 @@ function View() {
         case "paste:1":
           title = "Paste";
           content = <>
-            <Prism language={data.data.language}>{data.data.code}</Prism>
+            <Prism language={data.data.language} id="paste-content">{data.data.code}</Prism>
             <Button
               leftIcon={<Download size={16} />}
               component="a"
@@ -78,7 +78,7 @@ function View() {
 
             <Text style={{ overflowX: "auto" }}>
               <ul>
-                <li><b>SHA256 Hash:</b> {data.data.hash}</li>
+                <li><b>SHA256 Hash:</b> <span id="upload-sha256">{data.data.hash}</span></li>
                 <li><b>File Size:</b> {size}</li>
               </ul>
             </Text>

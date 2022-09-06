@@ -29,9 +29,15 @@ test('can create and use short url', async (t) => {
   t.is(res.status, 200, 'is request successful')
   const json: any = await res.json();
 
-  res = await mf.dispatchFetch(`http://localhost:8787/${json.id}`);
-  t.is(res.status, 301, 'is redirect');
-  t.is(res.headers.get('Location'), url, 'is correct url');
+  res = await mf.dispatchFetch(`http://localhost:8787/info/${json.id}`);
+  t.is(res.status, 200, 'is request successful');
+  t.like(await res.json(), {
+    id: json.id,
+    expires: null,
+    data: {
+      url,
+    }
+  });
 });
 
 test('can create and use paste', async (t) => {
@@ -48,7 +54,12 @@ test('can create and use paste', async (t) => {
   t.is(res.status, 200, 'is request successful');
   const json: any = await res.json();
 
-  res = await mf.dispatchFetch(`http://localhost:8787/${json.id}`);
+  res = await mf.dispatchFetch(`http://localhost:8787/${json.id}`, {
+    method: "GET",
+    headers: {
+      "User-Agent": "bot/test"
+    }
+  });
   t.is(res.status, 200, 'is successful');
   t.is(await res.text(), code, 'has correct body');
 });

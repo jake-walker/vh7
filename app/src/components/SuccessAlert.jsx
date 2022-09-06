@@ -10,9 +10,10 @@ export function SuccessAlert({ response, clear, ...props }) {
   const url = urljoin(baseURL, response.id);
 
   return (
-    <Alert icon={<CheckCircle size={32} />} title="Shortened!" color="green" withCloseButton onClose={clear} {...props}>
+    <Alert id="success-alert" icon={<CheckCircle size={32} />} title="Shortened!" color="green" withCloseButton onClose={clear} {...props}>
       Your URL has been shortened to {' '}
       <Text
+        id="success-alert-link"
         variant="link"
         component="code"
         size="sm"

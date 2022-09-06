@@ -39,10 +39,10 @@ export function ShortenForm({ onResponse, onError }) {
   return (
     <form onSubmit={form.onSubmit(submit)} style={{ position: 'relative' }}>
       <LoadingOverlay visible={loading} />
-      <TextInput required label="URL" placeholder="https://example.com/a/long/url" {...form.getInputProps('url')} />
+      <TextInput id="shorten-url" required label="URL" placeholder="https://example.com/a/long/url" {...form.getInputProps('url')} />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="short link" />
-      <Button type="submit" mt={10} leftIcon={<Send size={16} />}>Shorten</Button>
+      <Button id="shorten-submit" type="submit" mt={10} leftIcon={<Send size={16} />}>Shorten</Button>
     </form>
   )
 }

@@ -44,6 +44,7 @@ export function UploadForm({ onResponse, onError }) {
         Uploaded files last a maximum of 30 days.
       </Alert>
       <Dropzone
+        id="upload-file"
         onDrop={onDrop}
         onReject={onReject}
         maxSize={2.56e+8}

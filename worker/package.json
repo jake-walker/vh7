@@ -36,6 +36,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "dev": "miniflare --debug --watch",
+    "preview": "miniflare",
     "build": "webpack",
     "publish": "wranger publish",
     "test": "yarn run build && ava --verbose test/*.spec.ts"

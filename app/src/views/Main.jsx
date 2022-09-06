@@ -38,13 +38,13 @@ function Main() {
         {error && <ErrorAlert error={error} clear={() => setError(null)} my={15} />}
 
         <Tabs variant="pills" tabPadding="lg">
-          <Tabs.Tab label="Shorten" icon={<Link size={16} />}>
+          <Tabs.Tab id="shorten-tab" label="Shorten" icon={<Link size={16} />}>
             <ShortenForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
-          <Tabs.Tab label="Paste" icon={<Clipboard size={16} />}>
+          <Tabs.Tab id="paste-tab" label="Paste" icon={<Clipboard size={16} />}>
             <PasteForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
-          <Tabs.Tab label="Upload" icon={<File size={16} />}>
+          <Tabs.Tab id="upload-tab" label="Upload" icon={<File size={16} />}>
             <UploadForm onResponse={(res) => onResponse(res)} onError={onError} />
           </Tabs.Tab>
         </Tabs>
