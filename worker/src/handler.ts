@@ -14,15 +14,15 @@ const globalHeaders = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, baggage, sentry-trace',
 };
 
 type RequestWithContext = Request & {
   data: any | null
 };
 
-function wrapCors(response: Response) {
-  response.headers.set('Access-Control-Allow-Origin', '*');
+function setHeaders(response: Response, headers: { [key: string]: string }) {
+  Object.entries(headers).map(([key, value]) => response.headers.set(key, value));
   return response;
 }
 
@@ -44,45 +44,45 @@ router.post('/api/shorten', withContent, async (req: RequestWithContext) => {
   const data = await ShortLinkArgs.safeParseAsync(req.data);
 
   if (!data.success) {
-    return wrapCors(error(400, {
+    return error(400, {
       error: 'Invalid request body',
       status: 400,
       detail: data.error.issues,
-    }));
+    });
   }
 
   const shortUrl = await createShortUrl(data.data.url, data.data.expires);
-  return wrapCors(json(shortUrl));
+  return json(shortUrl);
 });
 
 router.post('/api/paste', withContent, async (req: RequestWithContext) => {
   const data = await PasteArgs.safeParseAsync(req.data);
 
   if (!data.success) {
-    return wrapCors(error(400, {
+    return error(400, {
       error: 'Invalid request body',
       status: 400,
       detail: data.error.issues,
-    }));
+    });
   }
 
   const paste = await createPaste(data.data.code, data.data.language, data.data.expires);
-  return wrapCors(json(paste, { headers: globalHeaders }));
+  return json(paste, { headers: globalHeaders });
 });
 
 router.post('/api/upload', withContent, async (req: RequestWithContext) => {
   const data = await UploadArgs.safeParseAsync(req.data);
 
   if (!data.success) {
-    return wrapCors(error(400, {
+    return error(400, {
       error: 'Invalid request body',
       status: 400,
       detail: data.error.issues,
-    }));
+    });
   }
 
   const upload = await createUpload(data.data.file, data.data.expires);
-  return wrapCors(json(upload, { headers: globalHeaders }));
+  return json(upload, { headers: globalHeaders });
 });
 
 router.get('/api/info/:id', async ({ params }) => {
@@ -90,14 +90,14 @@ router.get('/api/info/:id', async ({ params }) => {
     const shortlink = await lookup(params.id);
 
     if (shortlink !== null) {
-      return wrapCors(json(shortlink, { headers: globalHeaders }));
+      return json(shortlink, { headers: globalHeaders });
     }
   }
 
-  return wrapCors(error(404, {
+  return error(404, {
     error: 'Short link not found',
     status: 404,
-  }));
+  });
 });
 
 router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, query: Obj }) => {
@@ -169,13 +169,14 @@ export default async function handleRequest(
       });
     }
 
-    return await router.handle(request);
+    return setHeaders(await router.handle(request), globalHeaders);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e);
 
     sentry.captureException(e);
     return new Response('Internal Server Error', {
+      headers: globalHeaders,
       status: 500,
     });
   }
