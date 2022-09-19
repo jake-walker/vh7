@@ -171,6 +171,9 @@ export default async function handleRequest(
 
     return await router.handle(request);
   } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e);
+
     sentry.captureException(e);
     return new Response('Internal Server Error', {
       status: 500,
