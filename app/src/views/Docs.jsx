@@ -14,8 +14,11 @@ function Docs() {
           </p>
           <h3>FAQ</h3>
           <p>
-            <b>How long do short links last?</b> Shortened URLs and pastes last forever*, uploads stay
-            for a minimum of 2 months and then deleted and their short links are made available again.
+            <b>How long do short links last?</b> Everything lasts for 60 days by default, however
+            this time can be changed by clicking the 'Show Advanced' link before pressing the
+            button on the main page. Short links and pastes can be set to last from 1 day to
+            forever*. Uploaded files only last a maximum of 30 days at the moment (even if set to
+            expire longer).
 
             <Text color="dimmed" size="xs">
               * - I will try my best to keep data backed up and VH7 online, however I can't make any
@@ -41,7 +44,7 @@ function Docs() {
           <p>
             Using VH7's API will allow you to build short links into your own application. To keep
             links shorter for everyone, I please ask that you use the API for small projects
-            and <a href="https://jakew.me/contact">contact me</a> first for any bigger projects.
+            and <a href="https://jakew.me/about">contact me</a> first for any bigger projects.
           </p>
         </TypographyStylesProvider>
         <h4><Badge>POST</Badge> /api/shorten</h4>
@@ -54,7 +57,7 @@ function Docs() {
         <h5>Example Request</h5>
         <Prism language="json">{`{\n  "url": "https://example.com"\n}`}</Prism>
         <h5>Example Response</h5>
-        <Prism language="json">{`{\n  "id": "abcd",\n  "url": "https://example.com"\n}`}</Prism>
+        <Prism language="json">{`{\n  "id": "abcd",\n  "type": "url:1",\n  "created": 1663589965311,\n  "expires": null,\n  "data": {\n    "url": "https://example.com"\n  }\n}`}</Prism>
         <h5>cURL Example</h5>
         <Prism language="bash">{`curl \\
   -H 'Content-Type: application/json' -X POST \\
@@ -71,7 +74,7 @@ function Docs() {
         <h5>Example Request</h5>
         <Prism language="json">{`{\n  "code": "def add(a, b):\\n    return a + b"\n  "language": "python"\n}`}</Prism>
         <h5>Example Response</h5>
-        <Prism language="json">{`{\n  "id": "abcd",\n  "code": "def add(a, b):\\n    return a + b"\n  "language": "python"\n}`}</Prism>
+        <Prism language="json">{`{\n  "id": "abcd",\n  "type": "paste:1",\n  "created": 1663589965311,\n  "expires": null,\n  "data": {\n    "code": "def add(a, b):\\n    return a + b"\n    "language": "python"\n  }\n}`}</Prism>
         <h5>cURL Example</h5>
         <Prism language="bash">{`curl \\
   -H "Content-Type: application/json" -X POST \\
@@ -86,7 +89,7 @@ function Docs() {
           Send a form data request including a <code>file</code> field.
         </p>
         <h5>Example Response</h5>
-        <Prism language="json">{`{\n  "id": "abcd",\n  "size": 35,\n  "filename": "hello.txt",\n  "hash": "d223c30380ce42d3884b8368196a265e9efecef6885f81cf6426ff688a3ebeed"\n}`}</Prism>
+        <Prism language="json">{`{\n  "id": "abcd",\n  "type": "upload:1",\n  "created": 1663589965311,\n  "expires": 1666181965311,\n  "data": {\n    "size": 35,\n    "filename": "hello.txt",\n    "hash": "d223c30380ce42d3884b8368196a265e9efecef6885f81cf6426ff688a3ebeed"\n  }\n}`}</Prism>
         <Text color="dimmed" size="xs">
           The size is in bytes and the hash is SHA256.
         </Text>
@@ -99,8 +102,8 @@ function Docs() {
           Retreive information about a given link.
         </p>
         <p>
-          The response will be a JSON object in a similar format to when creating
-          a short link with a <code>created</code> and <code>type</code> field.
+          The response will return a JSON object in the same format as the above
+          creation routes.
         </p>
         <h5>cURL Example</h5>
         <Prism language="bash">{`curl https://vh7.uk/api/info/abcd`}</Prism>
@@ -108,7 +111,8 @@ function Docs() {
         <h4><Badge>GET</Badge> /:id?direct</h4>
         <p>
           Visiting the short link with <code>?direct</code> will redirect you
-          to URLs or download pastes and uploads.
+          to URLs or download pastes and uploads. <b>Use this for downloading
+          uploaded files in your application.</b>
         </p>
         <h5>cURL Example</h5>
         <Prism language="bash">{`curl https://vh7.uk/abcd`}</Prism>
