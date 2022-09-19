@@ -20,11 +20,11 @@ To start local versions of AWS S3 and AWS DynamoDB, you can run `docker-compose 
 Next, enter the `worker` folder and create a new `.env` file containing the following:
 
 ```
-AWS_ACCESS_KEY_ID=minioadmin
-AWS_SECRET_ACCESS_KEY=minioadmin
-AWS_DEFAULT_REGION=eu-west-1
-AWS_ENDPOINT_URL=localhost:9000
-AWS_S3_BUCKET=vh7-uploads
+S3_ACCESS_KEY_ID=minioadmin
+S3_SECRET_ACCESS_KEY=minioadmin
+S3_DEFAULT_REGION=eu-west-1
+S3_ENDPOINT_URL=localhost:9000
+S3_BUCKET=vh7-uploads
 DYNAMODB_ACCESS_KEY_ID=DUMMYIDEXAMPLE
 DYNAMODB_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY
 DYNAMODB_DEFAULT_REGION=eu-west-1

@@ -7,10 +7,10 @@ module.exports = {
     namespaceId: process.env.CF_NAMESPACE_ID
   },
   s3: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    endpointUrl: process.env.AWS_ENDPOINT_URL,
-    bucket: process.env.AWS_S3_BUCKET
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    endpointUrl: process.env.S3_ENDPOINT_URL,
+    bucket: process.env.S3_BUCKET
   },
 
   cleanupHostnames: [
