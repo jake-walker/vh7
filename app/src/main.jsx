@@ -11,7 +11,7 @@ import theme from './theme';
 import store from './store';
 
 initSentry({
-  dsn: "https://8312fbcf256d4384b11dc1c8f6f569df@o170830.ingest.sentry.io/6724288",
+  dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [new BrowserTracing()],
   tracesSampleRate: 0.1,
 });
