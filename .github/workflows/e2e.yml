@@ -67,12 +67,17 @@ jobs:
           DYNAMODB_TABLE: vh7
           DYNAMODB_ENDPOINT_URL: http://localhost:8000
           VH7_ENV: testing
+          SENTRY_DSN: ${{ secrets.WORKER_SENTRY_DSN }}
+          SENTRY_CLIENT_ID: ${{ secrets.WORKER_SENTRY_CLIENT_ID }}
+          SENTRY_CLIENT_SECRET: ${{ secrets.WORKER_SENTRY_CLIENT_SECRET }}
       - name: Build & Run App
         working-directory: ./app
         run: |
           yarn run build --mode testing
           yarn run preview --mode testing > ../app.log 2>&1 &
           # npx -y wait-on --timeout 30000 http://localhost:3000
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.APP_SENTRY_DSN }}
       - name: Cypress run
         working-directory: ./app
         run: yarn run cypress run --e2e --record true
