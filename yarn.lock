@@ -930,11 +930,6 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     to-fast-properties "^2.0.0"
 
-"@borderless/worker-sentry@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@borderless/worker-sentry/-/worker-sentry-2.0.0.tgz#82a5bfccb232773fdd1a7da293abf5f69c6d4f3b"
-  integrity sha512-HmH9E7xcYDpcmTscyTfxT6hyjA9vIGFQRy2VQ6e5g2JW778FlL2vYjmVlnkuDMNQdFmcZaUwHo7GedoO95xC6w==
-
 "@cloudflare/workers-types@^3.3.0":
   version "3.16.0"
   resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-3.16.0.tgz#011658ca3f9810373e0eb4a2b5d6cabe4848d8d6"
@@ -1513,6 +1508,17 @@
     "@sentry/utils" "7.12.1"
     tslib "^1.9.3"
 
+"@sentry/core@6.19.6":
+  version "6.19.6"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-6.19.6.tgz#7d4649d0148b5d0be1358ab02e2f869bf7363e9a"
+  integrity sha512-biEotGRr44/vBCOegkTfC9rwqaqRKIpFljKGyYU6/NtzMRooktqOhjmjmItNCMRknArdeaQwA8lk2jcZDXX3Og==
+  dependencies:
+    "@sentry/hub" "6.19.6"
+    "@sentry/minimal" "6.19.6"
+    "@sentry/types" "6.19.6"
+    "@sentry/utils" "6.19.6"
+    tslib "^1.9.3"
+
 "@sentry/core@7.12.1":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.12.1.tgz#a22f1c530ed528a699ed204c36eb5fc8d308103d"
@@ -1523,6 +1529,15 @@
     "@sentry/utils" "7.12.1"
     tslib "^1.9.3"
 
+"@sentry/hub@6.19.6":
+  version "6.19.6"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-6.19.6.tgz#ada83ceca0827c49534edfaba018221bc1eb75e1"
+  integrity sha512-PuEOBZxvx3bjxcXmWWZfWXG+orojQiWzv9LQXjIgroVMKM/GG4QtZbnWl1hOckUj7WtKNl4hEGO2g/6PyCV/vA==
+  dependencies:
+    "@sentry/types" "6.19.6"
+    "@sentry/utils" "6.19.6"
+    tslib "^1.9.3"
+
 "@sentry/hub@7.12.1":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-7.12.1.tgz#dffad40cd2b8f44df2d5f20a89df87879cbbf1c3"
@@ -1530,6 +1545,15 @@
   dependencies:
     "@sentry/types" "7.12.1"
     "@sentry/utils" "7.12.1"
+    tslib "^1.9.3"
+
+"@sentry/minimal@6.19.6":
+  version "6.19.6"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-6.19.6.tgz#b6cced3708e25d322039e68ebdf8fadfa445bf7d"
+  integrity sha512-T1NKcv+HTlmd8EbzUgnGPl4ySQGHWMCyZ8a8kXVMZOPDzphN3fVIzkYzWmSftCWp0rpabXPt9aRF2mfBKU+mAQ==
+  dependencies:
+    "@sentry/hub" "6.19.6"
+    "@sentry/types" "6.19.6"
     tslib "^1.9.3"
 
 "@sentry/react@^7.12.1":
@@ -1553,10 +1577,23 @@
     "@sentry/utils" "7.12.1"
     tslib "^1.9.3"
 
+"@sentry/types@6.19.6":
+  version "6.19.6"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-6.19.6.tgz#70513f9dca05d23d7ab9c2a6cb08d4db6763ca67"
+  integrity sha512-QH34LMJidEUPZK78l+Frt3AaVFJhEmIi05Zf8WHd9/iTt+OqvCHBgq49DDr1FWFqyYWm/QgW/3bIoikFpfsXyQ==
+
 "@sentry/types@7.12.1":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.12.1.tgz#eff76d938f9effc62a2ec76cd5c3f04de37f5c15"
   integrity sha512-VGZs39SZgMcCGv7H0VyFy1LEFGsnFZH590JUopmz6nG63EpeYQ2xzhIoPNAiLKbyUvBEwukn+faCg3u3MGqhgQ==
+
+"@sentry/utils@6.19.6":
+  version "6.19.6"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-6.19.6.tgz#2ddc9ef036c3847084c43d0e5a55e4646bdf9021"
+  integrity sha512-fAMWcsguL0632eWrROp/vhPgI7sBj/JROWVPzpabwVkm9z3m1rQm6iLFn4qfkZL8Ozy6NVZPXOQ7EXmeU24byg==
+  dependencies:
+    "@sentry/types" "6.19.6"
+    tslib "^1.9.3"
 
 "@sentry/utils@7.12.1":
   version "7.12.1"
@@ -1585,6 +1622,11 @@
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
+
+"@types/cookie@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.5.0.tgz#14ebcd209f2555e341548c31128d4deb34dfb2b0"
+  integrity sha512-CJWHVHHupxBYfIlMM+qzXx4dRKIV1VzOm0cP3Wpqten8MDx1tK+y92YDXUshN1ONAfwodvKxDNkw35/pNs+izg==
 
 "@types/eslint-scope@^3.7.3":
   version "3.7.4"
@@ -2643,6 +2685,11 @@ convert-to-spaces@^2.0.1:
   resolved "https://registry.yarnpkg.com/convert-to-spaces/-/convert-to-spaces-2.0.1.tgz#61a6c98f8aa626c16b296b862a91412a33bceb6b"
   integrity sha512-rcQ1bsQO9799wq24uE5AM2tAILy4gXGIK/njFWcVQkGNZ96edlpY+A7bjwvzjYvLDyzmG1MmMLZhpcsb+klNMQ==
 
+cookie@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.5.0.tgz#d1f5d71adec6558c58f389987c366aa47e994f8b"
+  integrity sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==
+
 cookie@^0.4.1:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.2.tgz#0e41f24de5ecf317947c82fc789e06a884824432"
@@ -2927,6 +2974,13 @@ error-ex@^1.3.1:
   integrity sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==
   dependencies:
     is-arrayish "^0.2.1"
+
+error-stack-parser@^2.0.6:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/error-stack-parser/-/error-stack-parser-2.1.4.tgz#229cb01cdbfa84440bfa91876285b94680188286"
+  integrity sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==
+  dependencies:
+    stackframe "^1.3.4"
 
 es-abstract@^1.19.0, es-abstract@^1.19.1, es-abstract@^1.19.2, es-abstract@^1.19.5, es-abstract@^1.20.0:
   version "1.20.1"
@@ -5401,6 +5455,11 @@ source-map-support@^0.5.20, source-map-support@~0.5.20:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
 
+source-map@0.5.6:
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
+  integrity sha512-MjZkVp0NHr5+TPihLcadqnlVoGIoWo4IBHptutGh9wI3ttUYvCG26HkSuDi+K6lsZ25syXJXcctwgyVCt//xqA==
+
 source-map@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
@@ -5431,6 +5490,13 @@ sshpk@^1.14.1:
     safer-buffer "^2.0.2"
     tweetnacl "~0.14.0"
 
+stack-generator@^2.0.5:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/stack-generator/-/stack-generator-2.0.10.tgz#8ae171e985ed62287d4f1ed55a1633b3fb53bb4d"
+  integrity sha512-mwnua/hkqM6pF4k8SnmZ2zfETsRUpWXREfA/goT8SLCV4iOFa4bzOX2nDipWAZFPTjLvQB82f5yaodMVhK0yJQ==
+  dependencies:
+    stackframe "^1.3.4"
+
 stack-trace@0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
@@ -5442,6 +5508,28 @@ stack-utils@^2.0.5:
   integrity sha512-xrQcmYhOsn/1kX+Vraq+7j4oE2j/6BFscZ0etmYg81xuM8Gq0022Pxb8+IqgOFUIaxHs0KaSb7T1+OegiNrNFA==
   dependencies:
     escape-string-regexp "^2.0.0"
+
+stackframe@^1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.3.4.tgz#b881a004c8c149a5e8efef37d51b16e412943310"
+  integrity sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==
+
+stacktrace-gps@^3.0.4:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/stacktrace-gps/-/stacktrace-gps-3.1.2.tgz#0c40b24a9b119b20da4525c398795338966a2fb0"
+  integrity sha512-GcUgbO4Jsqqg6RxfyTHFiPxdPqF+3LFmQhm7MgCuYQOYuWyqxo5pwRPz5d/u6/WYJdEnWfK4r+jGbyD8TSggXQ==
+  dependencies:
+    source-map "0.5.6"
+    stackframe "^1.3.4"
+
+stacktrace-js@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/stacktrace-js/-/stacktrace-js-2.0.2.tgz#4ca93ea9f494752d55709a081d400fdaebee897b"
+  integrity sha512-Je5vBeY4S1r/RnLydLl0TBTi3F2qdfWmYsGvtfZgEI+SCprPppaIhQf5nGcal4gI4cGpCV/duLcAzT1np6sQqg==
+  dependencies:
+    error-stack-parser "^2.0.6"
+    stack-generator "^2.0.5"
+    stacktrace-gps "^3.0.4"
 
 streamsearch@^1.1.0:
   version "1.1.0"
@@ -5634,6 +5722,19 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
+
+toucan-js@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/toucan-js/-/toucan-js-2.6.1.tgz#358ce4251da34b72e29d764c823f1407c37a03df"
+  integrity sha512-G0D6lkfsQBWJhHgSagFCTc0QTWoAVfjouVZXGNv1L/N9YN2r41R0daqzpFHcAwbS4VrOTDgyiXzamfRDdub4sA==
+  dependencies:
+    "@sentry/core" "6.19.6"
+    "@sentry/hub" "6.19.6"
+    "@sentry/types" "6.19.6"
+    "@sentry/utils" "6.19.6"
+    "@types/cookie" "0.5.0"
+    cookie "0.5.0"
+    stacktrace-js "2.0.2"
 
 tough-cookie@~2.5.0:
   version "2.5.0"

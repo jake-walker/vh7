@@ -1,5 +1,6 @@
 import { Obj, Router } from 'itty-router';
 import { error, json } from 'itty-router-extras';
+import Toucan from 'toucan-js';
 import {
   createPaste, createShortUrl, createUpload, lookup,
 } from './controller';
@@ -153,17 +154,26 @@ router.get('/:id', async ({ params, query, headers }: Request & { params: Obj, q
 
 router.all('*', () => new Response('Not found!', { status: 404 }));
 
-export default async function handleRequest(request: Request): Promise<Response> {
-  // Respond to CORS preflight requests
-  if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        ...globalHeaders,
-        Allow: 'GET, OPTIONS, POST',
-      },
-      status: 204,
+export default async function handleRequest(
+  request: Request, sentry: Toucan,
+): Promise<Response> {
+  try {
+    // Respond to CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          ...globalHeaders,
+          Allow: 'GET, OPTIONS, POST',
+        },
+        status: 204,
+      });
+    }
+
+    return await router.handle(request);
+  } catch (e) {
+    sentry.captureException(e);
+    return new Response('Internal Server Error', {
+      status: 500,
     });
   }
-
-  return router.handle(request);
 }
