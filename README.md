@@ -5,7 +5,7 @@ A free and open source URL shortening, file sharing and pastebin service.
 
 VH7 is a small project offering a free URL shortening, file sharing and pastebin service. Unlike other major URL shorteners, VH7 offers shorter links (4 characters) as well as the ability to have a short link for files and code snippets under the same roof.
 
-VH7 utilises [Cloudflare Workers](https://workers.cloudflare.com/) for hosting the API, [Cloudflare Pages](https://pages.cloudflare.com/) for hosting the frontend, [Cloudflare Workers KV](https://www.cloudflare.com/en-gb/products/workers-kv/) for storing data and [AWS S3](https://aws.amazon.com/s3/) for storing files.
+VH7 utilises [Cloudflare Workers](https://workers.cloudflare.com/) for hosting the API, [Cloudflare Pages](https://pages.cloudflare.com/) for hosting the frontend, [AWS DynamoDB](https://aws.amazon.com/dynamodb/) for storing data and [AWS S3](https://aws.amazon.com/s3/) for storing files. _I have chosen to use two different cloud providers to allow me to run VH7 as cheaply as I can. Cloudflare gives a very generous Workers free tier, whereas AWS DynamoDB gives a good balance between price and flexability (whereas Cloudflare Workers KV which was used in the past was slightly more difficult to work with)._
 
 ## Getting Started
 
