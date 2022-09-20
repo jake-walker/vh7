@@ -22,7 +22,15 @@ type RequestWithContext = Request & {
 };
 
 function setHeaders(response: Response, headers: { [key: string]: string }) {
-  Object.entries(headers).map(([key, value]) => response.headers.set(key, value));
+  Object.entries(headers).map(([key, value]) => {
+    try {
+      response.headers.set(key, value);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to set header ${key}`);
+    }
+    return null;
+  });
   return response;
 }
 
