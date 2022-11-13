@@ -1,4 +1,4 @@
-import { useForm } from '@mantine/hooks';
+import { useForm } from '@mantine/form';
 import { shorten } from "../controller";
 import { z } from 'zod';
 import { Button, LoadingOverlay, Text, TextInput } from '@mantine/core';

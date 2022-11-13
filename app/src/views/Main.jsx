@@ -37,16 +37,24 @@ function Main() {
         {response && <SuccessAlert response={response} clear={() => setResponse(null)} my={15} />}
         {error && <ErrorAlert error={error} clear={() => setError(null)} my={15} />}
 
-        <Tabs variant="pills" tabPadding="lg">
-          <Tabs.Tab id="shorten-tab" label="Shorten" icon={<Link size={16} />}>
+        <Tabs variant="pills" defaultValue="shorten">
+          <Tabs.List>
+            <Tabs.Tab value="shorten" icon={<Link size={16} />}>Shorten</Tabs.Tab>
+            <Tabs.Tab value="paste" icon={<Clipboard size={16} />}>Paste</Tabs.Tab>
+            <Tabs.Tab value="upload" icon={<File size={16} />}>Upload</Tabs.Tab>
+          </Tabs.List>
+
+          <Space h="sm" />
+
+          <Tabs.Panel value="shorten">
             <ShortenForm onResponse={(res) => onResponse(res)} onError={onError} />
-          </Tabs.Tab>
-          <Tabs.Tab id="paste-tab" label="Paste" icon={<Clipboard size={16} />}>
+          </Tabs.Panel>
+          <Tabs.Panel value="paste">
             <PasteForm onResponse={(res) => onResponse(res)} onError={onError} />
-          </Tabs.Tab>
-          <Tabs.Tab id="upload-tab" label="Upload" icon={<File size={16} />}>
+          </Tabs.Panel>
+          <Tabs.Panel value="upload">
             <UploadForm onResponse={(res) => onResponse(res)} onError={onError} />
-          </Tabs.Tab>
+          </Tabs.Panel>
         </Tabs>
 
         <Box mt={30}>

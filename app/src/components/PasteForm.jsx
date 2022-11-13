@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { paste } from "../controller";
-import { useForm } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import { useState } from 'react';
 import { Button, LoadingOverlay, Select, Textarea } from '@mantine/core';
 import { Send } from 'react-feather';

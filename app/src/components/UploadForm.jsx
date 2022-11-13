@@ -3,7 +3,7 @@ import { upload } from "../controller";
 import { Dropzone } from '@mantine/dropzone';
 import { Alert, Group, Text } from "@mantine/core";
 import { Info, Upload } from "react-feather";
-import { useForm } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import { AdvancedControls, initialValues, validationRules } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 
@@ -51,19 +51,17 @@ export function UploadForm({ onResponse, onError }) {
         multiple={false}
         loading={loading}
       >
-        {(status) => (
-          <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: 'none' }}>
-            <Upload size={64} />
-            <div>
-              <Text size="xl" inline>
-                Drag files here or click to select files
-              </Text>
-              <Text size="sm" color="dimmed" inline mt={7}>
-                Files should not exceed 256 MB.
-              </Text>
-            </div>
-          </Group>
-        )}
+        <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: 'none' }}>
+          <Upload size={64} />
+          <div>
+            <Text size="xl" inline>
+              Drag files here or click to select files
+            </Text>
+            <Text size="sm" color="dimmed" inline mt={7}>
+              Files should not exceed 256 MB.
+            </Text>
+          </div>
+        </Group>
       </Dropzone>
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="upload" />

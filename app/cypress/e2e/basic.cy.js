@@ -17,7 +17,7 @@ describe('Home Page', () => {
       code = code.replace(/\r\n/g, '\n');
 
       cy.visit('/');
-      cy.get('#paste-tab').click();
+      cy.get('[id$=-tab-paste]').click();
 
       // fill in the form
       cy.get("#paste-code").type(code).should("have.value", code);
@@ -35,7 +35,7 @@ describe('Home Page', () => {
 
   it('uploads', () => {
     cy.visit('/');
-    cy.get('#upload-tab').click();
+    cy.get('[id$=-tab-upload]').click();
 
     // upload a file to the dropzone
     cy.get('#upload-file').get("input[type=file]").selectFile({
