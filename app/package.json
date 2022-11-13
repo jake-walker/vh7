@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@awesomeqr/react": "^0.1.2-rc.0",
     "@emotion/react": "^11.10.5",
     "@mantine/core": "^5.7.2",
     "@mantine/dropzone": "^5.7.2",
