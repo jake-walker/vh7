@@ -18,21 +18,24 @@ export const validationRules = {
   }).safeParse(value).success
 }
 
-export function AdvancedControls({ form }) {
+export function AdvancedControls({ form, maxDays = null }) {
   const [opened, setOpened] = useState(false);
 
-  const dates = [1, 7, 30, 60, 90, -1].map((days) => {
-    if (days === -1) return {
-      value: days.toString(),
-      label: "Never"
-    };
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return {
-      value: days.toString(),
-      label: `in ${days} day${(days > 1) ? 's' : ''}`
-    }
-  })
+  const dates = [1, 7, 14, 30, 60, 90, -1]
+    // remove days that are over the maximum if the maximum is set
+    .filter((days) => maxDays != null ? days <= maxDays && days > 0 : true)
+    .map((days) => {
+      if (days === -1) return {
+        value: days.toString(),
+        label: "Never"
+      };
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      return {
+        value: days.toString(),
+        label: `in ${days} day${(days > 1) ? 's' : ''}`
+      }
+    });
 
   return (
     <>

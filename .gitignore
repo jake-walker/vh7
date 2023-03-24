@@ -207,3 +207,4 @@ $RECYCLE.BIN/
 accessgrant.txt
 cleanup/backup-*
 app/cypress/downloads
+cleanup/prod.env

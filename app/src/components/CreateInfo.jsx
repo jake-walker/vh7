@@ -8,7 +8,7 @@ export function CreateInfo({ form, type }) {
       {type} that
       {form.values.expireDays == "-1"
         ? " will never expire"
-        : ` will expire in ${form.values.expireDays} days`}
+        : ` will expire in ${form.values.expireDays} day${form.values.expireDays != "1" ? "s" : ""}`}
       .
     </Text>
   )

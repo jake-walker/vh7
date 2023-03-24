@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { upload } from "../controller";
 import { Dropzone } from '@mantine/dropzone';
-import { Alert, Group, Text } from "@mantine/core";
-import { Info, Upload } from "react-feather";
-import { useForm } from "@mantine/form";
+import { Group, Text } from "@mantine/core";
+import { Upload } from "react-feather";
+import { useForm } from "@mantine/hooks";
 import { AdvancedControls, initialValues, validationRules } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 
 export function UploadForm({ onResponse, onError }) {
   const [loading, setLoading] = useState(false);
   const form = useForm({
-    initialValues,
+    initialValues: {
+      ...initialValues,
+      expireDays: "30"
+    },
     validationRules
   });
 
@@ -40,9 +43,6 @@ export function UploadForm({ onResponse, onError }) {
 
   return (
     <>
-      <Alert icon={<Info size={32} />} color="blue" mb="sm">
-        Uploaded files last a maximum of 30 days.
-      </Alert>
       <Dropzone
         id="upload-file"
         onDrop={onDrop}
@@ -63,7 +63,7 @@ export function UploadForm({ onResponse, onError }) {
           </div>
         </Group>
       </Dropzone>
-      <AdvancedControls form={form} />
+      <AdvancedControls form={form} maxDays={30} />
       <CreateInfo form={form} type="upload" />
     </>
   )
