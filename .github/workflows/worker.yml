@@ -11,7 +11,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
-          node-version: 16
+          node-version: 20
       - name: Get cache directory
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -27,16 +27,16 @@ jobs:
         working-directory: ./worker
         run: |
           yarn install --dev
-          yarn global add @cloudflare/wrangler
+          yarn global add wrangler
+      - name: Migrate database
+        working-directory: ./worker
+        run: wrangler d1 migrations apply DB --local
       - name: Lint
         working-directory: ./worker
         run: yarn run lint
-      # - name: Test
-      #   working-directory: ./worker
-      #   run: yarn run test
-      - name: Build
+      - name: Test
         working-directory: ./worker
-        run: wrangler build
+        run: yarn run test
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

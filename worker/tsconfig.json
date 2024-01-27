@@ -1,23 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
-    "module": "esnext",
     "target": "esnext",
-    "lib": ["esnext"],
-    "alwaysStrict": true,
-    "strict": true,
-    "preserveConstEnums": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
+    "module": "esnext",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
+    "strict": true,
+    "lib": ["esnext"],
     "types": [
+      "vitest/globals",
       "@cloudflare/workers-types"
     ],
     "resolveJsonModule": true,
-    "paths": {
-      "@/*": ["src/*"]
-    },
-    "baseUrl": "./"
-  },
-  "include": ["src/**/*", "test/**/*"]
+  }
 }

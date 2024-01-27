@@ -5,10 +5,6 @@ jobs:
   cypress-run:
     runs-on: ubuntu-latest
     services:
-      dynamodb:
-        image: amazon/dynamodb-local:latest
-        ports:
-          - 8000:8000
       minio:
         image: bitnami/minio:latest
         env:
@@ -22,7 +18,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
-          node-version: 16
+          node-version: 20
       - name: Get cache directory
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -34,13 +30,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Create DynamoDB Table
-        uses: giboow/action-aws-cli@v1
-        with:
-          args: dynamodb --endpoint-url http://dynamodb:8000 create-table --region eu-west-1 --table-name vh7 --key-schema AttributeName=id,KeyType=HASH --attribute-definitions AttributeName=id,AttributeType=S --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1
-        env:
-          AWS_ACCESS_KEY_ID: testid
-          AWS_SECRET_ACCESS_KEY: testkey
       - name: Create S3 Bucket
         uses: giboow/action-aws-cli@v1
         with:
@@ -62,10 +51,6 @@ jobs:
           S3_DEFAULT_REGION: eu-west-1
           S3_ENDPOINT_URL: http://localhost:9000
           S3_BUCKET: vh7-uploads
-          DYNAMODB_ACCESS_KEY_ID: testid
-          DYNAMODB_SECRET_ACCESS_KEY: testkey
-          DYNAMODB_TABLE: vh7
-          DYNAMODB_ENDPOINT_URL: http://localhost:8000
           VH7_ENV: testing
           SENTRY_DSN: ${{ secrets.WORKER_SENTRY_DSN }}
           SENTRY_CLIENT_ID: ${{ secrets.WORKER_SENTRY_CLIENT_ID }}

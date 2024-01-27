@@ -1,14 +1,22 @@
 import { AwsClient } from 'aws4fetch';
 
-const aws = new AwsClient({
-  accessKeyId: S3_ACCESS_KEY_ID,
-  secretAccessKey: S3_SECRET_ACCESS_KEY,
-  region: S3_DEFAULT_REGION,
-});
+export type S3Configuration = {
+  accessKeyId: string,
+  secretAccessKey: string,
+  region: string,
+  endpointUrl: string,
+  bucket: string
+};
 
-async function makeRequest(path: string = '/', options: RequestInit | Request = {}) {
-  const url = new URL(`${S3_ENDPOINT_URL}/${S3_BUCKET}${path}`);
-  const signedRequest = await aws.sign(url, {
+async function makeRequest(config: S3Configuration, path: string = '/', options: RequestInit | Request = {}) {
+  const client = new AwsClient({
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
+    region: config.region,
+  });
+
+  const url = new URL(`${config.endpointUrl}/${config.bucket}${path}`);
+  const signedRequest = await client.sign(url, {
     aws: {
       service: 's3',
     },
@@ -21,23 +29,23 @@ async function makeRequest(path: string = '/', options: RequestInit | Request = 
   });
 }
 
-export async function getObjectMetadata(filename: string) {
-  const req = makeRequest(`/${filename}`, {
+export async function getObjectMetadata(config: S3Configuration, filename: string) {
+  const req = makeRequest(config, `/${filename}`, {
     method: 'HEAD',
   });
 
   return req;
 }
 
-export async function getObject(filename: string) {
-  const req = makeRequest(`/${filename}`);
+export async function getObject(config: S3Configuration, filename: string) {
+  const req = makeRequest(config, `/${filename}`);
   return req;
 }
 
-export async function putObject(filename: string, file: File) {
-  const req = makeRequest(`/${filename}`, {
+export async function putObject(config: S3Configuration, filename: string, file: File) {
+  const req = makeRequest(config, `/${filename}`, {
     method: 'PUT',
-    body: file.stream(),
+    body: file,
     headers: {
       'Content-Type': file.type,
       'Content-Length': file.size.toString(),
