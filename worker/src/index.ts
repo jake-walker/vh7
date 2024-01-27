@@ -1,5 +1,6 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { drizzle, type DrizzleD1Database } from 'drizzle-orm/d1';
+import { cors } from 'hono/cors';
 import { PasteArgs, ShortLinkArgs, UploadArgs } from './schema';
 import {
   createPaste, createShortUrl, createUpload, lookup,
@@ -31,6 +32,10 @@ const withDb: MiddlewareHandler = async (c, next) => {
   c.set('db', drizzle(c.env.DB, { schema: models }));
   await next();
 };
+
+app.use('*', cors());
+
+app.get('/', (c) => c.text('VH7'));
 
 app.post('/api/shorten',
   withDb,

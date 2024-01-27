@@ -1,6 +1,4 @@
 import { getBindingsProxy } from 'wrangler';
-import { readFile } from 'fs/promises';
-import path from 'path';
 import { drizzle } from 'drizzle-orm/d1';
 import app, { type Bindings } from './index';
 import * as models from './models';
@@ -11,11 +9,11 @@ const { bindings } = await getBindingsProxy();
 const appEnv: Bindings = {
   DB: bindings.DB as D1Database,
   VH7_ENV: 'testing',
-  S3_ACCESS_KEY_ID: 'minioadmin',
-  S3_SECRET_ACCESS_KEY: 'minioadmin',
-  S3_REGION: 'eu-west-1',
-  S3_ENDPOINT_URL: 'http://localhost:9000',
-  S3_BUCKET: 'vh7-uploads',
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID || 'minioadmin',
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY || 'minioadmin',
+  S3_REGION: process.env.S3_REGION || 'eu-west-1',
+  S3_ENDPOINT_URL: process.env.S3_ENDPOINT_URL || 'http://localhost:9000',
+  S3_BUCKET: process.env.S3_BUCKET || 'vh7-uploads',
 };
 
 beforeAll(async () => {
@@ -117,9 +115,10 @@ describe('API', () => {
     });
 
     test('upload', async () => {
-      const filename = path.join(__dirname, '../../app/public/assets/favicon.ico');
       const data = new FormData();
-      data.append('file', new Blob([await readFile(filename)]), 'favicon.ico');
+      data.append('file', new Blob(['Hello, World!'], {
+        type: 'text/plain',
+      }), 'test.txt');
 
       const res = await app.request('http://vh7.uk/api/upload', {
         method: 'POST',
@@ -132,9 +131,9 @@ describe('API', () => {
         expect.objectContaining({
           id: expect.any(String),
           type: 'upload',
-          filename: 'favicon.ico',
-          size: 15406,
-          hash: 'b8eea8c82be6c275d8f664b5cafc5b5081e240e4f1826aa57f068606a1c8741f',
+          filename: 'test.txt',
+          size: 13,
+          hash: 'dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f',
           createdAt: expect.any(String),
           expiresAt: expect.any(String),
           updatedAt: expect.any(String),

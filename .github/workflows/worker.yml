@@ -5,6 +5,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      minio:
+        image: bitnami/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+          - 9000:9000
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -23,6 +31,13 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: Create S3 Bucket
+        uses: giboow/action-aws-cli@v1
+        with:
+          args: s3api --endpoint-url http://minio:9000 create-bucket --bucket vh7-uploads
+        env:
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
       - name: Install dependencies
         working-directory: ./worker
         run: |

@@ -34,21 +34,23 @@ function parseExpiry(expiryDays) {
 export async function shorten(url, expiryDays) {
   const expires = parseExpiry(expiryDays);
 
-  const res = await instance.post('/shorten', {
-    url,
-    expires
-  });
+  const form = new FormData();
+  form.append('url', url);
+  form.append('expires', expires);
+
+  const res = await instance.post('/shorten', form);
   return res.data;
 }
 
 export async function paste(code, language, expiryDays) {
   const expires = parseExpiry(expiryDays);
 
-  const res = await instance.post('/paste', {
-    code,
-    language,
-    expires
-  });
+  const form = new FormData();
+  form.append('code', code);
+  form.append('language', language);
+  form.append('expires', expires);
+
+  const res = await instance.post('/paste', form);
   return res.data;
 }
 
