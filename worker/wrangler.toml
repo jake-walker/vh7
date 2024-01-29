@@ -22,3 +22,9 @@ database_name = "vh7"
 database_id = "8248b645-7133-4795-a343-e9273706f77c"
 preview_database_id = "c7e738c7-0b24-4c49-a3db-695e8658c01c"
 migrations_dir = "migrations"
+
+[env.production.vars]
+S3_REGION = "eu-west-1"
+S3_ENDPOINT_URL = "https://gateway.eu1.storjshare.io"
+S3_BUCKET = "vh7-uploads"
+VH7_ENV = "production"
