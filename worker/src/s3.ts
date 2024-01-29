@@ -54,3 +54,8 @@ export async function putObject(config: S3Configuration, filename: string, file:
 
   return req;
 }
+
+export async function deleteObject(config: S3Configuration, filename: string) {
+  const req = makeRequest(config, `/${filename}`, { method: 'DELETE' });
+  return req;
+}

@@ -6,7 +6,8 @@ import { S3Configuration, putObject } from './s3';
 import { sha256 } from './controller';
 
 const { bindings } = await getBindingsProxy();
-const appEnv: Bindings = {
+// eslint-disable-next-line import/prefer-default-export
+export const appEnv: Bindings = {
   DB: bindings.DB as D1Database,
   VH7_ENV: 'testing',
   S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID || 'minioadmin',
@@ -14,6 +15,7 @@ const appEnv: Bindings = {
   S3_REGION: process.env.S3_REGION || 'eu-west-1',
   S3_ENDPOINT_URL: process.env.S3_ENDPOINT_URL || 'http://localhost:9000',
   S3_BUCKET: process.env.S3_BUCKET || 'vh7-uploads',
+  VH7_ADMIN_TOKEN: 'keyboardcat',
 };
 
 beforeAll(async () => {
@@ -233,5 +235,18 @@ describe('API', () => {
       },
     }, appEnv);
     expect(res.status).toBe(404);
+  });
+
+  test('cleanup requires auth', async () => {
+    const noAuthRes = await app.request('http://vh7.uk/api/cleanup', {}, appEnv);
+    expect([401, 403]).toContain(noAuthRes.status);
+
+    const authRes = await app.request('http://vh7.uk/api/cleanup', {
+      headers: {
+        Authorization: `Bearer ${appEnv.VH7_ADMIN_TOKEN}`,
+      },
+    }, appEnv);
+    expect(authRes.status).toBe(200);
+    expectTypeOf(await authRes.json()).toBeArray();
   });
 });

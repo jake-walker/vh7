@@ -8,6 +8,7 @@ import {
 import { checkDirectUserAgent, getFrontendUrl, isValidId } from './helpers';
 import * as models from './models';
 import { S3Configuration, getObject } from './s3';
+import cleanup from './cleanup';
 
 export type Bindings = {
   DB: D1Database,
@@ -16,7 +17,8 @@ export type Bindings = {
   S3_SECRET_ACCESS_KEY: string,
   S3_REGION: string,
   S3_ENDPOINT_URL: string,
-  S3_BUCKET: string
+  S3_BUCKET: string,
+  VH7_ADMIN_TOKEN: string
 };
 
 type Env = {
@@ -128,6 +130,31 @@ app.get('/api/info/:id', withDb, async (c) => {
     error: 'Short link not found',
     status: 404,
   }, 404);
+});
+
+app.get('/api/cleanup', withDb, async (c) => {
+  const token = c.req.header('Authorization')?.replace('Bearer ', '') || '';
+
+  if (token !== c.env.VH7_ADMIN_TOKEN) {
+    return c.text('Invalid or non-existant admin token', 403);
+  }
+
+  if (c.var.db === undefined) {
+    return c.status(500);
+  }
+
+  const s3Config: S3Configuration = {
+    accessKeyId: c.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: c.env.S3_SECRET_ACCESS_KEY,
+    bucket: c.env.S3_BUCKET,
+    endpointUrl: c.env.S3_ENDPOINT_URL,
+    region: c.env.S3_REGION,
+  };
+
+  const deleted = await cleanup(c.var.db, s3Config);
+  return c.json({
+    deleted,
+  });
 });
 
 app.get('/:id', withDb, async (c) => {

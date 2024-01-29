@@ -14,6 +14,7 @@ S3_REGION = "eu-west-1"
 S3_ENDPOINT_URL = "http://localhost:9000"
 S3_BUCKET = "vh7-uploads"
 VH7_ENV = "development"
+VH7_ADMIN_TOKEN = "keyboardcat"
 
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
