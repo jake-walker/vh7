@@ -33,6 +33,19 @@ describe('Home Page', () => {
     });
   });
 
+  it('pastes without language set', () => {
+    cy.visit('/');
+    cy.get('[id$=-tab-paste]').click();
+
+    // fill in the form
+    cy.get("#paste-code").type("Hello World!").should("have.value", "Hello World!");
+    // submit the form
+    cy.get("#paste-submit").click();
+
+    // check the success alert is shown
+    cy.get("#success-alert").should("be.visible");
+  });
+
   it('uploads', () => {
     cy.visit('/');
     cy.get('[id$=-tab-upload]').click();

@@ -3,10 +3,6 @@ compatibility_date = "2021-12-06"
 workers_dev = true
 main = "src/index.ts"
 
-# [secrets]
-# S3_ACCESS_KEY_ID
-# S3_SECRET_ACCESS_KEY
-
 [vars]
 S3_ACCESS_KEY_ID = "minioadmin"
 S3_SECRET_ACCESS_KEY = "minioadmin"
@@ -17,14 +13,27 @@ VH7_ENV = "development"
 VH7_ADMIN_TOKEN = "keyboardcat"
 
 [[d1_databases]]
-binding = "DB" # i.e. available in your Worker on env.DB
-database_name = "vh7"
-database_id = "8248b645-7133-4795-a343-e9273706f77c"
-preview_database_id = "c7e738c7-0b24-4c49-a3db-695e8658c01c"
+binding = "DB"
+database_name = "vh7-development"
+database_id = "87904197-0107-411a-a030-be6ed70f8ff7"
 migrations_dir = "migrations"
 
 [env.production.vars]
 S3_REGION = "eu-west-1"
-S3_ENDPOINT_URL = "https://gateway.eu1.storjshare.io"
-S3_BUCKET = "vh7-uploads"
+S3_ENDPOINT_URL = "https://gateway.storjshare.io"
+S3_BUCKET = "uploads"
 VH7_ENV = "production"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "vh7"
+database_id = "8248b645-7133-4795-a343-e9273706f77c"
+migrations_dir = "migrations"
+
+[[env.production.routes]]
+pattern = "vh7.uk/*"
+zone_name = "vh7.uk"
+
+[[env.production.routes]]
+pattern = "www.vh7.uk/*"
+zone_name = "vh7.uk"

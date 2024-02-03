@@ -27,9 +27,9 @@
   },
   "scripts": {
     "lint": "eslint ./src",
-    "dev": "wranger dev",
+    "dev": "wrangler dev",
     "build": "webpack",
-    "publish": "wranger publish",
+    "publish": "wrangler publish",
     "test": "vitest --run",
     "migrate:generate": "drizzle-kit generate:sqlite --schema ./src/models.ts --out=./migrations",
     "migrate:up": "drizzle-kit up:sqlite"

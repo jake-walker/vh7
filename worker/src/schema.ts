@@ -30,10 +30,15 @@ export const ShortLinkArgs = BaseShortLinkArgs.and(BaseArgs);
 
 const BasePasteArgs = z.object({
   code: z.string(),
-  language: z.string().nullable().default(null).refine((val) => {
+  language: z.preprocess((val) => {
+    if (val === 'null') {
+      return null;
+    }
+    return val;
+  }, z.string().nullable().default(null).refine((val) => {
     if (val === null) return true;
     return languages.map((lang) => lang.id).includes(val);
-  }, { message: 'Language ID not supported' }),
+  }, { message: 'Language ID not supported' })),
 });
 
 export const PasteArgs = BasePasteArgs.and(BaseArgs);

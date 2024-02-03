@@ -19,9 +19,7 @@ export function shortUrl(u) {
 
 function parseExpiry(expiryDays) {
   let expiryDate = null;
-  console.log("days", expiryDays);
   expiryDays = parseInt(expiryDays);
-  console.log("days", expiryDays);
   if (expiryDays > 0) {
     expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + expiryDays);
