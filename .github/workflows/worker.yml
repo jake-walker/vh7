@@ -5,13 +5,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      minio:
+        image: bitnami/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+          - 9000:9000
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Node
         uses: actions/setup-node@v2.1.2
         with:
-          node-version: 16
+          node-version: 20
       - name: Get cache directory
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -23,28 +31,41 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      - name: Create S3 Bucket
+        uses: giboow/action-aws-cli@v1
+        with:
+          args: s3api --endpoint-url http://minio:9000 create-bucket --bucket vh7-uploads
+        env:
+          AWS_ACCESS_KEY_ID: minioadmin
+          AWS_SECRET_ACCESS_KEY: minioadmin
       - name: Install dependencies
         working-directory: ./worker
         run: |
           yarn install --dev
-          yarn global add @cloudflare/wrangler
+          yarn global add wrangler
+      - name: Migrate database
+        working-directory: ./worker
+        run: wrangler d1 migrations apply DB --local
       - name: Lint
         working-directory: ./worker
         run: yarn run lint
-      # - name: Test
-      #   working-directory: ./worker
-      #   run: yarn run test
-      - name: Build
+      - name: Test
         working-directory: ./worker
-        run: wrangler build
+        run: yarn run test
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Publish
-        uses: web3-storage/wrangler-action@node16
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
         with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: ./worker
+          node-version: 20
+      - name: Publish
+        working-directory: ./worker
+        run: |
+          npx wrangler d1 migrations apply DB --env production
+          npx wrangler --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

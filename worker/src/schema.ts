@@ -1,12 +1,6 @@
 import { z } from 'zod';
 import languages from '../../languages.json';
 
-export interface BaseItem {
-  id: string,
-  created: number,
-  expires: number | null
-}
-
 const BaseArgs = z.object({
   expires: z.preprocess((val) => {
     if (typeof val === 'string') {
@@ -34,11 +28,6 @@ const BaseShortLinkArgs = z.object({
 
 export const ShortLinkArgs = BaseShortLinkArgs.and(BaseArgs);
 
-export interface ShortLinkItem extends BaseItem {
-  type: 'url:1',
-  data: z.infer<typeof BaseShortLinkArgs>
-}
-
 const BasePasteArgs = z.object({
   code: z.string(),
   language: z.string().nullable().default(null).refine((val) => {
@@ -49,11 +38,6 @@ const BasePasteArgs = z.object({
 
 export const PasteArgs = BasePasteArgs.and(BaseArgs);
 
-export interface PasteItem extends BaseItem {
-  type: 'paste:1',
-  data: z.infer<typeof BasePasteArgs>
-}
-
 const BaseUploadArgs = z.object({
   file: z.instanceof(File).refine((val) => val.size <= 2.56e+8, {
     message: 'File must be less than 256 MB',
@@ -61,12 +45,3 @@ const BaseUploadArgs = z.object({
 }).and(BaseArgs);
 
 export const UploadArgs = BaseUploadArgs.and(BaseArgs);
-
-export interface UploadItem extends BaseItem {
-  type: 'upload:1',
-  data: {
-    filename: string
-    size: number
-    hash: string
-  }
-}

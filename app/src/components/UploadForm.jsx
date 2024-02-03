@@ -3,7 +3,7 @@ import { upload } from "../controller";
 import { Dropzone } from '@mantine/dropzone';
 import { Group, Text } from "@mantine/core";
 import { Upload } from "react-feather";
-import { useForm } from "@mantine/hooks";
+import { useForm } from "@mantine/form";
 import { AdvancedControls, initialValues, validationRules } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 

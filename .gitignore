@@ -208,3 +208,4 @@ accessgrant.txt
 cleanup/backup-*
 app/cypress/downloads
 cleanup/prod.env
+.wrangler

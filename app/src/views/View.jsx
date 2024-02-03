@@ -41,16 +41,16 @@ function View() {
       content = <Text mt={6}>Error: {data.error.message}. Please try again.</Text>;
     } else {
       switch (data.type) {
-        case "url:1":
-          title = shortUrl(data.data.url, 30);
+        case "url":
+          title = shortUrl(data.url, 30);
           content = <>
-            <TimedRedirect href={data.data.url} />
+            <TimedRedirect href={data.url} />
           </>;
           break;
-        case "paste:1":
+        case "paste":
           title = "Paste";
           content = <>
-            <Prism language={data.data.language} id="paste-content">{data.data.code}</Prism>
+            <Prism language={data.language} id="paste-content">{data.code}</Prism>
             <Button
               leftIcon={<Download size={16} />}
               component="a"
@@ -61,13 +61,13 @@ function View() {
             </Button>
           </>;
           break;
-        case "upload:1":
-          title = data.data.filename;
-          let size = `${data.data.size} bytes`;
-          if (data.data.size > 1000000) {
-            size = `${(data.data.size / 1000000).toFixed(1)} MB`
-          } else if (data.data.size > 1000) {
-            size = `${(data.data.size / 1000).toFixed(1)} KB`
+        case "upload":
+          title = data.filename;
+          let size = `${data.size} bytes`;
+          if (data.size > 1000000) {
+            size = `${(data.size / 1000000).toFixed(1)} MB`
+          } else if (data.size > 1000) {
+            size = `${(data.size / 1000).toFixed(1)} KB`
           }
 
           content = <>
@@ -78,7 +78,7 @@ function View() {
 
             <Text style={{ overflowX: "auto" }}>
               <ul>
-                <li><b>SHA256 Hash:</b> <span id="upload-sha256">{data.data.hash}</span></li>
+                <li><b>SHA256 Hash:</b> <span id="upload-sha256">{data.hash}</span></li>
                 <li><b>File Size:</b> {size}</li>
               </ul>
             </Text>
@@ -88,12 +88,12 @@ function View() {
               component="a"
               href={`${baseURL}${link}?direct=1`}
             >
-              Download {data.data.filename}
+              Download {data.filename}
             </Button>
           </>;
           break;
       }
-      subtitle = `Created ${(new Date(data.created).toLocaleDateString())}`;
+      subtitle = `Created ${(new Date(data.createdAt).toLocaleDateString())}`;
     }
   }
 

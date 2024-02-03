@@ -2,8 +2,13 @@
 describe('View Page', () => {
   it('can view a short link', () => {
     // first, create a new short link
-    cy.request('POST', 'http://localhost:8787/api/shorten', {
-      url: 'http://localhost:3000/testing123'
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:8787/api/shorten',
+      form: true,
+      body: {
+        url: 'http://localhost:3000/testing123'
+      }
     }).then((res) => {
       // then visit it
       cy.visit(`/view/${res.body.id}`);
@@ -21,9 +26,14 @@ describe('View Page', () => {
   it('can view a paste', () => {
     cy.fixture('paste').then((code) => {
       // first, create a new paste
-      cy.request('POST', 'http://localhost:8787/api/paste', {
-        language: 'python',
-        code
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:8787/api/paste',
+        form: true,
+        body: {
+          language: 'python',
+          code: code,
+        }
       }).then((res) => {
         // then visit it
         const id = res.body.id;

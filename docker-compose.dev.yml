@@ -1,18 +1,5 @@
 version: '3.8'
 services:
-  dynamodb:
-    image: amazon/dynamodb-local:latest
-    ports:
-      - "8100:8000"
-  init-dynamodb:
-    image: amazon/aws-cli:latest
-    command: "dynamodb --endpoint-url http://dynamodb:8000 create-table --region eu-west-1 --table-name vh7 --key-schema AttributeName=id,KeyType=HASH --attribute-definitions AttributeName=id,AttributeType=S --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 > /dev/null"
-    environment:
-      - "AWS_ACCESS_KEY_ID=DUMMYIDEXAMPLE"
-      - "AWS_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY"
-    depends_on:
-      dynamodb:
-        condition: service_started
   minio:
     image: minio/minio:latest
     command: "server /data -console-address ':9001'"
