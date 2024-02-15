@@ -20,11 +20,12 @@ export function HistoryItem({ item }) {
   let type = "";
   let title = "";
   let description = "";
-  let created = item.date || item.created;
+  let created = item.createdAt || item.date || item.created;
   let expires = null;
 
   switch (item.type) {
     case "shorten":
+    case "url":
       type = "Shorten";
       title = shortUrl(item.url, 30);
       description = null;
@@ -57,6 +58,10 @@ export function HistoryItem({ item }) {
 
   if (item.expires && typeof item.expires === "number") {
     expires = item.expires;
+  }
+
+  if (item.expiresAt) {
+    expires = item.expiresAt;
   }
 
   return (

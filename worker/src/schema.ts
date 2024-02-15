@@ -4,6 +4,10 @@ import languages from '../../languages.json';
 const BaseArgs = z.object({
   expires: z.preprocess((val) => {
     if (typeof val === 'string') {
+      if (val === 'null') {
+        return null;
+      }
+
       return parseInt(val, 10);
     }
     return val;
