@@ -95,6 +95,12 @@ app.post('/api/upload',
       }, 400);
     }
 
+    const max = new Date();
+    max.setDate(max.getDate() + 31);
+    if (parsed.data.expires === null || parsed.data.expires > max.getTime()) {
+      parsed.data.expires = max.getTime();
+    }
+
     if (c.var.db === undefined) {
       return c.status(500);
     }
