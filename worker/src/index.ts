@@ -7,17 +7,12 @@ import {
 } from './controller';
 import { checkDirectUserAgent, getFrontendUrl, isValidId } from './helpers';
 import * as models from './models';
-import { S3Configuration, getObject } from './s3';
 import cleanup from './cleanup';
 
 export type Bindings = {
   DB: D1Database,
   VH7_ENV: string,
-  S3_ACCESS_KEY_ID: string,
-  S3_SECRET_ACCESS_KEY: string,
-  S3_REGION: string,
-  S3_ENDPOINT_URL: string,
-  S3_BUCKET: string,
+  UPLOADS: R2Bucket,
   VH7_ADMIN_TOKEN: string
 };
 
@@ -105,15 +100,8 @@ app.post('/api/upload',
       return c.status(500);
     }
 
-    const s3Config: S3Configuration = {
-      accessKeyId: c.env.S3_ACCESS_KEY_ID,
-      secretAccessKey: c.env.S3_SECRET_ACCESS_KEY,
-      bucket: c.env.S3_BUCKET,
-      endpointUrl: c.env.S3_ENDPOINT_URL,
-      region: c.env.S3_REGION,
-    };
-
-    const upload = await createUpload(c.var.db, parsed.data.file, parsed.data.expires, s3Config);
+    const upload = await createUpload(c.var.db, c.env.UPLOADS, parsed.data.file,
+      parsed.data.expires);
     return c.json(upload);
   });
 
@@ -149,15 +137,7 @@ app.get('/api/cleanup', withDb, async (c) => {
     return c.status(500);
   }
 
-  const s3Config: S3Configuration = {
-    accessKeyId: c.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: c.env.S3_SECRET_ACCESS_KEY,
-    bucket: c.env.S3_BUCKET,
-    endpointUrl: c.env.S3_ENDPOINT_URL,
-    region: c.env.S3_REGION,
-  };
-
-  const deleted = await cleanup(c.var.db, s3Config);
+  const deleted = await cleanup(c.var.db, c.env.UPLOADS);
   return c.json({
     deleted,
   });
@@ -203,27 +183,18 @@ app.get('/:id', withDb, async (c) => {
         });
       case 'upload':
         // eslint-disable-next-line no-case-declarations
-        const obj = await getObject({
-          accessKeyId: c.env.S3_ACCESS_KEY_ID,
-          secretAccessKey: c.env.S3_SECRET_ACCESS_KEY,
-          bucket: c.env.S3_BUCKET,
-          endpointUrl: c.env.S3_ENDPOINT_URL,
-          region: c.env.S3_REGION,
-        }, shortlink.id);
+        const obj = await c.env.UPLOADS.get(shortlink.id);
 
-        if (obj.status === 404) {
+        if (obj === null) {
           return c.text('Short link not found', 404);
         }
 
-        if (obj.status !== 200) {
-          return c.status(500);
-        }
-
-        return c.body(obj.body as any, 200, {
+        return c.body(obj.body, 200, {
           'Content-Type': 'application/force-download',
           'Content-Transfer-Encoding': 'binary',
           'Content-Disposition': `attachment; filename="${shortlink.filename}"`,
           'Cache-Control': 'max-age=86400',
+          etag: obj.httpEtag,
         });
       default:
         return c.status(500);

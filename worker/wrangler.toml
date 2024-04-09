@@ -4,11 +4,6 @@ workers_dev = true
 main = "src/index.ts"
 
 [vars]
-S3_ACCESS_KEY_ID = "minioadmin"
-S3_SECRET_ACCESS_KEY = "minioadmin"
-S3_REGION = "eu-west-1"
-S3_ENDPOINT_URL = "http://localhost:9000"
-S3_BUCKET = "vh7-uploads"
 VH7_ENV = "development"
 VH7_ADMIN_TOKEN = "keyboardcat"
 
@@ -18,10 +13,11 @@ database_name = "vh7-development"
 database_id = "87904197-0107-411a-a030-be6ed70f8ff7"
 migrations_dir = "migrations"
 
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "vh7-uploads-development"
+
 [env.production.vars]
-S3_REGION = "eu-west-1"
-S3_ENDPOINT_URL = "https://gateway.storjshare.io"
-S3_BUCKET = "uploads"
 VH7_ENV = "production"
 
 [[env.production.d1_databases]]
@@ -29,6 +25,10 @@ binding = "DB"
 database_name = "vh7"
 database_id = "8248b645-7133-4795-a343-e9273706f77c"
 migrations_dir = "migrations"
+
+[[env.production.r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "vh7-uploads-production"
 
 [[env.production.routes]]
 pattern = "vh7.uk/*"

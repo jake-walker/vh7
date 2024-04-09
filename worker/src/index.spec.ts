@@ -1,20 +1,15 @@
-import { getBindingsProxy } from 'wrangler';
+import { getPlatformProxy } from 'wrangler';
 import { drizzle } from 'drizzle-orm/d1';
 import app, { type Bindings } from './index';
 import * as models from './models';
-import { S3Configuration, putObject } from './s3';
 import { sha256 } from './controller';
 
-const { bindings } = await getBindingsProxy();
+const { env } = await getPlatformProxy();
 // eslint-disable-next-line import/prefer-default-export
 export const appEnv: Bindings = {
-  DB: bindings.DB as D1Database,
+  DB: env.DB as D1Database,
+  UPLOADS: env.UPLOADS as R2Bucket,
   VH7_ENV: 'testing',
-  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID || 'minioadmin',
-  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY || 'minioadmin',
-  S3_REGION: process.env.S3_REGION || 'eu-west-1',
-  S3_ENDPOINT_URL: process.env.S3_ENDPOINT_URL || 'http://localhost:9000',
-  S3_BUCKET: process.env.S3_BUCKET || 'vh7-uploads',
   VH7_ADMIN_TOKEN: 'keyboardcat',
 };
 
@@ -57,14 +52,7 @@ beforeAll(async () => {
     id: 'CCCC', filename: file.name, hash: await sha256(file), size: file.size,
   });
 
-  const s3Config: S3Configuration = {
-    accessKeyId: appEnv.S3_ACCESS_KEY_ID,
-    secretAccessKey: appEnv.S3_SECRET_ACCESS_KEY,
-    bucket: appEnv.S3_BUCKET,
-    endpointUrl: appEnv.S3_ENDPOINT_URL,
-    region: appEnv.S3_REGION,
-  };
-  await putObject(s3Config, 'CCCC', file);
+  await appEnv.UPLOADS.put('CCCC', file);
 });
 
 describe('API', () => {

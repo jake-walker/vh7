@@ -2,7 +2,6 @@ import { customAlphabet } from 'nanoid/async';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm/expressions';
 import * as models from './models';
-import { S3Configuration, putObject } from './s3';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4);
 
@@ -73,17 +72,14 @@ export async function createPaste(
 
 export async function createUpload(
   db: DrizzleD1Database<typeof models>,
+  bucket: R2Bucket,
   file: File,
   rawExpires: number | null,
-  s3Config: S3Configuration,
 ): Promise<models.ShortLink & models.ShortLinkUpload> {
   const id = await generateId();
   const hash = await sha256(file);
 
-  const res = await putObject(s3Config, id, file);
-  if (res.status !== 200) {
-    throw new Error(`Failed to put object (status=${res.status}, msg=${await res.text()})`);
-  }
+  await bucket.put(id, file);
 
   const maxExpiry = new Date();
   maxExpiry.setDate(maxExpiry.getDate() + 30);
