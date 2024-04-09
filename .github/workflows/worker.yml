@@ -65,6 +65,7 @@ jobs:
       - name: Publish
         working-directory: ./worker
         run: |
+          yarn --prod
           npx wrangler d1 migrations apply DB --env production
           npx wrangler deploy --env production
         env:
