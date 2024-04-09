@@ -1,5 +1,5 @@
 import { useClipboard } from '@mantine/hooks';
-import { Alert, Text, HoverCard, Button, Group, Space } from '@mantine/core';
+import { Alert, Text, Popover, Button, Group, Space } from '@mantine/core';
 import { CheckCircle } from 'react-feather';
 import { AwesomeQRCode } from "@awesomeqr/react";
 import urljoin from 'url-join';
@@ -30,13 +30,13 @@ export function SuccessAlert({ response, clear, ...props }) {
         <Button color="green" onClick={() => clipboard.copy(url)}>
           {clipboard.copied ? 'Copied' : 'Copy'}
         </Button>
-        <HoverCard shadow="md" withinPortal={true}>
-          <HoverCard.Target>
+        <Popover shadow="md" position="bottom" withArrow withinPortal={true}>
+          <Popover.Target>
             <Button variant="subtle" color="green">
               Show QR
             </Button>
-          </HoverCard.Target>
-          <HoverCard.Dropdown>
+          </Popover.Target>
+          <Popover.Dropdown>
             <div style={{ width: '300px', height: '300px' }}>
               <AwesomeQRCode options={{
                 text: url,
@@ -50,8 +50,8 @@ export function SuccessAlert({ response, clear, ...props }) {
                   cornerAlignment: { scale: 1, protectors: false }
                 }}} />
             </div>
-          </HoverCard.Dropdown>
-        </HoverCard>
+          </Popover.Dropdown>
+        </Popover>
       </Group>
     </Alert>
   )
