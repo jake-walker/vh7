@@ -24,6 +24,7 @@ const BaseArgs = z.object({
       d.setDate(d.getDate() + 60);
       return d.getTime();
     })),
+  deleteToken: z.string().max(128).optional(),
 });
 
 const BaseShortLinkArgs = z.object({

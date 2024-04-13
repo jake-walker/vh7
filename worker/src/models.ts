@@ -9,6 +9,7 @@ export const shortLinks = sqliteTable('short_link', {
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().default(sql`CURRENT_TIMESTAMP`),
   expiresAt: integer('expires_at', { mode: 'timestamp' }),
   type: text('type').notNull(),
+  deleteToken: text('delete_token', { length: 128 }),
 });
 
 export const shortLinkUrls = sqliteTable('short_link_url', {

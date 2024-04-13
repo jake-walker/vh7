@@ -51,7 +51,8 @@ app.post('/api/shorten',
       return c.status(500);
     }
 
-    const shortUrl = await createShortUrl(c.var.db, parsed.data.url, parsed.data.expires);
+    const shortUrl = await createShortUrl(c.var.db, parsed.data.url, parsed.data.expires,
+      parsed.data.deleteToken);
     return c.json(shortUrl);
   });
 
@@ -73,7 +74,7 @@ app.post('/api/paste',
     }
 
     const paste = await createPaste(c.var.db, parsed.data.code, parsed.data.language,
-      parsed.data.expires);
+      parsed.data.expires, parsed.data.deleteToken);
     return c.json(paste);
   });
 
@@ -101,7 +102,7 @@ app.post('/api/upload',
     }
 
     const upload = await createUpload(c.var.db, c.env.UPLOADS, parsed.data.file,
-      parsed.data.expires);
+      parsed.data.expires, parsed.data.deleteToken);
     return c.json(upload);
   });
 
@@ -116,7 +117,7 @@ app.get('/api/info/:id', withDb, async (c) => {
     const shortlink = await lookup(c.var.db, id);
 
     if (shortlink !== null && (shortlink.expiresAt === null || shortlink.expiresAt >= new Date())) {
-      return c.json(shortlink);
+      return c.json({ ...shortlink, deleteToken: undefined });
     }
   }
 
