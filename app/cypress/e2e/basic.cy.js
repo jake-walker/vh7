@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 describe('Home Page', () => {
-  it('shortens', () => {
+  it('can create short url', () => {
     cy.visit('/');
 
     // fill in the form and submit
@@ -11,7 +11,7 @@ describe('Home Page', () => {
     cy.get("#success-alert").should("be.visible");
   });
 
-  it('pastes', () => {
+  it('can create paste', () => {
     cy.fixture('paste').then((code) => {
       // replace windows line endings with linux ones as it breaks the test
       code = code.replace(/\r\n/g, '\n');
@@ -33,7 +33,7 @@ describe('Home Page', () => {
     });
   });
 
-  it('pastes without language set', () => {
+  it('can create paste without language set', () => {
     cy.visit('/');
     cy.get('[id$=-tab-paste]').click();
 
@@ -46,7 +46,7 @@ describe('Home Page', () => {
     cy.get("#success-alert").should("be.visible");
   });
 
-  it('uploads', () => {
+  it('can create upload', () => {
     cy.visit('/');
     cy.get('[id$=-tab-upload]').click();
 
@@ -62,4 +62,31 @@ describe('Home Page', () => {
     // check the success alert is shown
     cy.get("#success-alert").should("be.visible");
   });
+
+  it('can delete from history', () => {
+    cy.request({
+      method: 'POST',
+      url: 'http://localhost:8787/api/shorten',
+      form: true,
+      body: {
+        url: 'http://example.com',
+        deleteToken: 'keyboardcat'
+      }
+    }).then((res) => {
+      window.localStorage.setItem('state', JSON.stringify({
+        history: {
+          items: [res.body]
+        }
+      }))
+      cy.visit('/');
+      cy.get(`#history-item-${res.body.id} >> .delete-button`).click();
+
+      cy.on('window:confirm', (t) => {
+        expect(t).to.contain("Are you sure you want to delete");
+        return true;
+      });
+
+      cy.get(`#history-item-${res.body.id}`).should('not.exist');
+    });
+  })
 });

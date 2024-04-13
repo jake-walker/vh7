@@ -87,7 +87,7 @@ export function HistoryItem({ item }) {
   const expired = hasExpired(expires);
 
   return (
-    <Box mb={6}>
+    <Box mb={6} id={`history-item-${item.id}`}>
       <Flex align="center" justify="space-between">
         <div>
           <Title order={5} sx={{ overflowX: "clip" }}>
@@ -106,7 +106,7 @@ export function HistoryItem({ item }) {
             }
           </Text>
         </div>
-        {item.deleteToken && <ActionIcon color="red" size="lg" variant="light" onClick={del}><Trash size="18" /></ActionIcon>}
+        {item.deleteToken && <ActionIcon className="delete-button" color="red" size="lg" variant="light" onClick={del}><Trash size="18" /></ActionIcon>}
       </Flex>
     </Box>
   )
