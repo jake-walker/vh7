@@ -17,6 +17,10 @@ function formatDate(date) {
   return date.toLocaleString(DateTime.DATE_MED);
 }
 
+function hasExpired(date) {
+  return new Date(date) <= new Date();
+}
+
 export function HistoryItem({ item }) {
   const dispatch = useDispatch();
   const url = urljoin(baseURL, item.id);
@@ -80,6 +84,8 @@ export function HistoryItem({ item }) {
     }
   }
 
+  const expired = hasExpired(expires);
+
   return (
     <Box mb={6}>
       <Flex align="center" justify="space-between">
@@ -89,14 +95,14 @@ export function HistoryItem({ item }) {
             <Badge ml={10}>{type}</Badge>
           </Title>
           <Text color="dimmed">
-            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed">{url}</Text>
+            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed" strikethrough={expired}>{url}</Text>
             {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
             &nbsp;&bull;
             Created {formatDate(created)}
-            {expires && <Text inherit component="span">
+            {expires && <>
                 &nbsp;&bull;
-                Expires {formatDate(expires)}
-              </Text>
+                {expired ? " Expired" : " Expires"} {formatDate(expires)}
+              </>
             }
           </Text>
         </div>
