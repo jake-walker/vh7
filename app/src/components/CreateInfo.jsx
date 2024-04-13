@@ -9,6 +9,7 @@ export function CreateInfo({ form, type }) {
       {form.values.expireDays == "-1"
         ? " will never expire"
         : ` will expire in ${form.values.expireDays} day${form.values.expireDays != "1" ? "s" : ""}`}
+      {form.values.deletable ? " and can be deleted by you" : ""}
       .
     </Text>
   )

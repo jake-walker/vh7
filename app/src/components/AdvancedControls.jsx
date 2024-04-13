@@ -1,10 +1,11 @@
-import { Collapse, PasswordInput, Select, Text } from "@mantine/core";
+import { Collapse, PasswordInput, Select, Switch, Text } from "@mantine/core";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "react-feather";
 import { z } from 'zod';
 
 export const initialValues = {
-  expireDays: "60"
+  expireDays: "60",
+  deletable: true
 }
 
 export const validationRules = {
@@ -41,6 +42,7 @@ export function AdvancedControls({ form, maxDays = null }) {
     <>
       <Collapse in={opened}>
         <Select label="Expires" data={dates} {...form.getInputProps('expireDays')} />
+        <Switch label="Allow deletion?" mb="xs" {...form.getInputProps('deletable', { type: 'checkbox' })} />
       </Collapse>
       <Text size="sm" component="a" color="dimmed" variant="link" sx={{ cursor: "pointer" }} onClick={() => setOpened(!opened)}>
         {opened ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
