@@ -24,6 +24,7 @@ const BaseArgs = z.object({
       d.setDate(d.getDate() + 60);
       return d.getTime();
     })),
+  deleteToken: z.string().max(128).optional(),
 });
 
 const BaseShortLinkArgs = z.object({
@@ -54,3 +55,7 @@ const BaseUploadArgs = z.object({
 }).and(BaseArgs);
 
 export const UploadArgs = BaseUploadArgs.and(BaseArgs);
+
+export const DeleteArgs = z.object({
+  deleteToken: z.string().max(128),
+});

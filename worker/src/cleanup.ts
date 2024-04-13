@@ -1,6 +1,7 @@
 import { type DrizzleD1Database } from 'drizzle-orm/d1';
-import { eq, lt } from 'drizzle-orm';
+import { lt } from 'drizzle-orm';
 import * as models from './models';
+import { deleteItem } from './controller';
 
 export default async function cleanup(
   db: DrizzleD1Database<typeof models>,
@@ -12,24 +13,7 @@ export default async function cleanup(
   });
 
   await Promise.all(toCleanUp.map(async (shortLink) => {
-    switch (shortLink.type) {
-      case 'url':
-        await db.delete(models.shortLinkUrls).where(eq(models.shortLinkUrls.id, shortLink.id));
-        await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
-        break;
-      case 'paste':
-        await db.delete(models.shortLinkPastes).where(eq(models.shortLinkPastes.id, shortLink.id));
-        await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
-        break;
-      case 'upload':
-        await db.delete(models.shortLinkUploads)
-          .where(eq(models.shortLinkUploads.id, shortLink.id));
-        await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
-        await bucket.delete(shortLink.id);
-        break;
-      default:
-        throw new Error(`Unexpected short link type ${shortLink.type}`);
-    }
+    await deleteItem(db, bucket, shortLink);
     deleted.push(shortLink.id);
   }));
 

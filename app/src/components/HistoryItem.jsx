@@ -1,8 +1,11 @@
-import { Box, Title, Text, Badge } from "@mantine/core";
+import { Box, Title, Text, Badge, ActionIcon, Flex } from "@mantine/core";
 import urljoin from 'url-join';
 import { Link } from 'react-router-dom';
-import { baseURL, shortUrl } from '../controller';
+import { baseURL, deleteWithToken, shortUrl } from '../controller';
 import { DateTime } from 'luxon';
+import { Trash } from "react-feather";
+import { useDispatch } from "react-redux";
+import { removeItem } from "../slices/history";
 
 function formatDate(date) {
   date = DateTime.fromJSDate(new Date(date));
@@ -14,7 +17,12 @@ function formatDate(date) {
   return date.toLocaleString(DateTime.DATE_MED);
 }
 
+function hasExpired(date) {
+  return new Date(date) <= new Date();
+}
+
 export function HistoryItem({ item }) {
+  const dispatch = useDispatch();
   const url = urljoin(baseURL, item.id);
 
   let type = "";
@@ -64,23 +72,42 @@ export function HistoryItem({ item }) {
     expires = item.expiresAt;
   }
 
+  async function del() {
+    if (item.deleteToken && confirm(`Are you sure you want to delete ${item.id}? This cannot be undone`)) {
+      try {
+        await deleteWithToken(item.id, item.deleteToken);
+        dispatch(removeItem(item.id));
+      } catch (err) {
+        console.error(err);
+        alert("Failed to delete the item, please check the developer console");
+      }
+    }
+  }
+
+  const expired = hasExpired(expires);
+
   return (
-    <Box mb={6}>
-      <Title order={5} sx={{ overflowX: "clip" }}>
-        {title}
-        <Badge ml={10}>{type}</Badge>
-      </Title>
-      <Text color="dimmed">
-        <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed">{url}</Text>
-        {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
-        &nbsp;&bull;
-        Created {formatDate(created)}
-        {expires && <Text inherit component="span">
+    <Box mb={6} id={`history-item-${item.id}`}>
+      <Flex align="center" justify="space-between">
+        <div>
+          <Title order={5} sx={{ overflowX: "clip" }}>
+            {title}
+            <Badge ml={10}>{type}</Badge>
+          </Title>
+          <Text color="dimmed">
+            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed" strikethrough={expired}>{url}</Text>
+            {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
             &nbsp;&bull;
-            Expires {formatDate(expires)}
+            Created {formatDate(created)}
+            {expires && <>
+                &nbsp;&bull;
+                {expired ? " Expired" : " Expires"} {formatDate(expires)}
+              </>
+            }
           </Text>
-        }
-      </Text>
+        </div>
+        {item.deleteToken && <ActionIcon className="delete-button" color="red" size="lg" variant="light" onClick={del}><Trash size="18" /></ActionIcon>}
+      </Flex>
     </Box>
   )
 }

@@ -1,5 +1,6 @@
 import { getPlatformProxy } from 'wrangler';
 import { drizzle } from 'drizzle-orm/d1';
+import { eq } from 'drizzle-orm';
 import app, { type Bindings } from './index';
 import * as models from './models';
 import { sha256 } from './controller';
@@ -37,10 +38,17 @@ beforeAll(async () => {
     {
       id: 'DDDD', type: 'url', createdAt: new Date(2024, 0, 1), updatedAt: new Date(2024, 0, 1), expiresAt: new Date(2000, 0, 1),
     },
+    {
+      id: '1111', type: 'upload', createdAt: new Date(2024, 0, 1), updatedAt: new Date(2024, 0, 1), deleteToken: 'keyboardcat',
+    },
+    {
+      id: '2222', type: 'url', createdAt: new Date(2024, 0, 1), updatedAt: new Date(2024, 0, 1), deleteToken: 'keyboardcat',
+    },
   ]).run();
   await d.insert(models.shortLinkUrls).values([
     { id: 'AAAA', url: 'https://example.com' },
     { id: 'DDDD', url: 'https://example.com' },
+    { id: '2222', url: 'https://example.com' },
   ]);
   await d.insert(models.shortLinkPastes).values({ id: 'BBBB', code: 'println!("Hello, World!")', language: 'rust' });
 
@@ -48,12 +56,25 @@ beforeAll(async () => {
     type: 'text/plain',
   });
 
-  await d.insert(models.shortLinkUploads).values({
-    id: 'CCCC', filename: file.name, hash: await sha256(file), size: file.size,
-  });
+  await d.insert(models.shortLinkUploads).values([
+    {
+      id: 'CCCC', filename: file.name, hash: await sha256(file), size: file.size,
+    },
+    {
+      id: '1111', filename: file.name, hash: await sha256(file), size: file.size,
+    },
+  ]);
 
   await appEnv.UPLOADS.put('CCCC', file);
 });
+
+export async function doesExist(id: string) {
+  const { DB } = appEnv;
+  const d = drizzle(DB);
+
+  const res = await d.select().from(models.shortLinks).where(eq(models.shortLinks.id, id)).limit(1);
+  return res.length !== 0;
+}
 
 describe('API', () => {
   describe('create', () => {
@@ -76,6 +97,7 @@ describe('API', () => {
           createdAt: expect.any(String),
           expiresAt: expect.any(String),
           updatedAt: expect.any(String),
+          deleteToken: null,
         }),
       );
     });
@@ -100,6 +122,7 @@ describe('API', () => {
           createdAt: expect.any(String),
           expiresAt: expect.any(String),
           updatedAt: expect.any(String),
+          deleteToken: null,
         }),
       );
     });
@@ -127,6 +150,7 @@ describe('API', () => {
           createdAt: expect.any(String),
           expiresAt: expect.any(String),
           updatedAt: expect.any(String),
+          deleteToken: null,
         }),
       );
     });
@@ -236,5 +260,138 @@ describe('API', () => {
     }, appEnv);
     expect(authRes.status).toBe(200);
     expectTypeOf(await authRes.json()).toBeArray();
+  });
+
+  describe('delete', () => {
+    test('delete with valid delete token', async () => {
+      expect(await doesExist('1111')).toBe(true);
+
+      const data = new FormData();
+      data.set('deleteToken', 'keyboardcat');
+
+      const res = await app.request('http://vh7.uk/api/delete/1111', {
+        method: 'DELETE',
+        body: data,
+      }, appEnv);
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({
+        status: 200,
+        deleted: '1111',
+      });
+
+      expect(await doesExist('1111')).toBe(false);
+    });
+
+    test('delete with invalid delete token', async () => {
+      expect(await doesExist('2222')).toBe(true);
+
+      const data = new FormData();
+      data.set('deleteToken', 'hi');
+
+      const res = await app.request('http://vh7.uk/api/delete/2222', {
+        method: 'DELETE',
+        body: data,
+      }, appEnv);
+      expect(res.status).toBe(403);
+
+      expect(await doesExist('2222')).toBe(true);
+    });
+
+    test('non-deletable', async () => {
+      expect(await doesExist('AAAA')).toBe(true);
+
+      const data = new FormData();
+      data.set('deleteToken', 'keyboardcat');
+
+      const res = await app.request('http://vh7.uk/api/delete/AAAA', {
+        method: 'DELETE',
+        body: data,
+      }, appEnv);
+      expect(res.status).toBe(403);
+
+      expect(await doesExist('AAAA')).toBe(true);
+    });
+  });
+
+  describe('create with delete token', () => {
+    test('url', async () => {
+      const data = new FormData();
+      data.set('url', 'https://example.com');
+      data.set('deleteToken', 'keyboardcat');
+
+      const res = await app.request('http://vh7.uk/api/shorten', {
+        method: 'POST',
+        body: data,
+      }, appEnv);
+
+      expect(res.status).toBe(200);
+      const json: any = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: 'url',
+          url: 'https://example.com',
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: 'keyboardcat',
+        }),
+      );
+    });
+
+    test('paste', async () => {
+      const data = new FormData();
+      data.set('code', 'mycode');
+      data.set('deleteToken', 'keyboardcat');
+
+      const res = await app.request('http://vh7.uk/api/paste', {
+        method: 'POST',
+        body: data,
+      }, appEnv);
+
+      expect(res.status).toBe(200);
+      const json: any = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: 'paste',
+          code: 'mycode',
+          language: null,
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: 'keyboardcat',
+        }),
+      );
+    });
+
+    test('upload', async () => {
+      const data = new FormData();
+      data.append('file', new Blob(['Hello, World!'], {
+        type: 'text/plain',
+      }), 'test.txt');
+      data.set('deleteToken', 'keyboardcat');
+
+      const res = await app.request('http://vh7.uk/api/upload', {
+        method: 'POST',
+        body: data,
+      }, appEnv);
+
+      expect(res.status).toBe(200);
+      const json: any = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: 'upload',
+          filename: 'test.txt',
+          size: 13,
+          hash: 'dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f',
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: 'keyboardcat',
+        }),
+      );
+    });
   });
 });

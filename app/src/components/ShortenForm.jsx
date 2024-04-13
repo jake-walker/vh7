@@ -26,7 +26,7 @@ export function ShortenForm({ onResponse, onError }) {
     setLoading(true);
 
     try {
-      const res = await shorten(values.url, values.expireDays);
+      const res = await shorten(values.url, values.expireDays, values.deletable || false);
       onResponse(res);
       form.reset();
     } catch (err) {

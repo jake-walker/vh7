@@ -33,7 +33,7 @@ export function PasteForm({ onResponse, onError }) {
     }
 
     try {
-      const res = await paste(values.code, values.language, values.expireDays);
+      const res = await paste(values.code, values.language, values.expireDays, values.deletable || false);
       onResponse(res);
       form.reset();
     } catch (err) {

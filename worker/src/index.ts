@@ -1,9 +1,11 @@
 import { Hono, type MiddlewareHandler } from 'hono';
 import { drizzle, type DrizzleD1Database } from 'drizzle-orm/d1';
 import { cors } from 'hono/cors';
-import { PasteArgs, ShortLinkArgs, UploadArgs } from './schema';
 import {
-  createPaste, createShortUrl, createUpload, lookup,
+  DeleteArgs, PasteArgs, ShortLinkArgs, UploadArgs,
+} from './schema';
+import {
+  createPaste, createShortUrl, createUpload, deleteItem, lookup,
 } from './controller';
 import { checkDirectUserAgent, getFrontendUrl, isValidId } from './helpers';
 import * as models from './models';
@@ -51,7 +53,8 @@ app.post('/api/shorten',
       return c.status(500);
     }
 
-    const shortUrl = await createShortUrl(c.var.db, parsed.data.url, parsed.data.expires);
+    const shortUrl = await createShortUrl(c.var.db, parsed.data.url, parsed.data.expires,
+      parsed.data.deleteToken);
     return c.json(shortUrl);
   });
 
@@ -73,7 +76,7 @@ app.post('/api/paste',
     }
 
     const paste = await createPaste(c.var.db, parsed.data.code, parsed.data.language,
-      parsed.data.expires);
+      parsed.data.expires, parsed.data.deleteToken);
     return c.json(paste);
   });
 
@@ -101,7 +104,7 @@ app.post('/api/upload',
     }
 
     const upload = await createUpload(c.var.db, c.env.UPLOADS, parsed.data.file,
-      parsed.data.expires);
+      parsed.data.expires, parsed.data.deleteToken);
     return c.json(upload);
   });
 
@@ -116,7 +119,48 @@ app.get('/api/info/:id', withDb, async (c) => {
     const shortlink = await lookup(c.var.db, id);
 
     if (shortlink !== null && (shortlink.expiresAt === null || shortlink.expiresAt >= new Date())) {
-      return c.json(shortlink);
+      return c.json({ ...shortlink, deleteToken: undefined });
+    }
+  }
+
+  return c.json({
+    error: 'Short link not found',
+    status: 404,
+  }, 404);
+});
+
+app.delete('/api/delete/:id', withDb, async (c) => {
+  const id = c.req.param('id');
+  const parsed = DeleteArgs.safeParse(await c.req.parseBody());
+
+  if (!parsed.success) {
+    return c.json({
+      error: 'Invalid request data',
+      status: 400,
+      detail: parsed.error.issues,
+    }, 400);
+  }
+
+  if (c.var.db === undefined) {
+    return c.status(500);
+  }
+
+  if (id) {
+    const shortlink = await lookup(c.var.db, id);
+
+    if (shortlink !== null && (shortlink.expiresAt === null || shortlink.expiresAt >= new Date())) {
+      if (shortlink.deleteToken !== null && parsed.data.deleteToken === shortlink.deleteToken) {
+        await deleteItem(c.var.db, c.env.UPLOADS, shortlink);
+        return c.json({
+          deleted: shortlink.id,
+          status: 200,
+        }, 200);
+      }
+
+      return c.json({
+        error: 'Invalid delete token',
+        status: 403,
+      }, 403);
     }
   }
 

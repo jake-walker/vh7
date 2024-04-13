@@ -28,7 +28,7 @@ export function UploadForm({ onResponse, onError }) {
     setLoading(true);
 
     try {
-      const res = await upload(files[0], form.values.expireDays);
+      const res = await upload(files[0], form.values.expireDays, form.values.deletable || false);
       onResponse(res);
     } catch (err) {
       onError("Failed to upload: " + err.message);
