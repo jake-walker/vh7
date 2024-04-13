@@ -55,3 +55,7 @@ const BaseUploadArgs = z.object({
 }).and(BaseArgs);
 
 export const UploadArgs = BaseUploadArgs.and(BaseArgs);
+
+export const DeleteArgs = z.object({
+  deleteToken: z.string().max(128),
+});

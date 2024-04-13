@@ -155,3 +155,28 @@ export async function lookup(
       throw new Error(`Unexpected type ${stub.type}`);
   }
 }
+
+export async function deleteItem(
+  db: DrizzleD1Database<typeof models>,
+  bucket: R2Bucket,
+  shortLink: { id: string, type: string },
+): Promise<void> {
+  switch (shortLink.type) {
+    case 'url':
+      await db.delete(models.shortLinkUrls).where(eq(models.shortLinkUrls.id, shortLink.id));
+      await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
+      break;
+    case 'paste':
+      await db.delete(models.shortLinkPastes).where(eq(models.shortLinkPastes.id, shortLink.id));
+      await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
+      break;
+    case 'upload':
+      await db.delete(models.shortLinkUploads)
+        .where(eq(models.shortLinkUploads.id, shortLink.id));
+      await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
+      await bucket.delete(shortLink.id);
+      break;
+    default:
+      throw new Error(`Unexpected short link type: ${shortLink.type}`);
+  }
+}
