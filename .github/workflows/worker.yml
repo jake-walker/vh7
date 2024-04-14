@@ -51,7 +51,7 @@ jobs:
         working-directory: ./worker
         run: |
           yarn --prod
-          npx wrangler d1 migrations apply DB --env production
+          npx wrangler d1 migrations apply DB --env production --remote
           npx wrangler deploy --env production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
