@@ -1,7 +1,7 @@
 import { Progress, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 
-function TimedRedirect({ href }) {
+function TimedRedirect({ href }: { href: string }) {
   const maxTimer = 5;
   const [timer, setTimer] = useState(maxTimer);
 

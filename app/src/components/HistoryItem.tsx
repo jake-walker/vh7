@@ -1,14 +1,15 @@
 import { Box, Title, Text, Badge, ActionIcon, Flex } from "@mantine/core";
 import urljoin from 'url-join';
-import { Link } from 'react-router-dom';
-import { baseURL, deleteWithToken, shortUrl } from '../controller';
+import { Link } from 'react-router';
+import { baseUrl, deleteWithToken, shortUrl } from '../controller';
 import { DateTime } from 'luxon';
 import { Trash } from "react-feather";
 import { useDispatch } from "react-redux";
 import { removeItem } from "../slices/history";
+import type { HistoryItemType } from "../types";
 
-function formatDate(date) {
-  date = DateTime.fromJSDate(new Date(date));
+function formatDate(v: number | string | Date) {
+  const date = DateTime.fromJSDate(new Date(v));
 
   if (date.toISODate() === DateTime.local().toISODate()) {
     return `Today at ${date.toLocaleString(DateTime.TIME_SIMPLE)}`;
@@ -17,25 +18,26 @@ function formatDate(date) {
   return date.toLocaleString(DateTime.DATE_MED);
 }
 
-function hasExpired(date) {
+function hasExpired(date: number | string | Date | null | undefined) {
+  if (date === null || date === undefined) return false;
+
   return new Date(date) <= new Date();
 }
 
-export function HistoryItem({ item }) {
+export function HistoryItem({ item }: { item: HistoryItemType }) {
   const dispatch = useDispatch();
-  const url = urljoin(baseURL, item.id);
+  const url = urljoin(baseUrl, item.id);
 
-  let type = "";
-  let title = "";
-  let description = "";
-  let created = item.createdAt || item.date || item.created;
-  let expires = null;
+  let type: string | null = null;
+  let title: string | null = null;
+  let description: string | null = null;
+  let created = item.createdAt;
+  let expires = item.expiresAt;
 
   switch (item.type) {
-    case "shorten":
     case "url":
       type = "Shorten";
-      title = shortUrl(item.url, 30);
+      title = shortUrl(item.id);
       description = null;
       break;
     case "paste":
@@ -48,28 +50,6 @@ export function HistoryItem({ item }) {
       title = item.filename;
       description = `SHA256: ${item.hash.substring(0, 4)}...${item.hash.substring(item.hash.length - 4)}`;
       break;
-    case "url:1":
-      type = "Shorten";
-      title = shortUrl(item.data.url, 30);
-      description = null;
-      break;
-    case "paste:1":
-      type = "Paste";
-      title = "Paste";
-      description = null;
-      break;
-    case "upload:1":
-      type = "Upload";
-      title = item.data.filename;
-      description = `SHA256: ${item.data.hash.substring(0, 4)}...${item.data.hash.substring(item.data.hash.length - 4)}`
-  }
-
-  if (item.expires && typeof item.expires === "number") {
-    expires = item.expires;
-  }
-
-  if (item.expiresAt) {
-    expires = item.expiresAt;
   }
 
   async function del() {
@@ -90,19 +70,19 @@ export function HistoryItem({ item }) {
     <Box mb={6} id={`history-item-${item.id}`}>
       <Flex align="center" justify="space-between">
         <div>
-          <Title order={5} sx={{ overflowX: "clip" }}>
+          <Title order={5} style={{ overflowX: "clip" }}>
             {title}
             <Badge ml={10}>{type}</Badge>
           </Title>
-          <Text color="dimmed">
-            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} color="dimmed" strikethrough={expired}>{url}</Text>
+          <Text c="dimmed">
+            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} c="dimmed" td={expired ? "strikethrough" : undefined}>{url}</Text>
             {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
             &nbsp;&bull;
             Created {formatDate(created)}
             {expires && <>
-                &nbsp;&bull;
-                {expired ? " Expired" : " Expires"} {formatDate(expires)}
-              </>
+              &nbsp;&bull;
+              {expired ? " Expired" : " Expires"} {formatDate(expires)}
+            </>
             }
           </Text>
         </div>

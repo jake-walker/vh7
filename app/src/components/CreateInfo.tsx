@@ -1,8 +1,9 @@
 import { Text } from "@mantine/core"
+import type { UseFormReturnType } from "@mantine/form"
 
-export function CreateInfo({ form, type }) {
+export function CreateInfo({ form, type }: { form: UseFormReturnType<any>, type: string }) {
   return (
-    <Text color="dimmed" size="sm">
+    <Text c="dimmed" size="sm">
       This will create
       {"aeiou".split("").includes(type.charAt(0)) ? " an " : " a "}
       {type} that

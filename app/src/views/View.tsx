@@ -1,10 +1,10 @@
 import { Container, Title, Text, Box, Button, Alert } from "@mantine/core";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import Header from "../components/Header";
-import { info as getInfo, shortUrl, baseURL } from '../controller';
+import { info as getInfo, shortUrl, baseUrl } from '../controller';
 import NotFound from "./NotFound";
-import { Prism } from "@mantine/prism";
+import { CodeHighlight } from "@mantine/code-highlight";
 import { AlertOctagon, Download } from "react-feather";
 import TimedRedirect from "../components/TimedRedirect";
 
@@ -28,7 +28,7 @@ function View() {
     return <NotFound
       title="That short link was not found."
       description="The short link you are trying to visit does not exist or has expired."
-      />;
+    />;
   }
 
   let title;
@@ -50,11 +50,11 @@ function View() {
         case "paste":
           title = "Paste";
           content = <>
-            <Prism language={data.language} id="paste-content">{data.code}</Prism>
+            <CodeHighlight language={data.language} code={data.code} id="paste-content" />
             <Button
-              leftIcon={<Download size={16} />}
+              leftSection={<Download size={16} />}
               component="a"
-              href={`${baseURL}${link}?direct=1`}
+              href={`${baseUrl}${link}?direct=1`}
               mt={10}
             >
               Download
@@ -84,9 +84,9 @@ function View() {
             </Text>
 
             <Button
-              leftIcon={<Download size={16} />}
+              leftSection={<Download size={16} />}
               component="a"
-              href={`${baseURL}${link}?direct=1`}
+              href={`${baseUrl}${link}?direct=1`}
             >
               Download {data.filename}
             </Button>

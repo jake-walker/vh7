@@ -1,8 +1,8 @@
 import { Button, Container, Title } from "@mantine/core";
 import Header from "../components/Header";
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
-function NotFound({ title, description }) {
+function NotFound({ title, description }: { title?: string, description?: string }) {
   return (
     <>
       <Header small />
@@ -17,7 +17,7 @@ function NotFound({ title, description }) {
           Go home
         </Button>
       </Container>
-      </>
+    </>
   );
 }
 

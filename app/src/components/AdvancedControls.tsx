@@ -1,7 +1,14 @@
-import { Collapse, PasswordInput, Select, Switch, Text } from "@mantine/core";
+import { Collapse, Select, Switch, Text } from "@mantine/core";
+import type { UseFormReturnType } from "@mantine/form";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "react-feather";
 import { z } from 'zod';
+import { zodFormValidator } from "../controller";
+
+export interface AdvancedControlsFormValues {
+  expireDays: string,
+  deletable: boolean
+};
 
 export const initialValues = {
   expireDays: "60",
@@ -9,17 +16,17 @@ export const initialValues = {
 }
 
 export const validationRules = {
-  expireDays: (value) => z.string().refine((val) => {
+  expireDays: zodFormValidator(z.string().refine((val) => {
     try {
       const n = parseInt(val);
       return (n > 0 && n < 365) || n == -1;
     } catch {
       return false;
     }
-  }).safeParse(value).success
+  }))
 }
 
-export function AdvancedControls({ form, maxDays = null }) {
+export function AdvancedControls<T extends AdvancedControlsFormValues>({ form, maxDays = null }: { form: UseFormReturnType<T>, maxDays?: number | null }) {
   const [opened, setOpened] = useState(false);
 
   const dates = [1, 7, 14, 30, 60, 90, -1]
@@ -42,9 +49,9 @@ export function AdvancedControls({ form, maxDays = null }) {
     <>
       <Collapse in={opened}>
         <Select label="Expires" data={dates} {...form.getInputProps('expireDays')} />
-        <Switch label="Allow deletion?" mb="xs" {...form.getInputProps('deletable', { type: 'checkbox' })} />
+        <Switch label="Allow deletion?" my="xs" {...form.getInputProps('deletable', { type: 'checkbox' })} />
       </Collapse>
-      <Text size="sm" component="a" color="dimmed" variant="link" sx={{ cursor: "pointer" }} onClick={() => setOpened(!opened)}>
+      <Text size="sm" component="a" c="dimmed" variant="link" style={{ cursor: "pointer" }} onClick={() => setOpened(!opened)}>
         {opened ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
         {opened ? 'Hide' : 'Show'} Advanced
       </Text>

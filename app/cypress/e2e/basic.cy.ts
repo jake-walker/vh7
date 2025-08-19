@@ -67,7 +67,6 @@ describe('Home Page', () => {
     cy.request({
       method: 'POST',
       url: 'http://localhost:8787/api/shorten',
-      form: true,
       body: {
         url: 'http://example.com',
         deleteToken: 'keyboardcat'

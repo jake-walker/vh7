@@ -4,28 +4,19 @@ import { createSelectSchema } from 'drizzle-zod';
 import * as models from './models';
 
 const baseRequestSchema = z.object({
-  expires: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val === 'null') {
-        return null;
-      }
-
-      return parseInt(val, 10);
-    }
-    return val;
-  }, z.number().int().positive().optional()
+  expires: z.number().int().positive().nullable()
     .refine((val) => {
       if (val === null || val === undefined) return true;
       const min = new Date();
       const max = new Date();
       max.setDate(max.getDate() + 365);
       return val > min.getTime() && val < max.getTime();
-    }, { message: 'Expires must be between 0 days and 1 year' })
+    }, { message: 'Expiry must be between 0 days and 1 year' })
     .default(() => {
       const d = new Date();
       d.setDate(d.getDate() + 60);
       return d.getTime();
-    })).meta({
+    }).meta({
       description: "Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).",
       example: 1735689600000
     }),
@@ -46,15 +37,10 @@ const basePasteRequestSchema = z.object({
   code: z.string().meta({
     example: "def add(a, b):\n    return a + b"
   }),
-  language: z.preprocess((val) => {
-    if (val === 'null') {
-      return null;
-    }
-    return val;
-  }, z.string().nullable().default(null).refine((val) => {
-    if (val === null) return true;
+  language: z.string().optional().nullable().refine((val) => {
+    if (val === null || val === undefined) return true;
     return languages.map((lang) => lang.id).includes(val);
-  }, { message: 'Language ID not supported' })).meta({
+  }, { message: 'Language ID not supported' }).meta({
     description: "If provided, the code will syntax highlighted for this language.",
     example: "python"
   }),

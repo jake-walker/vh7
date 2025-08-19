@@ -1,14 +1,15 @@
 import { useClipboard } from '@mantine/hooks';
-import { Alert, Text, Popover, Button, Group, Space } from '@mantine/core';
+import { Alert, Text, Popover, Button, Group, Space, type AlertProps } from '@mantine/core';
 import { CheckCircle } from 'react-feather';
 import { AwesomeQRCode } from "@awesomeqr/react";
 import urljoin from 'url-join';
-import { baseURL } from '../controller';
+import { baseUrl } from '../controller';
+import type { AnyShortLinkApiResponse } from '../types';
 
-export function SuccessAlert({ response, clear, ...props }) {
+export function SuccessAlert({ response, clear, ...props }: { response: AnyShortLinkApiResponse, clear: () => void } & AlertProps) {
   const clipboard = useClipboard({ timeout: 500 });
 
-  const url = urljoin(baseURL, response.id);
+  const url = urljoin(baseUrl, response.id);
 
   return (
     <Alert id="success-alert" icon={<CheckCircle size={32} />} title="Shortened!" color="green" withCloseButton onClose={clear} {...props}>
@@ -17,16 +18,16 @@ export function SuccessAlert({ response, clear, ...props }) {
         <Text
           inherit
           component="code"
-          sx={(theme) => ({
+          style={(theme) => ({
             fontFamily: theme.fontFamilyMonospace,
             fontWeight: 'bold'
           })}
-          >
+        >
           {url}
         </Text>
       </Text>
       <Space h="sm" />
-      <Group spacing="xs">
+      <Group gap="xs">
         <Button color="green" onClick={() => clipboard.copy(url)}>
           {clipboard.copied ? 'Copied' : 'Copy'}
         </Button>
@@ -48,7 +49,8 @@ export function SuccessAlert({ response, clear, ...props }) {
                   timing: { scale: 1, protectors: false },
                   alignment: { scale: 1, protectors: false },
                   cornerAlignment: { scale: 1, protectors: false }
-                }}} />
+                }
+              }} />
             </div>
           </Popover.Dropdown>
         </Popover>

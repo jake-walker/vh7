@@ -1,30 +1,38 @@
 import { z } from 'zod'
-import { paste } from "../controller";
+import { paste, zodFormValidator } from "../controller";
 import { useForm } from "@mantine/form";
 import { useState } from 'react';
 import { Button, LoadingOverlay, Select, Textarea } from '@mantine/core';
 import { Send } from 'react-feather';
-import { AdvancedControls, initialValues, validationRules } from './AdvancedControls';
+import { AdvancedControls, initialValues, validationRules, type AdvancedControlsFormValues } from './AdvancedControls';
 import { CreateInfo } from './CreateInfo';
 import languages from '../languages.json';
+import type { CreateFormProps } from '../types';
 
-export function PasteForm({ onResponse, onError }) {
+type PasteFormValues = {
+  code: string,
+  language: string | null
+} & AdvancedControlsFormValues;
+
+export function PasteForm({ onResponse, onError }: CreateFormProps) {
   const [loading, setLoading] = useState(false);
 
-  const form = useForm({
+  const form = useForm<PasteFormValues>({
     initialValues: {
       code: '',
       language: null,
       ...initialValues
     },
-    validationRules: {
-      code: (value) => z.string().safeParse(value).success,
-      language: (value) => z.string().nullable().refine((val) => val === null || languages.map((lang) => lang.id).includes(val)).safeParse(value).success,
+    validate: {
+      code: zodFormValidator(z.string()),
+      language: zodFormValidator(z.string()
+        .nullable()
+        .refine((val) => val === null || val === '' || languages.map((lang) => lang.id).includes(val))),
       ...validationRules
     }
   });
 
-  const submit = async (values) => {
+  const submit = async (values: PasteFormValues) => {
     onError(null);
     setLoading(true);
 
@@ -37,7 +45,7 @@ export function PasteForm({ onResponse, onError }) {
       onResponse(res);
       form.reset();
     } catch (err) {
-      onError("Failed to paste: " + err.message);
+      onError("Failed to paste: " + err);
     }
 
     setLoading(false);
@@ -56,17 +64,19 @@ export function PasteForm({ onResponse, onError }) {
         styles={(theme) => ({
           input: {
             fontFamily: theme.fontFamilyMonospace,
+            paddingTop: 8,
+            paddingBottom: 8
           }
         })}
         {...form.getInputProps('code')}
       />
       <Select id="paste-language" label="Language" data={[
-          { label: "None", value: null },
-          ...languages.map((lang) => ({ label: lang.name, value: lang.id }))
-        ]} {...form.getInputProps('language')} />
+        { label: "None", value: "" },
+        ...languages.map((lang) => ({ label: lang.name, value: lang.id }))
+      ]} {...form.getInputProps('language')} />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="paste" />
-      <Button id="paste-submit" type="submit" mt={10} leftIcon={<Send size={16}/>}>Paste</Button>
+      <Button id="paste-submit" type="submit" mt={10} leftSection={<Send size={16} />}>Paste</Button>
     </form>
   )
 }

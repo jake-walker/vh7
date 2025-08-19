@@ -5,7 +5,6 @@ describe('View Page', () => {
     cy.request({
       method: 'POST',
       url: 'http://localhost:8787/api/shorten',
-      form: true,
       body: {
         url: 'http://localhost:3000/testing123'
       }
@@ -29,7 +28,6 @@ describe('View Page', () => {
       cy.request({
         method: 'POST',
         url: 'http://localhost:8787/api/paste',
-        form: true,
         body: {
           language: 'python',
           code: code,
@@ -60,25 +58,23 @@ describe('View Page', () => {
   it('can view an upload', () => {
     // the window object is needed for making a form request with a file
     cy.window().then((win) => {
-      cy.fixture('image.png').then((image) => {
-        // convert the base64 image to a blob to be used in the formdata object
-        const imageBlob = Cypress.Blob.base64StringToBlob(image, 'image/png');
+      cy.fixture('image.png', "binary").then((image) => {
+        const imageBlob = Cypress.Blob.binaryStringToBlob(image, 'image/png');
 
         // create a new formdata object with the file
         const data = new FormData();
         data.set('file', imageBlob, 'image.png');
 
-        // create a new upload request
-        return new Promise((resolve, reject) => {
-          const xhr = new win.XMLHttpRequest();
-          xhr.open('POST', 'http://localhost:8787/api/upload');
-          xhr.send(data);
-
-          xhr.onload = () => resolve(xhr);
-          xhr.onerror = () => reject(xhr);
+        cy.request({
+          method: 'POST',
+          url: 'http://localhost:8787/api/upload',
+          body: data,
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
         }).then((res) => {
           // then visit it
-          const json = JSON.parse(res.responseText);
+          const json = JSON.parse(new TextDecoder().decode(res.body));
           const id = json.id;
           cy.visit(`/view/${id}`);
 
@@ -93,15 +89,18 @@ describe('View Page', () => {
               method: 'GET',
               url: downloadLink,
               encoding: 'base64'
-            }).should((res) => {
-              expect(res.status).to.equal(200);
-              expect(res.body).to.equal(image);
+            }).should((res_1) => {
+              expect(res_1.status).to.equal(200);
+              Cypress.Blob.blobToBase64String(imageBlob).then((b64String) => {
+                expect(res_1.body).to.equal(b64String);
+              });
+
               // check the name of the downloaded file is the same
-              expect(res.headers["content-disposition"]).to.include(`filename="image.png"`);
+              expect(res_1.headers["content-disposition"]).to.include(`filename="image.png"`);
             });
           });
         });
       });
     });
   });
-})
+});

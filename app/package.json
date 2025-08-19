@@ -1,60 +1,52 @@
 {
   "name": "app",
-  "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@awesomeqr/react": "^0.1.2-rc.0",
-    "@emotion/react": "^11.10.5",
-    "@mantine/core": "^5.7.2",
-    "@mantine/dropzone": "^5.7.2",
-    "@mantine/form": "^5.7.2",
-    "@mantine/hooks": "^5.7.2",
-    "@mantine/prism": "^5.7.2",
-    "@reduxjs/toolkit": "^1.7.2",
-    "@sentry/react": "^7.12.1",
-    "@sentry/tracing": "^7.12.1",
-    "axios": "^1.11.0",
-    "luxon": "^3.0.1",
-    "openapi-fetch": "^0.14.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-feather": "^2.0.9",
-    "react-redux": "^7.2.6",
-    "react-router-dom": "6",
-    "url-join": "^4.0.1",
-    "zod": "^3.11.6"
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 3000",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
     "generate": "openapi-typescript http://localhost:8787/openapi -o src/api.g.ts"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "ignorePatterns": [
-      "**/*.g.ts"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "dependencies": {
+    "@awesomeqr/react": "0.1.2-rc.0",
+    "@mantine/code-highlight": "^8.2.5",
+    "@mantine/core": "^8.2.5",
+    "@mantine/dropzone": "^8.2.5",
+    "@mantine/form": "^8.2.5",
+    "@mantine/hooks": "^8.2.5",
+    "@reduxjs/toolkit": "^2.8.2",
+    "@sentry/react": "^10.5.0",
+    "luxon": "^3.7.1",
+    "openapi-fetch": "^0.14.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-feather": "^2.0.10",
+    "react-redux": "^9.2.0",
+    "react-router": "^7.8.1",
+    "url-join": "^5.0.0",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^1.1.4",
-    "cypress": "^10.7.0",
+    "@eslint/js": "^9.33.0",
+    "@types/luxon": "^3.7.1",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/url-join": "^5.0.0",
+    "@vitejs/plugin-react-swc": "^4.0.0",
+    "cypress": "^14.5.4",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
     "openapi-typescript": "^7.9.1",
-    "vite": "^2.7.13"
+    "postcss": "^8.5.6",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2"
   }
 }

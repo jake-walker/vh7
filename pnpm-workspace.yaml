@@ -3,6 +3,7 @@ packages:
   - worker
 
 onlyBuiltDependencies:
+  - '@swc/core'
   - better-sqlite3
   - cypress
   - es5-ext
