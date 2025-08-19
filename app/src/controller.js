@@ -1,20 +1,24 @@
-import { create } from 'axios';
+import axios from "axios";
 
-const apiURL = import.meta.env.PROD ? 'https://vh7.uk/api' : 'http://localhost:8787/api';
-export const baseURL = import.meta.env.PROD ? 'https://vh7.uk/' : 'http://localhost:8787/';
+const apiURL = import.meta.env.PROD
+  ? "https://vh7.uk/api"
+  : "http://localhost:8787/api";
+export const baseURL = import.meta.env.PROD
+  ? "https://vh7.uk/"
+  : "http://localhost:8787/";
 
-const instance = create({
+const instance = axios.create({
   baseURL: apiURL,
 });
 
 export function shortUrl(u) {
   if (u.length < 50) {
-    return u.replace('http://', '').replace('https://', '');
+    return u.replace("http://", "").replace("https://", "");
   }
 
   const uend = u.slice(u.length - 15);
-  const ustart = u.replace('http://', '').replace('https://', '').substr(0, 32);
-  return ustart + '...' + uend;
+  const ustart = u.replace("http://", "").replace("https://", "").substr(0, 32);
+  return ustart + "..." + uend;
 }
 
 function parseExpiry(expiryDays) {
@@ -32,29 +36,39 @@ function parseExpiry(expiryDays) {
 export async function shorten(url, expiryDays, deletable) {
   const expires = parseExpiry(expiryDays);
 
-  const form = new FormData();
-  form.append('url', url);
-  form.append('expires', expires);
-  if (deletable) {
-    form.append('deleteToken', crypto.randomUUID());
-  }
-
-  const res = await instance.post('/shorten', form);
+  const res = await instance.post(
+    "/shorten",
+    {
+      url,
+      expires,
+      deleteToken: deletable ? crypto.randomUUID() : null,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return res.data;
 }
 
 export async function paste(code, language, expiryDays, deletable) {
   const expires = parseExpiry(expiryDays);
 
-  const form = new FormData();
-  form.append('code', code);
-  form.append('language', language);
-  form.append('expires', expires);
-  if (deletable) {
-    form.append('deleteToken', crypto.randomUUID());
-  }
-
-  const res = await instance.post('/paste', form);
+  const res = await instance.post(
+    "/paste",
+    {
+      code,
+      language,
+      expires,
+      deleteToken: deletable ? crypto.randomUUID() : null,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return res.data;
 }
 
@@ -62,23 +76,28 @@ export async function upload(file, expiryDays, deletable) {
   const expires = parseExpiry(expiryDays);
 
   const form = new FormData();
-  form.append('file', file);
-  form.append('expires', expires);
+  form.append("file", file);
+  form.append("expires", expires);
   if (deletable) {
-    form.append('deleteToken', crypto.randomUUID());
+    form.append("deleteToken", crypto.randomUUID());
   }
 
-  const res = await instance.post('/upload', form);
+  const res = await instance.post("/upload", form);
   return res.data;
 }
 
 export async function deleteWithToken(id, token) {
-  const form = new FormData();
-  form.append('deleteToken', token);
-
-  const res = await instance.delete(`/delete/${id}`, {
-    data: form
-  });
+  const res = await instance.delete(
+    `/delete/${id}`,
+    {
+      deleteToken: token,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return res.data;
 }
 

@@ -1,7 +1,7 @@
-import { customAlphabet } from 'nanoid/async';
+import { customAlphabet } from 'nanoid';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
-import { eq } from 'drizzle-orm/expressions';
 import * as models from './models';
+import { eq } from 'drizzle-orm';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4);
 
@@ -12,17 +12,13 @@ export async function sha256(file: File) {
   return array.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function generateId(): Promise<string> {
-  return nanoid();
-}
-
 export async function createShortUrl(
   db: DrizzleD1Database<typeof models>,
   url: string,
   expires: number | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkUrl> {
-  const id = await generateId();
+  const id = nanoid();
 
   const stub: models.ShortLink = {
     id,
@@ -51,7 +47,7 @@ export async function createPaste(
   expires: number | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkPaste> {
-  const id = await generateId();
+  const id = nanoid();
 
   const stub: models.ShortLink = {
     id,
@@ -81,7 +77,7 @@ export async function createUpload(
   rawExpires: number | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkUpload> {
-  const id = await generateId();
+  const id = nanoid();
   const hash = await sha256(file);
 
   await bucket.put(id, file);

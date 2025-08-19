@@ -13,8 +13,9 @@
     "@reduxjs/toolkit": "^1.7.2",
     "@sentry/react": "^7.12.1",
     "@sentry/tracing": "^7.12.1",
-    "axios": "^0.25.0",
+    "axios": "^1.11.0",
     "luxon": "^3.0.1",
+    "openapi-fetch": "^0.14.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-feather": "^2.0.9",
@@ -26,12 +27,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 3000"
+    "preview": "vite preview --port 3000",
+    "generate": "openapi-typescript http://localhost:8787/openapi -o src/api.g.ts"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "ignorePatterns": [
+      "**/*.g.ts"
     ]
   },
   "browserslist": {
@@ -49,6 +54,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^1.1.4",
     "cypress": "^10.7.0",
+    "openapi-typescript": "^7.9.1",
     "vite": "^2.7.13"
   }
 }

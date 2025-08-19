@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "e0b1aeb9-9158-41b9-9b5e-99fc2072b848",
-  "prevId": "5c571eee-f9a2-498e-b1a7-6043b91b9b2b",
   "tables": {
     "short_link_paste": {
       "name": "short_link_paste",
@@ -34,19 +32,20 @@
         "short_link_paste_short_link_id_short_link_id_fk": {
           "name": "short_link_paste_short_link_id_short_link_id_fk",
           "tableFrom": "short_link_paste",
-          "tableTo": "short_link",
           "columnsFrom": [
             "short_link_id"
           ],
+          "tableTo": "short_link",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "short_link_upload": {
       "name": "short_link_upload",
@@ -85,19 +84,20 @@
         "short_link_upload_short_link_id_short_link_id_fk": {
           "name": "short_link_upload_short_link_id_short_link_id_fk",
           "tableFrom": "short_link_upload",
-          "tableTo": "short_link",
           "columnsFrom": [
             "short_link_id"
           ],
+          "tableTo": "short_link",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "short_link_url": {
       "name": "short_link_url",
@@ -122,19 +122,20 @@
         "short_link_url_short_link_id_short_link_id_fk": {
           "name": "short_link_url_short_link_id_short_link_id_fk",
           "tableFrom": "short_link_url",
-          "tableTo": "short_link",
           "columnsFrom": [
             "short_link_id"
           ],
+          "tableTo": "short_link",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "short_link": {
       "name": "short_link",
@@ -187,13 +188,16 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "e0b1aeb9-9158-41b9-9b5e-99fc2072b848",
+  "prevId": "5c571eee-f9a2-498e-b1a7-6043b91b9b2b",
+  "views": {}
 }

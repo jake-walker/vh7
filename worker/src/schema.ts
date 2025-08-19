@@ -1,7 +1,9 @@
-import { z } from 'zod';
+import z from 'zod';
 import languages from '../../languages.json';
+import { createSelectSchema } from 'drizzle-zod';
+import * as models from './models';
 
-const BaseArgs = z.object({
+const baseRequestSchema = z.object({
   expires: z.preprocess((val) => {
     if (typeof val === 'string') {
       if (val === 'null') {
@@ -11,7 +13,7 @@ const BaseArgs = z.object({
       return parseInt(val, 10);
     }
     return val;
-  }, z.number().int().positive().nullish()
+  }, z.number().int().positive().optional()
     .refine((val) => {
       if (val === null || val === undefined) return true;
       const min = new Date();
@@ -23,18 +25,27 @@ const BaseArgs = z.object({
       const d = new Date();
       d.setDate(d.getDate() + 60);
       return d.getTime();
-    })),
-  deleteToken: z.string().max(128).optional(),
+    })).meta({
+      description: "Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).",
+      example: 1735689600000
+    }),
+  deleteToken: z.string().max(128).optional().nullable().meta({
+    description: "An optional string that allows you to later delete the item before it expires."
+  }),
+})
+
+const baseShortLinkRequestSchema = z.object({
+  url: z.url().meta({
+    example: "https://example.com"
+  }),
 });
 
-const BaseShortLinkArgs = z.object({
-  url: z.string().url(),
-});
+export const shortLinkRequestSchema = baseShortLinkRequestSchema.and(baseRequestSchema);
 
-export const ShortLinkArgs = BaseShortLinkArgs.and(BaseArgs);
-
-const BasePasteArgs = z.object({
-  code: z.string(),
+const basePasteRequestSchema = z.object({
+  code: z.string().meta({
+    example: "def add(a, b):\n    return a + b"
+  }),
   language: z.preprocess((val) => {
     if (val === 'null') {
       return null;
@@ -43,19 +54,71 @@ const BasePasteArgs = z.object({
   }, z.string().nullable().default(null).refine((val) => {
     if (val === null) return true;
     return languages.map((lang) => lang.id).includes(val);
-  }, { message: 'Language ID not supported' })),
+  }, { message: 'Language ID not supported' })).meta({
+    description: "If provided, the code will syntax highlighted for this language.",
+    example: "python"
+  }),
 });
 
-export const PasteArgs = BasePasteArgs.and(BaseArgs);
+export const pasteRequestSchema = basePasteRequestSchema.and(baseRequestSchema);
 
-const BaseUploadArgs = z.object({
+const baseUploadRequestSchema = z.object({
   file: z.instanceof(File).refine((val) => val.size <= 2.56e+8, {
     message: 'File must be less than 256 MB',
+  }).meta({
+    override: {
+      type: "string",
+      format: "binary"
+    }
   }),
-}).and(BaseArgs);
+}).and(baseRequestSchema);
 
-export const UploadArgs = BaseUploadArgs.and(BaseArgs);
+export const uploadRequestSchema = baseUploadRequestSchema.and(baseRequestSchema);
 
-export const DeleteArgs = z.object({
+export const deleteRequestSchema = z.object({
   deleteToken: z.string().max(128),
+});
+
+const itemResponseSchema = createSelectSchema(models.shortLinks).omit({ deleteToken: true });
+export const shortLinkResponseSchema = z.object({
+  ...createSelectSchema(models.shortLinkUrls).shape,
+  ...itemResponseSchema.shape
+}).meta({
+  example: {
+    id: "abcd",
+    url: "https://example.com",
+    createdAt: "2025-01-01T00:00:00.000Z",
+    updatedAt: "2025-01-01T00:00:00.000Z",
+    expiresAt: null,
+    type: "url"
+  }
+});
+export const pasteResponseSchema = z.object({
+  ...createSelectSchema(models.shortLinkPastes).shape,
+  ...itemResponseSchema.shape
+}).meta({
+  example: {
+    id: "abcd",
+    code: "def add(a, b):\n    return a + b",
+    language: "python",
+    createdAt: "2025-01-01T00:00:00.000Z",
+    updatedAt: "2025-01-01T00:00:00.000Z",
+    expiresAt: null,
+    type: "paste"
+  }
+});
+export const uploadResponseSchema = z.object({
+  ...createSelectSchema(models.shortLinkUploads).shape,
+  ...itemResponseSchema.shape
+}).meta({
+  example: {
+    id: "abcd",
+    filename: "example.pdf",
+    size: 4321,
+    hash: "f5b5f00366fcc0c5bcb99e592bf40da0c0c1afc806ba9377dce545fcbf61d131",
+    createdAt: "2025-01-01T00:00:00.000Z",
+    updatedAt: "2025-01-01T00:00:00.000Z",
+    expiresAt: null,
+    type: "upload"
+  }
 });
