@@ -44,7 +44,7 @@ const withDb: MiddlewareHandler = async (c, next) => {
 app.use("*", cors());
 
 app.get(
-  "/openapi",
+  "/api/openapi.json",
   openAPISpecs(app, {
     documentation: {
       info: {
@@ -69,7 +69,7 @@ app.get(
 app.get(
   "/docs",
   Scalar({
-    url: "/openapi",
+    url: "/api/openapi.json",
     theme: "purple",
     pageTitle: "VH7 API Docs",
   }),

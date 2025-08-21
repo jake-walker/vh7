@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "biome check",
     "preview": "vite preview",
-    "generate": "openapi-typescript http://localhost:8787/openapi -o src/api.g.ts"
+    "generate": "openapi-typescript http://localhost:8787/api/openapi.json -o src/api.g.ts"
   },
   "dependencies": {
     "@awesomeqr/react": "0.1.2-rc.0",

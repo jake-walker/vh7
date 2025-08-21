@@ -1,4 +1,5 @@
 import { Button, Container, Text, Typography } from "@mantine/core";
+import { ArrowRight } from "react-feather";
 import Header from "../components/Header";
 
 function About() {
@@ -52,7 +53,20 @@ function About() {
             everyone, I please ask that you use the API for small projects and{" "}
             <a href="https://jakew.me/about">contact me</a> first for any bigger projects.
           </p>
-          <Button component="a" href="/docs">
+          <p>
+            API documentation is available at the link below, and you can also access the OpenAPI specification at{" "}
+            <a href="/api/openapi.json">
+              <code>/api/openapi.json</code>
+            </a>
+            .
+          </p>
+          <Button
+            component="a"
+            href="/docs"
+            variant="light"
+            style={{ textDecoration: "none" }}
+            rightSection={<ArrowRight size={16} />}
+          >
             See API Documentation
           </Button>
         </Typography>

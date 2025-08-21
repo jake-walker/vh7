@@ -125,11 +125,15 @@ export async function deleteWithToken(id: string, token: string) {
 }
 
 export async function info(id: string) {
-  const { data, error } = await client.GET("/api/info/{id}", {
+  const { data, error, response } = await client.GET("/api/info/{id}", {
     params: {
       path: { id },
     },
   });
+
+  if (response.status === 404) {
+    return null;
+  }
 
   if (error !== undefined) {
     console.error("Failed to get info:", error);

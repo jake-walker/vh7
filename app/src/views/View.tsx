@@ -18,7 +18,13 @@ function View() {
     if (link === undefined) return;
 
     getInfo(link)
-      .then((data) => setData(data))
+      .then((data) => {
+        if (data === null) {
+          setNotFound(true);
+        } else {
+          setData(data);
+        }
+      })
       .catch((err) => {
         if (err.response && err.response.status == 404) {
           setNotFound(true);
