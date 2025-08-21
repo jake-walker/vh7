@@ -1,19 +1,19 @@
-import { drizzle } from 'drizzle-orm/d1';
-import * as models from './models';
-import cleanup from './cleanup';
-import { createShortUrl } from './controller';
-import { appEnv, doesExist } from './index.spec';
+import { drizzle } from "drizzle-orm/d1";
+import cleanup from "./cleanup";
+import { createShortUrl } from "./controller";
+import { appEnv, doesExist } from "./index.spec";
+import * as models from "./models";
 
-test('cleanup', async () => {
+test("cleanup", async () => {
   const { DB, UPLOADS } = appEnv;
   const d = drizzle(DB, { schema: models });
 
   const validDate = new Date();
   validDate.setMonth(validDate.getMonth() + 1);
 
-  const expiredShortLink = await createShortUrl(d, 'https://example.com', new Date(2000, 1, 1).getTime(), undefined);
-  const validShortLink = await createShortUrl(d, 'https://example.com', validDate.getTime(), undefined);
-  const noExpiryShortLink = await createShortUrl(d, 'https://example.com', null, undefined);
+  const expiredShortLink = await createShortUrl(d, "https://example.com", new Date(2000, 1, 1).getTime(), undefined);
+  const validShortLink = await createShortUrl(d, "https://example.com", validDate.getTime(), undefined);
+  const noExpiryShortLink = await createShortUrl(d, "https://example.com", null, undefined);
 
   const deleted = await cleanup(d, UPLOADS);
 

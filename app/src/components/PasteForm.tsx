@@ -1,17 +1,17 @@
-import { z } from 'zod'
-import { paste, zodFormValidator } from "../controller";
+import { Button, LoadingOverlay, Select, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState } from 'react';
-import { Button, LoadingOverlay, Select, Textarea } from '@mantine/core';
-import { Send } from 'react-feather';
-import { AdvancedControls, initialValues, validationRules, type AdvancedControlsFormValues } from './AdvancedControls';
-import { CreateInfo } from './CreateInfo';
-import languages from '../../../languages.json';
-import type { CreateFormProps } from '../types';
+import { useState } from "react";
+import { Send } from "react-feather";
+import { z } from "zod";
+import languages from "../../../languages.json";
+import { paste, zodFormValidator } from "../controller";
+import type { CreateFormProps } from "../types";
+import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
+import { CreateInfo } from "./CreateInfo";
 
 type PasteFormValues = {
-  code: string,
-  language: string | null
+  code: string;
+  language: string | null;
 } & AdvancedControlsFormValues;
 
 export function PasteForm({ onResponse, onError }: CreateFormProps) {
@@ -19,24 +19,27 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
 
   const form = useForm<PasteFormValues>({
     initialValues: {
-      code: '',
+      code: "",
       language: null,
-      ...initialValues
+      ...initialValues,
     },
     validate: {
       code: zodFormValidator(z.string()),
-      language: zodFormValidator(z.string()
-        .nullable()
-        .refine((val) => val === null || val === '' || languages.map((lang) => lang.id).includes(val))),
-      ...validationRules
-    }
+      language: zodFormValidator(
+        z
+          .string()
+          .nullable()
+          .refine((val) => val === null || val === "" || languages.map((lang) => lang.id).includes(val)),
+      ),
+      ...validationRules,
+    },
   });
 
   const submit = async (values: PasteFormValues) => {
     onError(null);
     setLoading(true);
 
-    if (values.language === '') {
+    if (values.language === "") {
       values.language = null;
     }
 
@@ -45,14 +48,14 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
       onResponse(res);
       form.reset();
     } catch (err) {
-      onError("Failed to paste: " + err);
+      onError(`Failed to paste: ${err}`);
     }
 
     setLoading(false);
-  }
+  };
 
   return (
-    <form onSubmit={form.onSubmit(submit)} style={{ position: 'relative' }}>
+    <form onSubmit={form.onSubmit(submit)} style={{ position: "relative" }}>
       <LoadingOverlay visible={loading} />
       <Textarea
         id="paste-code"
@@ -65,18 +68,22 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
           input: {
             fontFamily: theme.fontFamilyMonospace,
             paddingTop: 8,
-            paddingBottom: 8
-          }
+            paddingBottom: 8,
+          },
         })}
-        {...form.getInputProps('code')}
+        {...form.getInputProps("code")}
       />
-      <Select id="paste-language" label="Language" data={[
-        { label: "None", value: "" },
-        ...languages.map((lang) => ({ label: lang.name, value: lang.id }))
-      ]} {...form.getInputProps('language')} />
+      <Select
+        id="paste-language"
+        label="Language"
+        data={[{ label: "None", value: "" }, ...languages.map((lang) => ({ label: lang.name, value: lang.id }))]}
+        {...form.getInputProps("language")}
+      />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="paste" />
-      <Button id="paste-submit" type="submit" mt={10} leftSection={<Send size={16} />}>Paste</Button>
+      <Button id="paste-submit" type="submit" mt={10} leftSection={<Send size={16} />}>
+        Paste
+      </Button>
     </form>
-  )
+  );
 }

@@ -1,18 +1,14 @@
 import { Button, Container, Title } from "@mantine/core";
+import { Link } from "react-router";
 import Header from "../components/Header";
-import { Link } from 'react-router';
 
-function NotFound({ title, description }: { title?: string, description?: string }) {
+function NotFound({ title, description }: { title?: string; description?: string }) {
   return (
     <>
       <Header small />
       <Container my={20}>
-        <Title order={2}>
-          {title || "Whoops! You've reached a dead end."}
-        </Title>
-        <p>
-          {description || "We could not find the page that you are looking for."}
-        </p>
+        <Title order={2}>{title || "Whoops! You've reached a dead end."}</Title>
+        <p>{description || "We could not find the page that you are looking for."}</p>
         <Button to="/" component={Link}>
           Go home
         </Button>

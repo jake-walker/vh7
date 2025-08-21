@@ -1,6 +1,6 @@
 import createClient from "openapi-fetch";
-import type { paths, operations } from "./api.g";
 import type { ZodType } from "zod";
+import type { operations, paths } from "./api.g";
 
 const baseUrl = import.meta.env.MODE === "development" ? "http://localhost:8787" : "";
 
@@ -8,7 +8,7 @@ const client = createClient<paths>({ baseUrl });
 
 export function idToUrl(id: string) {
   const u = new URL(import.meta.env.MODE !== "development" ? window.location.href : baseUrl);
-  return `${u.protocol}//${u.hostname}${u.port ? ":" + u.port : ""}/${encodeURIComponent(id)}`;
+  return `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ""}/${encodeURIComponent(id)}`;
 }
 
 export const zodFormValidator = (schema: ZodType) => (value: unknown) => {
@@ -19,7 +19,7 @@ export const zodFormValidator = (schema: ZodType) => (value: unknown) => {
   }
 
   return result.error.issues.map((issue) => issue.message).join(", ");
-}
+};
 
 export function shortUrl(u: string) {
   if (u.length < 50) {
@@ -28,14 +28,14 @@ export function shortUrl(u: string) {
 
   const uend = u.slice(u.length - 15);
   const ustart = u.replace("http://", "").replace("https://", "").substring(0, 32);
-  return ustart + "..." + uend;
+  return `${ustart}...${uend}`;
 }
 
 function parseExpiry(v: string | null) {
   if (v === null) return null;
 
   let expiryDate = null;
-  const expiryDays = parseInt(v);
+  const expiryDays = parseInt(v, 10);
   if (expiryDays > 0) {
     expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + expiryDays);
@@ -73,7 +73,7 @@ export async function paste(code: string, language: string | null, expiryDays: s
       language,
       expires,
       deleteToken: deletable ? crypto.randomUUID() : null,
-    }
+    },
   });
 
   if (error !== undefined) {
@@ -100,7 +100,7 @@ export async function upload(file: File, expiryDays: string | null, deletable: b
 
   const res = await fetch(`${baseUrl}/api/upload`, {
     method: "POST",
-    body: form
+    body: form,
   });
 
   return (await res.json()) as operations["postApiUpload"]["responses"][200]["content"]["application/json"];
@@ -111,9 +111,9 @@ export async function deleteWithToken(id: string, token: string) {
     params: {
       path: { id },
       query: {
-        deleteToken: token
-      }
-    }
+        deleteToken: token,
+      },
+    },
   });
 
   if (error !== undefined) {
@@ -127,8 +127,8 @@ export async function deleteWithToken(id: string, token: string) {
 export async function info(id: string) {
   const { data, error } = await client.GET("/api/info/{id}", {
     params: {
-      path: { id }
-    }
+      path: { id },
+    },
   });
 
   if (error !== undefined) {

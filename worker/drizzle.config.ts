@@ -5,6 +5,6 @@ export default defineConfig({
   schema: "./src/models.ts",
   out: "./migrations",
   dbCredentials: {
-    url: ":memory:"
-  }
+    url: ":memory:",
+  },
 });

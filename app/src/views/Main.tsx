@@ -1,20 +1,20 @@
-import { Box, Container, Space, Tabs, Title } from '@mantine/core';
-import { SuccessAlert } from "../components/SuccessAlert";
-import { ErrorAlert } from "../components/ErrorAlert";
-import { ShortenForm } from "../components/ShortenForm";
-import { PasteForm } from "../components/PasteForm";
-import { UploadForm } from "../components/UploadForm";
+import { Box, Container, Space, Tabs, Title } from "@mantine/core";
 import { useState } from "react";
-import { Clipboard, File, Link } from 'react-feather';
-import { useDispatch } from 'react-redux';
-import { addItem } from '../slices/history';
-import { HistoryItem } from '../components/HistoryItem';
-import Header from '../components/Header';
-import { type AnyShortLinkApiResponse, type AnyApiResponseHandler, type ApiErrorHandler } from '../types.d';
-import { useAppSelector } from '../hooks';
+import { Clipboard, File, Link } from "react-feather";
+import { useDispatch } from "react-redux";
+import { ErrorAlert } from "../components/ErrorAlert";
+import Header from "../components/Header";
+import { HistoryItem } from "../components/HistoryItem";
+import { PasteForm } from "../components/PasteForm";
+import { ShortenForm } from "../components/ShortenForm";
+import { SuccessAlert } from "../components/SuccessAlert";
+import { UploadForm } from "../components/UploadForm";
+import { useAppSelector } from "../hooks";
+import { addItem } from "../slices/history";
+import type { AnyApiResponseHandler, AnyShortLinkApiResponse, ApiErrorHandler } from "../types.d";
 
 function Main() {
-  const history = useAppSelector(state => state.history.items);
+  const history = useAppSelector((state) => state.history.items);
   const dispatch = useDispatch();
 
   const [response, setResponse] = useState<AnyShortLinkApiResponse | null>(null);
@@ -24,12 +24,12 @@ function Main() {
     dispatch(addItem(res));
     setResponse(res);
     setError(null);
-  }
+  };
 
   const onError: ApiErrorHandler = (err) => {
     setResponse(null);
     setError(err);
-  }
+  };
 
   return (
     <>
@@ -40,9 +40,15 @@ function Main() {
 
         <Tabs variant="pills" defaultValue="shorten">
           <Tabs.List>
-            <Tabs.Tab value="shorten" leftSection={<Link size={16} />}>Shorten</Tabs.Tab>
-            <Tabs.Tab value="paste" leftSection={<Clipboard size={16} />}>Paste</Tabs.Tab>
-            <Tabs.Tab value="upload" leftSection={<File size={16} />}>Upload</Tabs.Tab>
+            <Tabs.Tab value="shorten" leftSection={<Link size={16} />}>
+              Shorten
+            </Tabs.Tab>
+            <Tabs.Tab value="paste" leftSection={<Clipboard size={16} />}>
+              Paste
+            </Tabs.Tab>
+            <Tabs.Tab value="upload" leftSection={<File size={16} />}>
+              Upload
+            </Tabs.Tab>
           </Tabs.List>
 
           <Space h="sm" />
@@ -59,7 +65,9 @@ function Main() {
         </Tabs>
 
         <Box mt={30}>
-          <Title order={3} mb={10}>History</Title>
+          <Title order={3} mb={10}>
+            History
+          </Title>
           {history.map((item, i) => <HistoryItem key={i} item={item} />).reverse()}
         </Box>
       </Container>

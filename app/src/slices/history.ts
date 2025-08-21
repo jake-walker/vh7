@@ -2,15 +2,15 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { HistoryItemType } from "../types";
 
 interface HistoryState {
-  items: HistoryItemType[]
+  items: HistoryItemType[];
 }
 
 const initialState: HistoryState = {
-  items: []
-}
+  items: [],
+};
 
 export const historySlice = createSlice({
-  name: 'history',
+  name: "history",
   initialState,
   reducers: {
     addItem: (state, action: PayloadAction<HistoryItemType>) => {
@@ -18,13 +18,13 @@ export const historySlice = createSlice({
       state.items = state.items.slice(-7);
     },
     removeItem: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter((item) => item.id !== action.payload);
     },
     clear: (state) => {
       state.items = [];
-    }
-  }
-})
+    },
+  },
+});
 
 export const { addItem, clear, removeItem } = historySlice.actions;
 

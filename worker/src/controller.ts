@@ -1,15 +1,15 @@
-import { customAlphabet } from 'nanoid';
-import { DrizzleD1Database } from 'drizzle-orm/d1';
-import * as models from './models';
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import { customAlphabet } from "nanoid";
+import * as models from "./models";
 
-const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4);
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 4);
 
 export async function sha256(file: File) {
   const fileData = await file.arrayBuffer();
-  const digest = await crypto.subtle.digest('SHA-256', fileData);
+  const digest = await crypto.subtle.digest("SHA-256", fileData);
   const array = Array.from(new Uint8Array(digest));
-  return array.map((b) => b.toString(16).padStart(2, '0')).join('');
+  return array.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export async function createShortUrl(
@@ -25,7 +25,7 @@ export async function createShortUrl(
     createdAt: new Date(),
     updatedAt: new Date(),
     expiresAt: expires ? new Date(expires) : null,
-    type: 'url',
+    type: "url",
     deleteToken: deleteToken || null,
   };
 
@@ -54,7 +54,7 @@ export async function createPaste(
     createdAt: new Date(),
     updatedAt: new Date(),
     expiresAt: expires ? new Date(expires) : null,
-    type: 'paste',
+    type: "paste",
     deleteToken: deleteToken || null,
   };
 
@@ -94,7 +94,7 @@ export async function createUpload(
     createdAt: new Date(),
     updatedAt: new Date(),
     expiresAt: expires ? new Date(expires) : null,
-    type: 'upload',
+    type: "upload",
     deleteToken: deleteToken || null,
   };
 
@@ -112,7 +112,8 @@ export async function createUpload(
 }
 
 export async function lookup(
-  db: DrizzleD1Database<typeof models>, id: string,
+  db: DrizzleD1Database<typeof models>,
+  id: string,
 ): Promise<null | models.JoinedShortLinkAny> {
   if (!/[a-zA-Z0-9]{4}/.test(id)) {
     return null;
@@ -129,24 +130,24 @@ export async function lookup(
   let data: models.ShortLinkAny | undefined;
 
   switch (stub.type) {
-    case 'url':
+    case "url":
       data = await db.query.shortLinkUrls.findFirst({
         where: eq(models.shortLinkUrls.id, id),
       });
       if (data === undefined) return null;
-      return { ...stub, type: 'url', ...data };
-    case 'paste':
+      return { ...stub, type: "url", ...data };
+    case "paste":
       data = await db.query.shortLinkPastes.findFirst({
         where: eq(models.shortLinkPastes.id, id),
       });
       if (data === undefined) return null;
-      return { ...stub, type: 'paste', ...data };
-    case 'upload':
+      return { ...stub, type: "paste", ...data };
+    case "upload":
       data = await db.query.shortLinkUploads.findFirst({
         where: eq(models.shortLinkUploads.id, id),
       });
       if (data === undefined) return null;
-      return { ...stub, type: 'upload', ...data };
+      return { ...stub, type: "upload", ...data };
     default:
       throw new Error(`Unexpected type ${stub.type}`);
   }
@@ -155,20 +156,19 @@ export async function lookup(
 export async function deleteItem(
   db: DrizzleD1Database<typeof models>,
   bucket: R2Bucket,
-  shortLink: { id: string, type: string },
+  shortLink: { id: string; type: string },
 ): Promise<void> {
   switch (shortLink.type) {
-    case 'url':
+    case "url":
       await db.delete(models.shortLinkUrls).where(eq(models.shortLinkUrls.id, shortLink.id));
       await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
       break;
-    case 'paste':
+    case "paste":
       await db.delete(models.shortLinkPastes).where(eq(models.shortLinkPastes.id, shortLink.id));
       await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
       break;
-    case 'upload':
-      await db.delete(models.shortLinkUploads)
-        .where(eq(models.shortLinkUploads.id, shortLink.id));
+    case "upload":
+      await db.delete(models.shortLinkUploads).where(eq(models.shortLinkUploads.id, shortLink.id));
       await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
       await bucket.delete(shortLink.id);
       break;

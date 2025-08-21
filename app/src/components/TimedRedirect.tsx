@@ -17,10 +17,14 @@ function TimedRedirect({ href }: { href: string }) {
     <>
       <Progress value={(timer / maxTimer) * 100} mb={8} />
       <Text>
-        Redirecting to <Text inherit variant="link" component="a" href={href}>{href}</Text> in {timer}...
+        Redirecting to{" "}
+        <Text inherit variant="link" component="a" href={href}>
+          {href}
+        </Text>{" "}
+        in {timer}...
       </Text>
     </>
-  )
+  );
 }
 
 export default TimedRedirect;

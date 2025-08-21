@@ -1,15 +1,15 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import historyReducer from './slices/history';
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import historyReducer from "./slices/history";
 
 export const store = configureStore({
   reducer: combineReducers({
-    history: historyReducer
+    history: historyReducer,
   }),
-  preloadedState: JSON.parse(localStorage.getItem('state') ?? "{}")
+  preloadedState: JSON.parse(localStorage.getItem("state") ?? "{}"),
 });
 
 store.subscribe(() => {
-  localStorage.setItem('state', JSON.stringify(store.getState()));
+  localStorage.setItem("state", JSON.stringify(store.getState()));
 });
 
 export type AppStore = typeof store;

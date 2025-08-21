@@ -1,21 +1,21 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+import { MantineProvider } from "@mantine/core";
 import * as Sentry from "@sentry/react";
-import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router';
-import { MantineProvider } from '@mantine/core';
-import { store } from './store.ts';
-import theme from './theme.ts';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router";
+import App from "./App.tsx";
+import { store } from "./store.ts";
+import theme from "./theme.ts";
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   tracesSampleRate: 0.1,
   sendDefaultPii: false,
-  integrations: []
+  integrations: [],
 });
 
-createRoot(document.getElementById('root')!, {
+createRoot(document.getElementById("root")!, {
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
     console.warn("Uncaught error", error, errorInfo.componentStack);
   }),
@@ -31,4 +31,4 @@ createRoot(document.getElementById('root')!, {
       </BrowserRouter>
     </Provider>
   </StrictMode>,
-)
+);

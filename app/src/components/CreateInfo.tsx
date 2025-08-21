@@ -1,17 +1,23 @@
-import { Text } from "@mantine/core"
-import type { UseFormReturnType } from "@mantine/form"
+import { Text } from "@mantine/core";
+import type { UseFormReturnType } from "@mantine/form";
+import type { AdvancedControlsFormValues } from "./AdvancedControls";
 
-export function CreateInfo({ form, type }: { form: UseFormReturnType<any>, type: string }) {
+export function CreateInfo<T extends AdvancedControlsFormValues>({
+  form,
+  type,
+}: {
+  form: UseFormReturnType<T>;
+  type: string;
+}) {
   return (
     <Text c="dimmed" size="sm">
       This will create
       {"aeiou".split("").includes(type.charAt(0)) ? " an " : " a "}
       {type} that
-      {form.values.expireDays == "-1"
+      {form.values.expireDays === "-1"
         ? " will never expire"
-        : ` will expire in ${form.values.expireDays} day${form.values.expireDays != "1" ? "s" : ""}`}
-      {form.values.deletable ? " and can be deleted by you" : ""}
-      .
+        : ` will expire in ${form.values.expireDays} day${form.values.expireDays !== "1" ? "s" : ""}`}
+      {form.values.deletable ? " and can be deleted by you" : ""}.
     </Text>
-  )
+  );
 }

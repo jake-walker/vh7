@@ -1,9 +1,9 @@
-import { Box, Title, Text, Badge, ActionIcon, Flex } from "@mantine/core";
-import { Link } from 'react-router';
-import { deleteWithToken, idToUrl, shortUrl } from '../controller';
-import { DateTime } from 'luxon';
+import { ActionIcon, Badge, Box, Flex, Text, Title } from "@mantine/core";
+import { DateTime } from "luxon";
 import { Trash } from "react-feather";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router";
+import { deleteWithToken, idToUrl, shortUrl } from "../controller";
 import { removeItem } from "../slices/history";
 import type { HistoryItemType } from "../types";
 
@@ -30,8 +30,8 @@ export function HistoryItem({ item }: { item: HistoryItemType }) {
   let type: string | null = null;
   let title: string | null = null;
   let description: string | null = null;
-  let created = item.createdAt;
-  let expires = item.expiresAt;
+  const created = item.createdAt;
+  const expires = item.expiresAt;
 
   switch (item.type) {
     case "url":
@@ -74,19 +74,36 @@ export function HistoryItem({ item }: { item: HistoryItemType }) {
             <Badge ml={10}>{type}</Badge>
           </Title>
           <Text c="dimmed">
-            <Text inherit variant="link" to={`/${item.id}`} component={Link} c="dimmed" td={expired ? "strikethrough" : undefined}>{url}</Text>
-            {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
-            &nbsp;&bull;
-            Created {formatDate(created)}
-            {expires && <>
-              &nbsp;&bull;
-              {expired ? " Expired" : " Expires"} {formatDate(expires)}
-            </>
-            }
+            <Text
+              inherit
+              variant="link"
+              to={`/${item.id}`}
+              component={Link}
+              c="dimmed"
+              td={expired ? "strikethrough" : undefined}
+            >
+              {url}
+            </Text>
+            {description && (
+              <Text inherit component="span">
+                &nbsp;&bull;&nbsp;{description}
+              </Text>
+            )}
+            &nbsp;&bull; Created {formatDate(created)}
+            {expires && (
+              <>
+                &nbsp;&bull;
+                {expired ? " Expired" : " Expires"} {formatDate(expires)}
+              </>
+            )}
           </Text>
         </div>
-        {item.deleteToken && <ActionIcon className="delete-button" color="red" size="lg" variant="light" onClick={del}><Trash size="18" /></ActionIcon>}
+        {item.deleteToken && (
+          <ActionIcon className="delete-button" color="red" size="lg" variant="light" onClick={del}>
+            <Trash size="18" />
+          </ActionIcon>
+        )}
       </Flex>
     </Box>
-  )
+  );
 }

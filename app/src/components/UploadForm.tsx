@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { upload } from "../controller";
-import { Dropzone, type FileRejection, type FileWithPath } from '@mantine/dropzone';
 import { Group, Text } from "@mantine/core";
-import { Upload } from "react-feather";
+import { Dropzone, type FileRejection, type FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
-import { AdvancedControls, initialValues, validationRules, type AdvancedControlsFormValues } from "./AdvancedControls";
-import { CreateInfo } from "./CreateInfo";
+import { useState } from "react";
+import { Upload } from "react-feather";
+import { upload } from "../controller";
 import type { CreateFormProps } from "../types";
+import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
+import { CreateInfo } from "./CreateInfo";
 
 type UploadFormValues = {} & AdvancedControlsFormValues;
 
@@ -15,11 +15,11 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
   const form = useForm<UploadFormValues>({
     initialValues: {
       ...initialValues,
-      expireDays: "30"
+      expireDays: "30",
     },
     validate: {
-      ...validationRules
-    }
+      ...validationRules,
+    },
   });
 
   const onDrop = async (files: FileWithPath[]) => {
@@ -41,15 +41,17 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
       const res = await upload(files[0]!, form.values.expireDays, form.values.deletable || false);
       onResponse(res);
     } catch (err) {
-      onError("Failed to upload: " + err);
+      onError(`Failed·to·upload:·${err}`);
     }
 
     setLoading(false);
-  }
+  };
 
   const onReject = (files: FileRejection[]) => {
-    onError("Failed to upload: " + files.map((file) => file.errors.map((error) => error.message).join(", ")).join(", ") + ".");
-  }
+    onError(
+      `Failed·to·upload:·${files.map((file) => file.errors.map((error) => error.message).join(", ")).join(", ")}.`,
+    );
+  };
 
   return (
     <>
@@ -57,11 +59,11 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
         id="upload-file"
         onDrop={onDrop}
         onReject={onReject}
-        maxSize={2.56e+8}
+        maxSize={2.56e8}
         multiple={false}
         loading={loading}
       >
-        <Group gap="xl" justify="center" style={{ minHeight: 220, pointerEvents: 'none' }}>
+        <Group gap="xl" justify="center" style={{ minHeight: 220, pointerEvents: "none" }}>
           <Upload size={64} />
           <div>
             <Text size="xl" inline>
@@ -76,5 +78,5 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
       <AdvancedControls form={form} maxDays={30} />
       <CreateInfo form={form} type="upload" />
     </>
-  )
+  );
 }
