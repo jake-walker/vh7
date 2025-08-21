@@ -48,8 +48,7 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
 	"vars": {
-    "VH7_ENV": "development",
-    "VH7_ADMIN_TOKEN": "keyboardcat"
+    "VH7_ENV": "development"
   },
 	/**
 	 * Note: Use secrets to store sensitive data.
@@ -67,6 +66,11 @@
 	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
   "env": {
     "production": {
+      "route": {
+        "custom_domain": true,
+        "zone_name": "vh7.uk",
+        "pattern": "vh7.uk"
+      },
       "vars": {
         "VH7_ENV": "production",
       },
@@ -74,8 +78,8 @@
         {
           "binding": "DB",
           "database_name": "vh7",
-          "database_id": "8248b645-7133-4795-a343-e9273706f77c",
-          "migrations_dir": "migrations"
+          "database_id": "7f59f381-935a-438d-9f83-509996e0c43f",
+          "migrations_dir": "./worker/migrations"
         }
       ],
       "r2_buckets": [

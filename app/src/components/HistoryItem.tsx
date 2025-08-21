@@ -36,7 +36,7 @@ export function HistoryItem({ item }: { item: HistoryItemType }) {
   switch (item.type) {
     case "url":
       type = "Shorten";
-      title = shortUrl(item.id);
+      title = shortUrl(item.url);
       description = null;
       break;
     case "paste":
