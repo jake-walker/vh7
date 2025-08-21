@@ -1,7 +1,6 @@
 import { Box, Title, Text, Badge, ActionIcon, Flex } from "@mantine/core";
-import urljoin from 'url-join';
 import { Link } from 'react-router';
-import { baseUrl, deleteWithToken, shortUrl } from '../controller';
+import { deleteWithToken, idToUrl, shortUrl } from '../controller';
 import { DateTime } from 'luxon';
 import { Trash } from "react-feather";
 import { useDispatch } from "react-redux";
@@ -26,7 +25,7 @@ function hasExpired(date: number | string | Date | null | undefined) {
 
 export function HistoryItem({ item }: { item: HistoryItemType }) {
   const dispatch = useDispatch();
-  const url = urljoin(baseUrl, item.id);
+  const url = idToUrl(item.id);
 
   let type: string | null = null;
   let title: string | null = null;
@@ -75,7 +74,7 @@ export function HistoryItem({ item }: { item: HistoryItemType }) {
             <Badge ml={10}>{type}</Badge>
           </Title>
           <Text c="dimmed">
-            <Text inherit variant="link" to={`/view/${item.id}`} component={Link} c="dimmed" td={expired ? "strikethrough" : undefined}>{url}</Text>
+            <Text inherit variant="link" to={`/${item.id}`} component={Link} c="dimmed" td={expired ? "strikethrough" : undefined}>{url}</Text>
             {description && <Text inherit component="span">&nbsp;&bull;&nbsp;{description}</Text>}
             &nbsp;&bull;
             Created {formatDate(created)}

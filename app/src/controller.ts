@@ -2,11 +2,14 @@ import createClient from "openapi-fetch";
 import type { paths, operations } from "./api.g";
 import type { ZodType } from "zod";
 
-export const baseUrl = import.meta.env.PROD
-  ? "https://vh7.uk/"
-  : "http://localhost:8787/";
+const baseUrl = import.meta.env.MODE === "development" ? "http://localhost:8787" : "";
 
 const client = createClient<paths>({ baseUrl });
+
+export function idToUrl(id: string) {
+  const u = new URL(import.meta.env.MODE !== "development" ? window.location.href : baseUrl);
+  return `${u.protocol}//${u.hostname}${u.port ? ":" + u.port : ""}/${encodeURIComponent(id)}`;
+}
 
 export const zodFormValidator = (schema: ZodType) => (value: unknown) => {
   const result = schema.safeParse(value);
@@ -54,6 +57,7 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
   });
 
   if (error !== undefined) {
+    console.error("Failed to create short URL:", error);
     throw new Error(`Failed to create short URL: ${error}`);
   }
 
@@ -73,6 +77,7 @@ export async function paste(code: string, language: string | null, expiryDays: s
   });
 
   if (error !== undefined) {
+    console.error("Failed to create paste:", error);
     throw new Error(`Failed to create paste: ${error}`);
   }
 
@@ -104,15 +109,16 @@ export async function upload(file: File, expiryDays: string | null, deletable: b
 export async function deleteWithToken(id: string, token: string) {
   const { data, error } = await client.DELETE("/api/delete/{id}", {
     params: {
-      path: { id }
-    },
-    data: {
-      deleteToken: token,
-    },
+      path: { id },
+      query: {
+        deleteToken: token
+      }
+    }
   });
 
   if (error !== undefined) {
-    throw new Error(`Failed to create paste: ${error}`);
+    console.error("Failed to delete:", error);
+    throw new Error(`Failed to delete: ${error}`);
   }
 
   return data;
@@ -126,7 +132,8 @@ export async function info(id: string) {
   });
 
   if (error !== undefined) {
-    throw new Error(`Failed to create paste: ${error}`);
+    console.error("Failed to get info:", error);
+    throw new Error(`Failed to get info: ${error}`);
   }
 
   return data;

@@ -12,7 +12,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Main />} />
       <Route path="/about" element={<About />} />
-      <Route path="/view/:link" element={<View />} />
+      <Route path="/:link" element={<View />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

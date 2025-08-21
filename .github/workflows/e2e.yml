@@ -7,48 +7,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node
-        uses: actions/setup-node@v2.1.2
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Get cache directory
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: 24
+          cache: "pnpm"
       - name: Install dependencies
-        run: |
-          yarn install --dev
-          yarn global add wrangler
+        run: pnpm install
       - name: Migrate database
-        working-directory: ./worker
-        run: wrangler d1 migrations apply DB --local
-      - name: Run API
-        working-directory: ./worker
-        run: |
-          wrangler dev --port 8787 > ../worker.log 2>&1 &
-          npx -y wait-on --timeout 30000 http-get://localhost:8787
-      - name: Build & Run App
+        run: pnpm dlx wrangler d1 migrations apply DB --local
+      - name: Build frontend
         working-directory: ./app
-        run: |
-          yarn run build --mode testing
-          yarn run preview --mode testing > ../app.log 2>&1 &
-          # npx -y wait-on --timeout 30000 http://localhost:3000
+        run: pnpm build
         env:
           VITE_SENTRY_DSN: ${{ secrets.APP_SENTRY_DSN }}
+      - name: Run app
+        run: |
+          pnpm dlx wrangler dev > ./worker.log 2>&1 &
+          pnpm dlx wait-on --timeout 30000 http-get://localhost:8787
       - name: Cypress run
         working-directory: ./app
-        run: yarn run cypress run --e2e --record true
+        run: pnpm cypress run --e2e --record true --config baseUrl=http://localhost:8787
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Print Logs
         if: ${{ failure() }}
-        run: |
-          cat ./worker.log
-          cat ./app.log
+        run: cat ./worker.log

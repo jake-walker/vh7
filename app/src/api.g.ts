@@ -119,7 +119,7 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760881868781
+                     * @default 1760987919326
                      * @example 1735689600000
                      */
                     expires: number | null;
@@ -141,7 +141,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "url";
                     };
                 };
             };
@@ -168,7 +169,7 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760881868782
+                     * @default 1760987919327
                      * @example 1735689600000
                      */
                     expires: number | null;
@@ -191,7 +192,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "paste";
                     };
                 };
             };
@@ -212,7 +214,7 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760881868783
+                     * @default 1760987919327
                      * @example 1735689600000
                      */
                     expires: number | null;
@@ -221,7 +223,7 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760881868783
+                     * @default 1760987919327
                      * @example 1735689600000
                      */
                     expires: number | null;
@@ -245,7 +247,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "upload";
                     };
                 };
             };
@@ -274,7 +277,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "url";
                     } | {
                         id: string;
                         code: string;
@@ -282,7 +286,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "paste";
                     } | {
                         id: string;
                         filename: string;
@@ -291,7 +296,8 @@ export interface operations {
                         createdAt: string;
                         updatedAt: string;
                         expiresAt: string | null;
-                        type: string;
+                        /** @constant */
+                        type: "upload";
                     };
                 };
             };
@@ -299,20 +305,16 @@ export interface operations {
     };
     deleteApiDeleteById: {
         parameters: {
-            query?: never;
+            query: {
+                deleteToken: string;
+            };
             header?: never;
             path: {
                 id: string;
             };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    deleteToken: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description Successful response */
             200: {

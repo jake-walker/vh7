@@ -8,19 +8,20 @@ import {
 import {
   createPaste, createShortUrl, createUpload, deleteItem, lookup,
 } from './controller';
-import { checkDirectUserAgent, getFrontendUrl, isValidId } from './helpers';
+import { checkDirectUserAgent, isValidId } from './helpers';
 import * as models from './models';
 import cleanup from './cleanup';
 import { describeRoute, openAPISpecs } from 'hono-openapi';
 import { resolver, validator as zValidator } from "hono-openapi/zod";
 import { Scalar } from "@scalar/hono-api-reference";
-import z from "zod";
+import z, { url } from "zod";
 
 export type Bindings = {
   DB: D1Database,
   VH7_ENV: string,
   UPLOADS: R2Bucket,
-  VH7_ADMIN_TOKEN: string
+  VH7_ADMIN_TOKEN: string,
+  ASSETS: { fetch: typeof fetch }
 };
 
 type Env = {
@@ -87,7 +88,7 @@ app.post('/api/shorten',
     }
 
     const shortUrl = await createShortUrl(c.var.db, parsed.url, parsed.expires,
-      parsed.deleteToken);
+      parsed.deleteToken ?? undefined);
     return c.json(shortUrl);
   });
 
@@ -112,8 +113,8 @@ app.post('/api/paste',
       return c.status(500);
     }
 
-    const paste = await createPaste(c.var.db, parsed.code, parsed.language,
-      parsed.expires, parsed.deleteToken);
+    const paste = await createPaste(c.var.db, parsed.code, parsed.language ?? null,
+      parsed.expires, parsed.deleteToken ?? undefined);
     return c.json(paste);
   });
 
@@ -145,7 +146,7 @@ app.post('/api/upload',
     }
 
     const upload = await createUpload(c.var.db, c.env.UPLOADS, parsed.file,
-      parsed.expires, parsed.deleteToken);
+      parsed.expires, parsed.deleteToken ?? undefined);
     return c.json(upload);
   });
 
@@ -215,11 +216,11 @@ app.delete('/api/delete/:id',
       }
     }
   }),
-  zValidator("json", deleteRequestSchema),
+  zValidator("query", deleteRequestSchema),
   withDb,
   async (c) => {
     const id = c.req.param('id');
-    const parsed = c.req.valid("json");
+    const parsed = c.req.valid("query");
 
     if (c.var.db === undefined) {
       return c.status(500);
@@ -271,7 +272,6 @@ app.get('/:id',
   withDb,
   async (c) => {
     let id: string | undefined = c.req.param('id');
-    const frontendUrl = getFrontendUrl(c.env.VH7_ENV);
     const direct = c.req.query('direct') !== undefined || checkDirectUserAgent(c.req.header('User-Agent'));
 
     // sanitise id
@@ -280,11 +280,8 @@ app.get('/:id',
     }
 
     if (direct === false) {
-      if (!id) {
-        return c.redirect(frontendUrl, 301);
-      }
-
-      return c.redirect(new URL(`/view/${id}`, frontendUrl).href, 301);
+      // serve static
+      return c.env.ASSETS.fetch(new Request(new URL("/", c.req.url), c.req.raw));
     }
 
     if (!id) {
@@ -329,5 +326,7 @@ app.get('/:id',
 
     return c.text('Short link not found', 404);
   });
+
+app.get("*", (c) => c.env.ASSETS.fetch(c.req.raw));
 
 export default app;

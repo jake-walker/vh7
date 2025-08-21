@@ -8,7 +8,6 @@
     "@libsql/client": "^0.15.12",
     "@typescript-eslint/eslint-plugin": "^8.40.0",
     "@typescript-eslint/parser": "^8.40.0",
-    "better-sqlite3": "^12.2.0",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9.33.0",
     "eslint-config-airbnb-base": "^15.0.0",

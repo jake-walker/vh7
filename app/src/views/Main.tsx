@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { addItem } from '../slices/history';
 import { HistoryItem } from '../components/HistoryItem';
 import Header from '../components/Header';
-import { type AnyShortLinkApiResponse, type AnyApiResponseHandler, type ApiErrorHandler } from '../types';
+import { type AnyShortLinkApiResponse, type AnyApiResponseHandler, type ApiErrorHandler } from '../types.d';
 import { useAppSelector } from '../hooks';
 
 function Main() {

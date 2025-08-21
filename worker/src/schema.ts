@@ -4,7 +4,7 @@ import { createSelectSchema } from 'drizzle-zod';
 import * as models from './models';
 
 const baseRequestSchema = z.object({
-  expires: z.number().int().positive().nullable()
+  expires: z.coerce.number().int().positive().nullable()
     .refine((val) => {
       if (val === null || val === undefined) return true;
       const min = new Date();
@@ -68,7 +68,9 @@ export const deleteRequestSchema = z.object({
 const itemResponseSchema = createSelectSchema(models.shortLinks).omit({ deleteToken: true });
 export const shortLinkResponseSchema = z.object({
   ...createSelectSchema(models.shortLinkUrls).shape,
-  ...itemResponseSchema.shape
+  ...itemResponseSchema.extend({
+    type: z.literal("url"),
+  }).shape
 }).meta({
   example: {
     id: "abcd",
@@ -81,7 +83,9 @@ export const shortLinkResponseSchema = z.object({
 });
 export const pasteResponseSchema = z.object({
   ...createSelectSchema(models.shortLinkPastes).shape,
-  ...itemResponseSchema.shape
+  ...itemResponseSchema.extend({
+    type: z.literal("paste"),
+  }).shape
 }).meta({
   example: {
     id: "abcd",
@@ -95,7 +99,9 @@ export const pasteResponseSchema = z.object({
 });
 export const uploadResponseSchema = z.object({
   ...createSelectSchema(models.shortLinkUploads).shape,
-  ...itemResponseSchema.shape
+  ...itemResponseSchema.extend({
+    type: z.literal("upload"),
+  }).shape
 }).meta({
   example: {
     id: "abcd",

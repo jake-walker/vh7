@@ -8,50 +8,50 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Setup Node
-        uses: actions/setup-node@v2.1.2
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Get cache directory
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          node-version: 24
+          cache: "pnpm"
       - name: Install dependencies
-        working-directory: ./worker
-        run: |
-          yarn install --dev
-          yarn global add wrangler
+        run: pnpm install
       - name: Migrate database
-        working-directory: ./worker
-        run: wrangler d1 migrations apply DB --local
+        run: pnpm dlx wrangler d1 migrations apply DB --local
       - name: Lint
         working-directory: ./worker
-        run: yarn run lint
+        run: pnpm run lint
       - name: Test
         working-directory: ./worker
-        run: yarn run test
+        run: pnpm run test
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2.1.2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 20
-      - name: Publish
-        working-directory: ./worker
+          version: 10
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "pnpm"
+      - name: Install dependencies
         run: |
-          yarn --prod
-          npx wrangler d1 migrations apply DB --env production --remote
-          npx wrangler deploy --env production
+          pnpm install
+          pnpm add --global wrangler
+      - name: Build frontend
+        working-directory: ./app
+        run: pnpm build
+      - name: Publish
+        run: |
+          pnpm dlx wrangler d1 migrations apply DB --env production --remote
+          pnpm dlx wrangler deploy --env production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}

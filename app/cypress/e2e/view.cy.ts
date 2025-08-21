@@ -1,24 +1,26 @@
 /// <reference types="Cypress" />
 describe('View Page', () => {
   it('can view a short link', () => {
+    const baseUrl = new URL(Cypress.config().baseUrl ?? "https://localhost:5173");
+
     // first, create a new short link
     cy.request({
       method: 'POST',
       url: 'http://localhost:8787/api/shorten',
       body: {
-        url: 'http://localhost:3000/testing123'
+        url: new URL("/testing123", baseUrl).toString()
       }
     }).then((res) => {
       // then visit it
-      cy.visit(`/view/${res.body.id}`);
+      cy.visit(`/${res.body.id}`);
 
       // check the page title is equal to a pretty url
-      cy.get('.mantine-Container-root > .mantine-Title-root').should('have.text', 'localhost:3000/testing123');
+      cy.get('.mantine-Container-root > .mantine-Title-root').should('have.text', `${baseUrl.hostname}${baseUrl.port ? ":" + baseUrl.port : ""}/testing123`);
 
       // check we have redirected to the right place
       cy.location('href', {
         timeout: 8000
-      }).should('eq', 'http://localhost:3000/testing123');
+      }).should('eq', new URL("/testing123", baseUrl).toString());
     });
   });
 
@@ -35,7 +37,7 @@ describe('View Page', () => {
       }).then((res) => {
         // then visit it
         const id = res.body.id;
-        cy.visit(`/view/${id}`);
+        cy.visit(`/${id}`);
 
         // check the page title is expected for a paste
         cy.get('.mantine-Container-root > .mantine-Title-root').should('have.text', 'Paste');
@@ -57,7 +59,7 @@ describe('View Page', () => {
 
   it('can view an upload', () => {
     // the window object is needed for making a form request with a file
-    cy.window().then((win) => {
+    cy.window().then((_win) => {
       cy.fixture('image.png', "binary").then((image) => {
         const imageBlob = Cypress.Blob.binaryStringToBlob(image, 'image/png');
 
@@ -76,7 +78,7 @@ describe('View Page', () => {
           // then visit it
           const json = JSON.parse(new TextDecoder().decode(res.body));
           const id = json.id;
-          cy.visit(`/view/${id}`);
+          cy.visit(`/${id}`);
 
           // check the title of the page matches the uploaded filename
           cy.get('.mantine-Container-root > .mantine-Title-root').should('have.text', 'image.png');

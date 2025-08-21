@@ -5,12 +5,6 @@ export function checkDirectUserAgent(userAgent: string | undefined): boolean {
     || ua.includes('whatsapp')); // whatsapp & signal
 }
 
-export function getFrontendUrl(env: string): string {
-  return env === 'development' || env === 'testing'
-    ? 'http://localhost:3000'
-    : 'https://vh7.uk';
-}
-
 export function isValidId(id: string): boolean {
   return /^[a-zA-Z0-9]{4}$/.test(id);
 }

@@ -2,14 +2,13 @@ import { useClipboard } from '@mantine/hooks';
 import { Alert, Text, Popover, Button, Group, Space, type AlertProps } from '@mantine/core';
 import { CheckCircle } from 'react-feather';
 import { AwesomeQRCode } from "@awesomeqr/react";
-import urljoin from 'url-join';
-import { baseUrl } from '../controller';
 import type { AnyShortLinkApiResponse } from '../types';
+import { idToUrl } from '../controller';
 
 export function SuccessAlert({ response, clear, ...props }: { response: AnyShortLinkApiResponse, clear: () => void } & AlertProps) {
   const clipboard = useClipboard({ timeout: 500 });
 
-  const url = urljoin(baseUrl, response.id);
+  const url = idToUrl(response.id);
 
   return (
     <Alert id="success-alert" icon={<CheckCircle size={32} />} title="Shortened!" color="green" withCloseButton onClose={clear} {...props}>

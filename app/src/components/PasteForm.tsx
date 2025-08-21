@@ -6,7 +6,7 @@ import { Button, LoadingOverlay, Select, Textarea } from '@mantine/core';
 import { Send } from 'react-feather';
 import { AdvancedControls, initialValues, validationRules, type AdvancedControlsFormValues } from './AdvancedControls';
 import { CreateInfo } from './CreateInfo';
-import languages from '../languages.json';
+import languages from '../../../languages.json';
 import type { CreateFormProps } from '../types';
 
 type PasteFormValues = {

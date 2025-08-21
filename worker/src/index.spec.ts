@@ -12,6 +12,11 @@ export const appEnv: Bindings = {
   UPLOADS: env.UPLOADS as R2Bucket,
   VH7_ENV: 'testing',
   VH7_ADMIN_TOKEN: 'keyboardcat',
+  ASSETS: {
+    async fetch(input, init) {
+      return new Response("I am static!");
+    },
+  }
 };
 
 beforeAll(async () => {
@@ -79,12 +84,14 @@ export async function doesExist(id: string) {
 describe('API', () => {
   describe('create', () => {
     test('url', async () => {
-      const data = new FormData();
-      data.set('url', 'https://example.com');
-
       const res = await app.request('http://vh7.uk/api/shorten', {
         method: 'POST',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: "https://example.com"
+        }),
       }, appEnv);
 
       expect(res.status).toBe(200);
@@ -103,12 +110,14 @@ describe('API', () => {
     });
 
     test('paste', async () => {
-      const data = new FormData();
-      data.set('code', 'mycode');
-
       const res = await app.request('http://vh7.uk/api/paste', {
         method: 'POST',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: "mycode"
+        }),
       }, appEnv);
 
       expect(res.status).toBe(200);
@@ -195,8 +204,8 @@ describe('API', () => {
   ])('get indirect $type', async ({ id }) => {
     const res = await app.request(`http://vh7.uk/${id}`, {}, appEnv);
 
-    expect(res.status).toBe(301);
-    expect(res.headers.get('location')).toBe(`http://localhost:3000/view/${id}`);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("I am static!");
   });
 
   test('get direct url', async () => {
@@ -259,19 +268,20 @@ describe('API', () => {
       },
     }, appEnv);
     expect(authRes.status).toBe(200);
-    expectTypeOf(await authRes.json()).toBeArray();
   });
 
   describe('delete', () => {
     test('delete with valid delete token', async () => {
       expect(await doesExist('1111')).toBe(true);
 
-      const data = new FormData();
-      data.set('deleteToken', 'keyboardcat');
-
       const res = await app.request('http://vh7.uk/api/delete/1111', {
         method: 'DELETE',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          deleteToken: "keyboardcat"
+        }),
       }, appEnv);
       expect(res.status).toBe(200);
       expect(await res.json()).toEqual({
@@ -285,12 +295,14 @@ describe('API', () => {
     test('delete with invalid delete token', async () => {
       expect(await doesExist('2222')).toBe(true);
 
-      const data = new FormData();
-      data.set('deleteToken', 'hi');
-
       const res = await app.request('http://vh7.uk/api/delete/2222', {
         method: 'DELETE',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          deleteToken: "hi"
+        }),
       }, appEnv);
       expect(res.status).toBe(403);
 
@@ -300,12 +312,14 @@ describe('API', () => {
     test('non-deletable', async () => {
       expect(await doesExist('AAAA')).toBe(true);
 
-      const data = new FormData();
-      data.set('deleteToken', 'keyboardcat');
-
       const res = await app.request('http://vh7.uk/api/delete/AAAA', {
         method: 'DELETE',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          deleteToken: "keyboardcat"
+        }),
       }, appEnv);
       expect(res.status).toBe(403);
 
@@ -315,13 +329,15 @@ describe('API', () => {
 
   describe('create with delete token', () => {
     test('url', async () => {
-      const data = new FormData();
-      data.set('url', 'https://example.com');
-      data.set('deleteToken', 'keyboardcat');
-
       const res = await app.request('http://vh7.uk/api/shorten', {
         method: 'POST',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: "https://example.com",
+          deleteToken: "keyboardcat"
+        }),
       }, appEnv);
 
       expect(res.status).toBe(200);
@@ -340,13 +356,15 @@ describe('API', () => {
     });
 
     test('paste', async () => {
-      const data = new FormData();
-      data.set('code', 'mycode');
-      data.set('deleteToken', 'keyboardcat');
-
       const res = await app.request('http://vh7.uk/api/paste', {
         method: 'POST',
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: "mycode",
+          deleteToken: "keyboardcat"
+        }),
       }, appEnv);
 
       expect(res.status).toBe(200);

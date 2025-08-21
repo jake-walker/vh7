@@ -2,7 +2,7 @@ import { Container, Title, Text, Box, Button, Alert } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import Header from "../components/Header";
-import { info as getInfo, shortUrl, baseUrl } from '../controller';
+import { info as getInfo, idToUrl, shortUrl } from '../controller';
 import NotFound from "./NotFound";
 import { CodeHighlight } from "@mantine/code-highlight";
 import { AlertOctagon, Download } from "react-feather";
@@ -10,21 +10,25 @@ import TimedRedirect from "../components/TimedRedirect";
 
 function View() {
   const { link } = useParams();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<Awaited<ReturnType<typeof getInfo>> | null>(null);
+  const [error, setError] = useState<any>(null);
+  const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
+    if (link === undefined) return;
+
     getInfo(link)
       .then((data) => setData(data))
       .catch((err) => {
         if (err.response && err.response.status == 404) {
-          setData(false);
+          setNotFound(true)
         } else {
-          setData({ error: err });
+          setError(error);
         }
       });
-  }, []);
+  }, [link]);
 
-  if (data === false) {
+  if (notFound) {
     return <NotFound
       title="That short link was not found."
       description="The short link you are trying to visit does not exist or has expired."
@@ -36,13 +40,13 @@ function View() {
   let content;
 
   if (data !== null) {
-    if (data.error) {
+    if (error) {
       title = "Something has gone wrong!";
-      content = <Text mt={6}>Error: {data.error.message}. Please try again.</Text>;
+      content = <Text mt={6}>Error: {error.message}. Please try again.</Text>;
     } else {
       switch (data.type) {
         case "url":
-          title = shortUrl(data.url, 30);
+          title = shortUrl(data.url);
           content = <>
             <TimedRedirect href={data.url} />
           </>;
@@ -50,11 +54,11 @@ function View() {
         case "paste":
           title = "Paste";
           content = <>
-            <CodeHighlight language={data.language} code={data.code} id="paste-content" />
+            <CodeHighlight language={data.language ?? undefined} code={data.code} id="paste-content" />
             <Button
               leftSection={<Download size={16} />}
               component="a"
-              href={`${baseUrl}${link}?direct=1`}
+              href={`${idToUrl(link!)}?direct=1`}
               mt={10}
             >
               Download
@@ -76,17 +80,17 @@ function View() {
               Be cautious if downloading files from someone you do not know.
             </Alert>
 
-            <Text style={{ overflowX: "auto" }}>
+            <Box style={{ overflowX: "auto" }}>
               <ul>
                 <li><b>SHA256 Hash:</b> <span id="upload-sha256">{data.hash}</span></li>
                 <li><b>File Size:</b> {size}</li>
               </ul>
-            </Text>
+            </Box>
 
             <Button
               leftSection={<Download size={16} />}
               component="a"
-              href={`${baseUrl}${link}?direct=1`}
+              href={`${idToUrl(link!)}?direct=1`}
             >
               Download {data.filename}
             </Button>
@@ -102,7 +106,7 @@ function View() {
       <Header small />
       <Container my={20}>
         <Title order={2}>{title}</Title>
-        {subtitle && <Text color="dimmed">{subtitle}</Text>}
+        {subtitle && <Text c="dimmed">{subtitle}</Text>}
 
         <Box my={16}>
           {content}
