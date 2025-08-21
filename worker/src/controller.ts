@@ -111,6 +111,34 @@ export async function createUpload(
   return { ...stub, ...upload };
 }
 
+export async function createEvent(
+  db: DrizzleD1Database<typeof models>,
+  expires: number | null,
+  deleteToken: string | undefined,
+  data: Omit<models.NewShortLinkEvent, "id">
+): Promise<models.ShortLink & models.ShortLinkEvent> {
+  const id = nanoid();
+
+  const stub: models.ShortLink = {
+    id,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    expiresAt: expires ? new Date(expires) : null,
+    type: "event",
+    deleteToken: deleteToken || null,
+  };
+
+  const event: models.NewShortLinkEvent = {
+    id,
+    ...data
+  };
+
+  await db.insert(models.shortLinks).values(stub).run();
+  await db.insert(models.shortLinkEvents).values(event).run();
+
+  return { ...stub, ...event, description: event.description ?? null, location: event.location ?? null, endDate: event.endDate ?? null, allDay: event.allDay ?? false };
+}
+
 export async function lookup(
   db: DrizzleD1Database<typeof models>,
   id: string,
@@ -148,6 +176,12 @@ export async function lookup(
       });
       if (data === undefined) return null;
       return { ...stub, type: "upload", ...data };
+    case "event":
+      data = await db.query.shortLinkEvents.findFirst({
+        where: eq(models.shortLinkEvents.id, id)
+      });
+      if (data === undefined) return null;
+      return { ...stub, type: "event", ...data };
     default:
       throw new Error(`Unexpected type ${stub.type}`);
   }
@@ -171,6 +205,10 @@ export async function deleteItem(
       await db.delete(models.shortLinkUploads).where(eq(models.shortLinkUploads.id, shortLink.id));
       await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
       await bucket.delete(shortLink.id);
+      break;
+    case "event":
+      await db.delete(models.shortLinkEvents).where(eq(models.shortLinkEvents.id, shortLink.id));
+      await db.delete(models.shortLinks).where(eq(models.shortLinks.id, shortLink.id));
       break;
     default:
       throw new Error(`Unexpected short link type: ${shortLink.type}`);

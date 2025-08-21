@@ -4,13 +4,17 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { describeRoute, openAPISpecs } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
+import ics from "ics";
 import z from "zod";
 import cleanup from "./cleanup";
-import { createPaste, createShortUrl, createUpload, deleteItem, lookup } from "./controller";
-import { checkDirectUserAgent, isValidId } from "./helpers";
+import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, lookup } from "./controller";
+import { checkDirectUserAgent, createIcsEventAsync, isValidId } from "./helpers";
+import { buildIcs } from "./ics";
 import * as models from "./models";
 import {
   deleteRequestSchema,
+  eventRequestSchema,
+  eventResponseSchema,
   pasteRequestSchema,
   pasteResponseSchema,
   shortLinkRequestSchema,
@@ -97,7 +101,12 @@ app.post(
       return c.status(500);
     }
 
-    const shortUrl = await createShortUrl(c.var.db, parsed.url, parsed.expires, parsed.deleteToken ?? undefined);
+    const shortUrl = await createShortUrl(
+      c.var.db,
+      parsed.url,
+      parsed.expires ?? null,
+      parsed.deleteToken ?? undefined,
+    );
     return c.json(shortUrl);
   },
 );
@@ -128,7 +137,7 @@ app.post(
       c.var.db,
       parsed.code,
       parsed.language ?? null,
-      parsed.expires,
+      parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
     );
     return c.json(paste);
@@ -155,7 +164,7 @@ app.post(
 
     const max = new Date();
     max.setDate(max.getDate() + 31);
-    if (parsed.expires === null || parsed.expires > max.getTime()) {
+    if (parsed.expires === null || parsed.expires === undefined || parsed.expires > max.getTime()) {
       parsed.expires = max.getTime();
     }
 
@@ -167,10 +176,46 @@ app.post(
       c.var.db,
       c.env.UPLOADS,
       parsed.file,
-      parsed.expires,
+      parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
     );
     return c.json(upload);
+  },
+);
+
+app.post(
+  "/api/event",
+  describeRoute({
+    description: "Create a new shared calendar event",
+    responses: {
+      200: {
+        description: "Successful response",
+        content: {
+          "application/json": {
+            schema: resolver(eventResponseSchema),
+          },
+        },
+      },
+    },
+  }),
+  zValidator("json", eventRequestSchema),
+  withDb,
+  async (c) => {
+    const parsed = c.req.valid("json");
+
+    if (c.var.db === undefined) {
+      return c.status(500);
+    }
+
+    const event = await createEvent(c.var.db, parsed.expires ?? null, parsed.deleteToken ?? undefined, {
+      startDate: parsed.startDate,
+      title: parsed.title,
+      allDay: parsed.allDay,
+      description: parsed.description,
+      endDate: parsed.endDate,
+      location: parsed.location,
+    });
+    return c.json(event);
   },
 );
 
@@ -183,7 +228,7 @@ app.get(
         description: "Successful response",
         content: {
           "application/json": {
-            schema: resolver(z.union([shortLinkResponseSchema, pasteResponseSchema, uploadResponseSchema])),
+            schema: resolver(z.union([shortLinkResponseSchema, pasteResponseSchema, uploadResponseSchema, eventResponseSchema])),
           },
         },
       },
@@ -353,6 +398,16 @@ app.get("/:id", withDb, async (c) => {
           "Cache-Control": "max-age=86400",
           etag: obj.httpEtag,
         });
+      }
+      case "event": {
+        return c.text(buildIcs(shortlink, new URL(c.req.url).hostname),
+          200,
+          {
+            "Content-Type": "text/calendar",
+            "Content-Disposition": `attachment; filename="vh7-event-${shortlink.id}.ics"`,
+            "Cache-Control": "max-age=86400",
+          }
+        );
       }
       default:
         return c.status(500);

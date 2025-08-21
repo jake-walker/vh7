@@ -15,6 +15,13 @@
       "when": 1713003113340,
       "tag": "0001_romantic_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1755812012065,
+      "tag": "0002_flimsy_gambit",
+      "breakpoints": true
     }
   ]
 }

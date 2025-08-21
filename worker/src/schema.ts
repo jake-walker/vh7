@@ -4,7 +4,7 @@ import languages from "../../languages.json";
 import * as models from "./models";
 
 const baseRequestSchema = z.object({
-  expires: z.coerce
+  expires: z.optional(z.coerce
     .number()
     .int()
     .positive()
@@ -23,7 +23,7 @@ const baseRequestSchema = z.object({
       const d = new Date();
       d.setDate(d.getDate() + 60);
       return d.getTime();
-    })
+    }))
     .meta({
       description:
         "Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).",
@@ -83,6 +83,18 @@ const baseUploadRequestSchema = z
 
 export const uploadRequestSchema = baseUploadRequestSchema.and(baseRequestSchema);
 
+const baseEventRequestSchema = z.object({
+  title: z.string().meta({
+    example: "My event"
+  }),
+  description: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date().optional().nullable(),
+  allDay: z.boolean().default(false).optional()
+}).refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, { error: "End date must be after start date" });
+export const eventRequestSchema = baseEventRequestSchema.and(baseRequestSchema);
+
 export const deleteRequestSchema = z.object({
   deleteToken: z.string().max(128),
 });
@@ -140,5 +152,27 @@ export const uploadResponseSchema = z
       updatedAt: "2025-01-01T00:00:00.000Z",
       expiresAt: null,
       type: "upload",
+    },
+  });
+export const eventResponseSchema = z
+  .object({
+    ...createSelectSchema(models.shortLinkEvents).shape,
+    ...itemResponseSchema.extend({
+      type: z.literal("event"),
+    }).shape,
+  })
+  .meta({
+    example: {
+      id: "abcd",
+      title: "Coffee Morning",
+      description: "Join us for a delicious hot cup of joe to start your morning!",
+      location: "Hacker Cafe",
+      startDate: "2025-08-01T09:00:00.000Z",
+      endDate: "2025-08-01T10:30:00.000Z",
+      allDay: false,
+      createdAt: "2025-01-01T00:00:00.000Z",
+      updatedAt: "2025-01-01T00:00:00.000Z",
+      expiresAt: null,
+      type: "event",
     },
   });

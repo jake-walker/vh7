@@ -27,6 +27,7 @@ beforeAll(async () => {
   await d.delete(models.shortLinkUrls);
   await d.delete(models.shortLinkPastes);
   await d.delete(models.shortLinkUploads);
+  await d.delete(models.shortLinkEvents);
   await d.delete(models.shortLinks);
 
   // insert test links
@@ -57,6 +58,12 @@ beforeAll(async () => {
         createdAt: new Date(2024, 0, 1),
         updatedAt: new Date(2024, 0, 1),
         expiresAt: new Date(2000, 0, 1),
+      },
+      {
+        id: "EEEE",
+        type: "event",
+        createdAt: new Date(2024, 0, 1),
+        updatedAt: new Date(2024, 0, 1),
       },
       {
         id: "1111",
@@ -99,6 +106,18 @@ beforeAll(async () => {
       size: file.size,
     },
   ]);
+
+  await d.insert(models.shortLinkEvents).values([
+    {
+      id: "EEEE",
+      title: "My Event",
+      startDate: new Date(2025, 0, 1, 0, 0, 0, 0),
+      endDate: null,
+      description: null,
+      location: null,
+      allDay: false,
+    }
+  ])
 
   await appEnv.UPLOADS.put("CCCC", file);
 });
@@ -174,6 +193,42 @@ describe("API", () => {
       );
     });
 
+    test("event", async () => {
+      const res = await app.request(
+        "http://vh7.uk/api/event",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: "My Event",
+            startDate: "2025-01-01T00:00:00Z",
+          }),
+        },
+        appEnv,
+      );
+
+      expect(res.status).toBe(200);
+      const json: any = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: "event",
+          title: "My Event",
+          startDate: "2025-01-01T00:00:00.000Z",
+          endDate: null,
+          description: null,
+          location: null,
+          allDay: false,
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: null,
+        }),
+      );
+    });
+
     test("upload", async () => {
       const data = new FormData();
       data.append(
@@ -223,6 +278,17 @@ describe("API", () => {
         hash: "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f",
       },
     },
+    {
+      id: "EEEE", expectedData: {
+        type: "event",
+        title: "My Event",
+        startDate: "2025-01-01T00:00:00.000Z",
+        endDate: null,
+        description: null,
+        location: null,
+        allDay: false,
+      }
+    }
   ])("get info $expectedData.type", async ({ id, expectedData }) => {
     const res = await app.request(`http://vh7.uk/api/info/${id}`, {}, appEnv);
 
@@ -249,6 +315,7 @@ describe("API", () => {
     { id: "AAAA", type: "url" },
     { id: "BBBB", type: "paste" },
     { id: "CCCC", type: "upload" },
+    { id: "EEEE", type: "event" },
     { id: "ZZZZ", type: "non-existant" },
   ])("get indirect $type", async ({ id }) => {
     const res = await app.request(`http://vh7.uk/${id}`, {}, appEnv);
@@ -287,6 +354,23 @@ describe("API", () => {
     expect(res.headers.get("Content-Type")).toBe("text/plain");
     expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="vh7-paste-BBBB.txt"');
     expect(await res.text()).toBe('println!("Hello, World!")');
+  });
+
+  test("get direct event", async () => {
+    const res = await app.request(
+      "http://vh7.uk/EEEE",
+      {
+        headers: {
+          "User-Agent": "curl/8.1.2",
+        },
+      },
+      appEnv,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("text/calendar");
+    expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="vh7-event-EEEE.ics"');
+    expect(await res.text()).toBe('BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Vh7Events//EN\nCALSCALE:GREGORIAN\nBEGIN:VEVENT\nUID:EEEE@vh7.uk\nDTSTAMP:20240101T000000Z\nDTSTART:20250101T000000Z\nDTEND:20250101T010000Z\nSUMMARY:My Event\nEND:VEVENT\nEND:VCALENDAR'.replaceAll("\n", "\r\n"));
   });
 
   test("get direct upload", async () => {
@@ -446,6 +530,43 @@ describe("API", () => {
           type: "paste",
           code: "mycode",
           language: null,
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: "keyboardcat",
+        }),
+      );
+    });
+
+    test("event", async () => {
+      const res = await app.request(
+        "http://vh7.uk/api/event",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: "My Event",
+            startDate: "2025-01-01T00:00:00Z",
+            deleteToken: "keyboardcat",
+          }),
+        },
+        appEnv,
+      );
+
+      expect(res.status).toBe(200);
+      const json: any = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: "event",
+          title: "My Event",
+          startDate: "2025-01-01T00:00:00.000Z",
+          endDate: null,
+          description: null,
+          location: null,
+          allDay: false,
           createdAt: expect.any(String),
           expiresAt: expect.any(String),
           updatedAt: expect.any(String),

@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/event": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Create a new shared calendar event */
+        post: operations["postApiEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/info/{id}": {
         parameters: {
             query?: never;
@@ -119,10 +136,10 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760987919326
+                     * @default 1761000448906
                      * @example 1735689600000
                      */
-                    expires: number | null;
+                    expires?: number | null;
                     /** @description An optional string that allows you to later delete the item before it expires. */
                     deleteToken?: string | null;
                 };
@@ -169,10 +186,10 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760987919327
+                     * @default 1761000448907
                      * @example 1735689600000
                      */
-                    expires: number | null;
+                    expires?: number | null;
                     /** @description An optional string that allows you to later delete the item before it expires. */
                     deleteToken?: string | null;
                 };
@@ -214,19 +231,19 @@ export interface operations {
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760987919327
+                     * @default 1761000448907
                      * @example 1735689600000
                      */
-                    expires: number | null;
+                    expires?: number | null;
                     /** @description An optional string that allows you to later delete the item before it expires. */
                     deleteToken?: string | null;
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1760987919327
+                     * @default 1761000448907
                      * @example 1735689600000
                      */
-                    expires: number | null;
+                    expires?: number | null;
                     /** @description An optional string that allows you to later delete the item before it expires. */
                     deleteToken?: string | null;
                 };
@@ -249,6 +266,61 @@ export interface operations {
                         expiresAt: string | null;
                         /** @constant */
                         type: "upload";
+                    };
+                };
+            };
+        };
+    };
+    postApiEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @example My event */
+                    title: string;
+                    description?: string | null;
+                    location?: string | null;
+                    startDate: string;
+                    endDate?: string | null;
+                    /** @default false */
+                    allDay?: boolean;
+                } & {
+                    /**
+                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
+                     * @default 1761000448908
+                     * @example 1735689600000
+                     */
+                    expires?: number | null;
+                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    deleteToken?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        id: string;
+                        title: string;
+                        description: string | null;
+                        location: string | null;
+                        startDate: string;
+                        endDate: string | null;
+                        allDay: boolean;
+                        createdAt: string;
+                        updatedAt: string;
+                        expiresAt: string | null;
+                        /** @constant */
+                        type: "event";
                     };
                 };
             };
@@ -298,6 +370,19 @@ export interface operations {
                         expiresAt: string | null;
                         /** @constant */
                         type: "upload";
+                    } | {
+                        id: string;
+                        title: string;
+                        description: string | null;
+                        location: string | null;
+                        startDate: string;
+                        endDate: string | null;
+                        allDay: boolean;
+                        createdAt: string;
+                        updatedAt: string;
+                        expiresAt: string | null;
+                        /** @constant */
+                        type: "event";
                     };
                 };
             };

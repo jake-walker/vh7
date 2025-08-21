@@ -1,8 +1,10 @@
 import { CodeHighlight } from "@mantine/code-highlight";
-import { Alert, Box, Button, Container, Text, Title } from "@mantine/core";
+import { Alert, Box, Button, Container, Stack, Text, Title } from "@mantine/core";
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { AlertOctagon, Download } from "react-feather";
+import { AlertOctagon, Calendar, Download } from "react-feather";
 import { useParams } from "react-router";
+import { googleCalendarUrl, outlookCalendarUrl } from "../calendarLinks";
 import Header from "../components/Header";
 import TimedRedirect from "../components/TimedRedirect";
 import { info as getInfo, idToUrl, shortUrl } from "../controller";
@@ -52,6 +54,7 @@ function View() {
       title = "Something has gone wrong!";
       content = <Text mt={6}>Error: {error.message}. Please try again.</Text>;
     } else {
+      subtitle = `Created ${new Date(data.createdAt).toLocaleDateString()}`;
       switch (data.type) {
         case "url":
           title = shortUrl(data.url);
@@ -106,8 +109,45 @@ function View() {
           );
           break;
         }
+        case "event": {
+          title = data.title;
+          const startDate = DateTime.fromISO(data.startDate);
+          const endDate = data.endDate !== null ? DateTime.fromISO(data.endDate) : null;
+          subtitle = startDate.toLocaleString({ dateStyle: "long", timeStyle: data.allDay ? undefined : "short" });
+          const lessThan24Hours = endDate === null || startDate.diff(endDate).hours < 24;
+          if (endDate !== null && !(lessThan24Hours && data.allDay)) {
+            subtitle += ` to ${endDate.toLocaleString({ dateStyle: lessThan24Hours ? undefined : "long", timeStyle: data.allDay ? undefined : "short" })}`;
+          }
+          content = (
+            <Stack gap="xs">
+              {data.location && (
+                <Text>
+                  <strong>Location:</strong> {data.location}
+                </Text>
+              )}
+              {data.description && (
+                <Text>
+                  <strong>Description:</strong> {data.description}
+                </Text>
+              )}
+              <Text c="dimmed">Created {new Date(data.createdAt).toLocaleDateString()}</Text>
+
+              <Box>
+                <Button leftSection={<Calendar size={16} />} component="a" target="_blank" href={googleCalendarUrl(data)} me={12}>
+                  Add to Google Calendar
+                </Button>
+                <Button leftSection={<Calendar size={16} />} component="a" target="_blank" href={outlookCalendarUrl(data)} me={12}>
+                  Add to Outlook
+                </Button>
+                <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`} me={12}>
+                  Add to iCloud & others (ICS)...
+                </Button>
+              </Box>
+            </Stack>
+          );
+          break;
+        }
       }
-      subtitle = `Created ${new Date(data.createdAt).toLocaleDateString()}`;
     }
   }
 

@@ -1,5 +1,7 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit"
-  }
+    "source.fixAll.biome": "explicit",
+  },
+  "editor.formatOnSave": true,
+  "biome.lsp.bin": "./worker/node_modules/@biomejs/biome/bin/biome"
 }
