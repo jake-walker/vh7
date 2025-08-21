@@ -344,15 +344,9 @@ describe("API", () => {
       expect(await doesExist("1111")).toBe(true);
 
       const res = await app.request(
-        "http://vh7.uk/api/delete/1111",
+        "http://vh7.uk/api/delete/1111?deleteToken=keyboardcat",
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            deleteToken: "keyboardcat",
-          }),
         },
         appEnv,
       );
@@ -369,15 +363,9 @@ describe("API", () => {
       expect(await doesExist("2222")).toBe(true);
 
       const res = await app.request(
-        "http://vh7.uk/api/delete/2222",
+        "http://vh7.uk/api/delete/2222?deleteToken=hi",
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            deleteToken: "hi",
-          }),
         },
         appEnv,
       );
@@ -390,15 +378,9 @@ describe("API", () => {
       expect(await doesExist("AAAA")).toBe(true);
 
       const res = await app.request(
-        "http://vh7.uk/api/delete/AAAA",
+        "http://vh7.uk/api/delete/AAAA?deleteToken=keyboardcat",
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            deleteToken: "keyboardcat",
-          }),
         },
         appEnv,
       );

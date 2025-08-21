@@ -29,7 +29,9 @@ jobs:
         run: pnpm exec biome ci || true
       - name: Test (worker)
         working-directory: ./worker
-        run: pnpm run test
+        run: |
+          ln -s ../.wrangler ./.wrangler
+          pnpm run test
   deploy:
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -52,6 +54,8 @@ jobs:
       - name: Build frontend
         working-directory: ./app
         run: pnpm build
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.APP_SENTRY_DSN }}
       - name: Publish
         run: |
           pnpm dlx wrangler d1 migrations apply DB --env production --remote
