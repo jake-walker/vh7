@@ -21,10 +21,13 @@ jobs:
         run: pnpm install
       - name: Migrate database
         run: pnpm dlx wrangler d1 migrations apply DB --local
-      - name: Lint
+      - name: Lint (app)
+        working-directory: ./app
+        run: pnpm exec biome ci
+      - name: Lint (worker)
         working-directory: ./worker
-        run: pnpm run lint
-      - name: Test
+        run: pnpm exec biome ci
+      - name: Test (worker)
         working-directory: ./worker
         run: pnpm run test
   deploy:

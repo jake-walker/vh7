@@ -4,15 +4,10 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@biomejs/biome": "2.2.0",
     "@cloudflare/workers-types": "^4.20250819.0",
     "@libsql/client": "^0.15.12",
-    "@typescript-eslint/eslint-plugin": "^8.40.0",
-    "@typescript-eslint/parser": "^8.40.0",
     "drizzle-kit": "^0.31.4",
-    "eslint": "^9.33.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-airbnb-typescript": "^18.0.0",
-    "eslint-plugin-import": "^2.32.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
@@ -31,7 +26,7 @@
     "zod-openapi": "^5.3.1"
   },
   "scripts": {
-    "lint": "eslint ./src",
+    "lint": "biome check",
     "dev": "wrangler dev --port 8787",
     "build": "webpack",
     "publish": "wrangler publish",
