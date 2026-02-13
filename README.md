@@ -1,42 +1,90 @@
 # VH7
-A free and open source URL shortening, file sharing and pastebin service.
 
-## Overview
+VH7 is an all-in-one URL shortener, file sharing, and pastebin service. It provides a simple and efficient way to create short links, share files, and host code snippets or text pastes.
 
-VH7 is a small project offering a free URL shortening, file sharing and pastebin service. Unlike other major URL shorteners, VH7 offers shorter links (4 characters) as well as the ability to have a short link for files and code snippets under the same roof.
+The production instance is available at **[vh7.uk](https://vh7.uk)**.
 
-VH7 utilises [Cloudflare Workers](https://workers.cloudflare.com/) for hosting the API, [Cloudflare Pages](https://pages.cloudflare.com/) for hosting the frontend, [Cloudflare D1](https://developers.cloudflare.com/d1/) for storing data and [Cloudflare R2](https://developers.cloudflare.com/r2/) for storing files.
+## Features
 
-## Getting Started
+- **URL Shortener:** Create short, easy-to-share links.
+- **File Sharing:** Upload and share files with ease.
+- **Pastebin:** Share code snippets and text with syntax highlighting.
+- **Advanced Controls:** Set expiration dates and custom slugs for your shares.
+- **Developer Friendly:** Built with a modern tech stack and a clean API.
 
-First, clone this repository and run `yarn --dev` to install the dependendies for all the sub-projects.
+## Tech Stack
 
-### Local Infrastructure
+VH7 is built entirely on the Cloudflare ecosystem for maximum performance and scalability:
 
-To start local versions of AWS S3 and AWS DynamoDB, you can run `docker-compose -f docker-compose.dev.yml up` and leave the below values the same.
+- **Frontend:** [React](https://reactjs.org/) with [Mantine](https://mantine.dev/) for UI components, [Vite](https://vitejs.dev/) for building, and [Redux Toolkit](https://redux-toolkit.js.org/) for state management.
+- **Backend:** [Cloudflare Workers](https://workers.cloudflare.com/) using the [Hono](https://hono.dev/) framework.
+- **Database:** [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite-based serverless database) managed with [Drizzle ORM](https://orm.drizzle.team/).
+- **Object Storage:** [Cloudflare R2](https://developers.cloudflare.com/r2/) for storing uploaded files.
+- **Tooling:** [Biome](https://biomejs.dev/) for linting and formatting, [pnpm](https://pnpm.io/) for package management.
 
-### Worker
+## Project Structure
 
-Next, enter the `worker` folder and create a new `.env` file containing the following:
+The repository is organized into a monorepo with two main directories:
 
+- `/app`: The frontend React application.
+- `/worker`: The backend API and scheduled cleanup tasks.
+
+## Local Development
+
+### Prerequisites
+
+- [pnpm](https://pnpm.io/installation) installed.
+- [Cloudflare Wrangler](https://developers.cloudflare.com/workers/wrangler/install-and-update/) CLI installed (optional, but recommended).
+
+### Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/jakew/vh7.git
+   cd vh7
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+3. **Initialize the local database:**
+   In the `worker` directory, run migrations to set up your local D1 instance:
+   ```bash
+   cd worker
+   pnpm migrate:up
+   cd ..
+   ```
+
+### Running the Application
+
+To run VH7 locally, you need to start both the backend and the frontend.
+
+1. **Start the Backend (Worker):**
+   ```bash
+   cd worker
+   pnpm dev
+   ```
+   The API will be available at `http://localhost:8787`.
+
+2. **Start the Frontend (App):**
+   In a new terminal window:
+   ```bash
+   cd app
+   pnpm dev
+   ```
+   The application will be available at the URL provided by Vite (usually `http://localhost:5173`).
+
+## Deployment
+
+Deployment is handled via Cloudflare. Ensure you have your `wrangler.jsonc` configured with the correct environment variables and bindings.
+
+```bash
+# Deploy the worker and assets
+wrangler deploy
 ```
-S3_ACCESS_KEY_ID=minioadmin
-S3_SECRET_ACCESS_KEY=minioadmin
-S3_DEFAULT_REGION=eu-west-1
-S3_ENDPOINT_URL=localhost:9000
-S3_BUCKET=vh7-uploads
-DYNAMODB_ACCESS_KEY_ID=DUMMYIDEXAMPLE
-DYNAMODB_SECRET_ACCESS_KEY=DUMMYEXAMPLEKEY
-DYNAMODB_DEFAULT_REGION=eu-west-1
-DYNAMODB_TABLE=vh7
-DYNAMODB_ENDPOINT_URL=http://localhost:8100
-VH7_ENV=development
-```
 
-Then run `yarn run dev` to start a local development server.
+## License
 
-### Frontend
-
-To start the frontend, enter the `app` folder and run `yarn run dev`.
-
-Visit `http://localhost:3000` in your web browser.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
