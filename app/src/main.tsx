@@ -1,11 +1,9 @@
-import { CodeHighlightAdapterProvider, plainTextAdapter } from "@mantine/code-highlight";
 import { MantineProvider } from "@mantine/core";
 import * as Sentry from "@sentry/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
-// import languages from "../../languages.json";
 import App from "./App.tsx";
 import { store } from "./store.ts";
 import theme from "./theme.ts";
@@ -16,17 +14,6 @@ Sentry.init({
   sendDefaultPii: false,
   integrations: [],
 });
-
-// async function loadShiki() {
-//   const { createHighlighter } = await import("shiki/bundle/full");
-//   const shiki = await createHighlighter({
-//     langs: languages.map((l) => l.id),
-//     themes: [],
-//   });
-//   return shiki;
-// }
-
-// const shikiAdapter = createShikiAdapter(loadShiki);
 
 createRoot(document.getElementById("root")!, {
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
@@ -39,9 +26,7 @@ createRoot(document.getElementById("root")!, {
     <Provider store={store}>
       <BrowserRouter>
         <MantineProvider theme={theme}>
-          <CodeHighlightAdapterProvider adapter={plainTextAdapter}>
-            <App />
-          </CodeHighlightAdapterProvider>
+          <App />
         </MantineProvider>
       </BrowserRouter>
     </Provider>

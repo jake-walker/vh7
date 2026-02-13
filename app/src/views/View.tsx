@@ -1,4 +1,3 @@
-import { CodeHighlight } from "@mantine/code-highlight";
 import { Alert, Box, Button, Container, Stack, Text, Title } from "@mantine/core";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
@@ -6,6 +5,7 @@ import { AlertOctagon, Calendar, Download } from "react-feather";
 import { useParams } from "react-router";
 import { googleCalendarUrl, outlookCalendarUrl } from "../calendarLinks";
 import Header from "../components/Header";
+import { LazyCodeHighlight } from "../components/LazyCodeHighlight";
 import TimedRedirect from "../components/TimedRedirect";
 import { info as getInfo, idToUrl, shortUrl } from "../controller";
 import NotFound from "./NotFound";
@@ -68,7 +68,7 @@ function View() {
           title = "Paste";
           content = (
             <>
-              <CodeHighlight language={data.language ?? undefined} code={data.code} id="paste-content" />
+              <LazyCodeHighlight language={data.language ?? null} code={data.code} id="paste-content" />
               <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`} mt={10}>
                 Download
               </Button>
@@ -133,10 +133,22 @@ function View() {
               <Text c="dimmed">Created {new Date(data.createdAt).toLocaleDateString()}</Text>
 
               <Box>
-                <Button leftSection={<Calendar size={16} />} component="a" target="_blank" href={googleCalendarUrl(data)} me={12}>
+                <Button
+                  leftSection={<Calendar size={16} />}
+                  component="a"
+                  target="_blank"
+                  href={googleCalendarUrl(data)}
+                  me={12}
+                >
                   Add to Google Calendar
                 </Button>
-                <Button leftSection={<Calendar size={16} />} component="a" target="_blank" href={outlookCalendarUrl(data)} me={12}>
+                <Button
+                  leftSection={<Calendar size={16} />}
+                  component="a"
+                  target="_blank"
+                  href={outlookCalendarUrl(data)}
+                  me={12}
+                >
                   Add to Outlook
                 </Button>
                 <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`} me={12}>
