@@ -28,7 +28,6 @@ export type Bindings = {
   DB: D1Database;
   VH7_ENV: string;
   UPLOADS: R2Bucket;
-  VH7_ADMIN_TOKEN: string;
   ASSETS: { fetch: typeof fetch };
 };
 
@@ -333,23 +332,6 @@ app.delete(
   },
 );
 
-app.get("/api/cleanup", withDb, async (c) => {
-  const token = c.req.header("Authorization")?.replace("Bearer ", "") || "";
-
-  if (token !== c.env.VH7_ADMIN_TOKEN) {
-    return c.text("Invalid or non-existant admin token", 403);
-  }
-
-  if (c.var.db === undefined) {
-    return c.status(500);
-  }
-
-  const deleted = await cleanup(c.var.db, c.env.UPLOADS);
-  return c.json({
-    deleted,
-  });
-});
-
 app.get("/:id", withDb, async (c) => {
   let id: string | undefined = c.req.param("id");
   const direct = c.req.query("direct") !== undefined || checkDirectUserAgent(c.req.header("User-Agent"));
@@ -422,4 +404,10 @@ app.get("/:id", withDb, async (c) => {
 
 app.get("*", (c) => c.env.ASSETS.fetch(c.req.raw));
 
-export default app;
+export default {
+  fetch: app.fetch,
+  async scheduled(_controller: ScheduledController, env: Bindings, ctx: ExecutionContext) {
+    const db = drizzle(env.DB, { schema: models });
+    ctx.waitUntil(cleanup(db, env.UPLOADS));
+  },
+};

@@ -9,8 +9,11 @@ export default async function cleanup(db: DrizzleD1Database<typeof models>, buck
     where: lt(models.shortLinks.expiresAt, new Date()),
   });
 
+  console.log(`Cleanup is removing ${toCleanUp.length} items...`);
+
   await Promise.all(
     toCleanUp.map(async (shortLink) => {
+      console.log(`Removing ${shortLink.id}...`);
       await deleteItem(db, bucket, shortLink);
       deleted.push(shortLink.id);
     }),

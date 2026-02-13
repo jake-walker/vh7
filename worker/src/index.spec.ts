@@ -11,7 +11,6 @@ export const appEnv: Bindings = {
   DB: env.DB as D1Database,
   UPLOADS: env.UPLOADS as R2Bucket,
   VH7_ENV: "testing",
-  VH7_ADMIN_TOKEN: "keyboardcat",
   ASSETS: {
     async fetch(_input, _init) {
       return new Response("I am static!");
@@ -405,22 +404,6 @@ describe("API", () => {
       appEnv,
     );
     expect(res.status).toBe(404);
-  });
-
-  test("cleanup requires auth", async () => {
-    const noAuthRes = await app.request("http://vh7.uk/api/cleanup", {}, appEnv);
-    expect([401, 403]).toContain(noAuthRes.status);
-
-    const authRes = await app.request(
-      "http://vh7.uk/api/cleanup",
-      {
-        headers: {
-          Authorization: `Bearer ${appEnv.VH7_ADMIN_TOKEN}`,
-        },
-      },
-      appEnv,
-    );
-    expect(authRes.status).toBe(200);
   });
 
   describe("delete", () => {
