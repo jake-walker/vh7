@@ -47,16 +47,9 @@ const basePasteRequestSchema = z.object({
     example: "def add(a, b):\n    return a + b",
   }),
   language: z
-    .string()
-    .optional()
+    .enum(languages.map((lang) => lang.id))
     .nullable()
-    .refine(
-      (val) => {
-        if (val === null || val === undefined) return true;
-        return languages.map((lang) => lang.id).includes(val);
-      },
-      { message: "Language ID not supported" },
-    )
+    .optional()
     .meta({
       description: "If provided, the code will syntax highlighted for this language.",
       example: "python",

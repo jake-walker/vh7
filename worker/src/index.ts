@@ -6,6 +6,7 @@ import { describeRoute, openAPISpecs } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
 import ics from "ics";
 import z from "zod";
+import languages from "../../languages.json";
 import cleanup from "./cleanup";
 import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, lookup } from "./controller";
 import { checkDirectUserAgent, createIcsEventAsync, isValidId } from "./helpers";
@@ -377,12 +378,14 @@ app.get("/:id", withDb, async (c) => {
     switch (shortlink.type) {
       case "url":
         return c.redirect(shortlink.url, 301);
-      case "paste":
+      case "paste": {
+        const pasteExtension = languages.find((l) => l.id === shortlink.language)?.extension ?? "txt";
         return c.text(shortlink.code, 200, {
           "Content-Type": "text/plain",
-          "Content-Disposition": `attachment; filename="vh7-paste-${shortlink.id}.txt"`,
+          "Content-Disposition": `attachment; filename="vh7-paste-${shortlink.id}.${pasteExtension}"`,
           "Cache-Control": "max-age=86400",
         });
+      }
       case "upload": {
         // eslint-disable-next-line no-case-declarations
         const obj = await c.env.UPLOADS.get(shortlink.id);

@@ -182,7 +182,7 @@ export interface operations {
                      * @description If provided, the code will syntax highlighted for this language.
                      * @example python
                      */
-                    language?: string | null;
+                    language?: ("markup" | "bash" | "clike" | "c" | "cpp" | "css" | "css-extras" | "javascript" | "jsx" | "js-extras" | "js-templates" | "coffeescript" | "diff" | "git" | "go" | "graphql" | "markup-templating" | "handlebars" | "json" | "less" | "makefile" | "markdown" | "objectivec" | "ocaml" | "python" | "reason" | "sass" | "scss" | "sql" | "stylus" | "tsx" | "typescript" | "wasm" | "yaml") | null;
                 } & {
                     /**
                      * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).

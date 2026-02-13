@@ -1,172 +1,217 @@
 [
   {
-    "id": "markup",
-    "name": "Markup",
-    "extension": null
+    "name": "Angular HTML",
+    "id": "angular-html",
+    "extension": "html"
   },
   {
-    "id": "bash",
-    "name": "Bash",
-    "extension": null
+    "name": "Angular TypeScript",
+    "id": "angular-ts",
+    "extension": "ts"
   },
   {
-    "id": "clike",
-    "name": "",
-    "extension": null
+    "name": "Astro",
+    "id": "astro",
+    "extension": "astro"
   },
   {
-    "id": "c",
-    "name": "C",
-    "extension": null
+    "name": "Blade",
+    "id": "blade",
+    "extension": "blade.php"
   },
   {
-    "id": "cpp",
-    "name": "C++",
-    "extension": null
-  },
-  {
-    "id": "css",
-    "name": "CSS",
-    "extension": null
-  },
-  {
-    "id": "css-extras",
-    "name": "CSS Extras",
-    "extension": null
-  },
-  {
-    "id": "javascript",
-    "name": "JavaScript",
-    "extension": null
-  },
-  {
-    "id": "jsx",
-    "name": "JSX",
-    "extension": null
-  },
-  {
-    "id": "js-extras",
-    "name": "JavaScript Extras",
-    "extension": null
-  },
-  {
-    "id": "js-templates",
-    "name": "JavaScript Templates",
-    "extension": null
-  },
-  {
-    "id": "coffeescript",
     "name": "CoffeeScript",
-    "extension": null
+    "id": "coffee",
+    "extension": "coffee"
   },
   {
-    "id": "diff",
-    "name": "Diff",
-    "extension": null
+    "name": "CSS",
+    "id": "css",
+    "extension": "css"
   },
   {
-    "id": "git",
-    "name": "Git",
-    "extension": null
-  },
-  {
-    "id": "go",
-    "name": "Go",
-    "extension": null
-  },
-  {
-    "id": "graphql",
     "name": "GraphQL",
-    "extension": null
+    "id": "graphql",
+    "extension": "graphql"
   },
   {
-    "id": "markup-templating",
-    "name": "Markup Templating",
-    "extension": null
+    "name": "Ruby Haml",
+    "id": "haml",
+    "extension": "haml"
   },
   {
-    "id": "handlebars",
     "name": "Handlebars",
-    "extension": null
+    "id": "handlebars",
+    "extension": "hbs"
   },
   {
-    "id": "json",
+    "name": "HTML",
+    "id": "html",
+    "extension": "html"
+  },
+  {
+    "name": "HTML (Derivative)",
+    "id": "html-derivative",
+    "extension": "html"
+  },
+  {
+    "name": "HTTP",
+    "id": "http",
+    "extension": "http"
+  },
+  {
+    "name": "Imba",
+    "id": "imba",
+    "extension": "imba"
+  },
+  {
+    "name": "JavaScript",
+    "id": "javascript",
+    "extension": "js"
+  },
+  {
+    "name": "Jinja",
+    "id": "jinja",
+    "extension": "jinja"
+  },
+  {
+    "name": "Jison",
+    "id": "jison",
+    "extension": "jison"
+  },
+  {
     "name": "JSON",
-    "extension": null
+    "id": "json",
+    "extension": "json"
   },
   {
+    "name": "JSON5",
+    "id": "json5",
+    "extension": "json5"
+  },
+  {
+    "name": "JSON with Comments",
+    "id": "jsonc",
+    "extension": "jsonc"
+  },
+  {
+    "name": "JSON Lines",
+    "id": "jsonl",
+    "extension": "jsonl"
+  },
+  {
+    "name": "JSX",
+    "id": "jsx",
+    "extension": "jsx"
+  },
+  {
+    "name": "Julia",
+    "id": "julia",
+    "extension": "jl"
+  },
+  {
+    "name": "Less",
     "id": "less",
-    "name": "LESS",
-    "extension": null
+    "extension": "less"
   },
   {
-    "id": "makefile",
-    "name": "Makefile",
-    "extension": null
-  },
-  {
-    "id": "markdown",
     "name": "Markdown",
-    "extension": null
+    "id": "markdown",
+    "extension": "md"
   },
   {
-    "id": "objectivec",
-    "name": "Objective C",
-    "extension": null
+    "name": "Marko",
+    "id": "marko",
+    "extension": "marko"
   },
   {
-    "id": "ocaml",
-    "name": "OCaml",
-    "extension": null
+    "name": "MDC",
+    "id": "mdc",
+    "extension": "mdc"
   },
   {
-    "id": "python",
-    "name": "Python",
-    "extension": null
+    "name": "MDX",
+    "id": "mdx",
+    "extension": "mdx"
   },
   {
-    "id": "reason",
-    "name": "Reason",
-    "extension": null
+    "name": "PHP",
+    "id": "php",
+    "extension": "php"
   },
   {
+    "name": "PostCSS",
+    "id": "postcss",
+    "extension": "css"
+  },
+  {
+    "name": "Pug",
+    "id": "pug",
+    "extension": "pug"
+  },
+  {
+    "name": "Sass",
     "id": "sass",
-    "name": "SASS",
-    "extension": null
+    "extension": "sass"
   },
   {
-    "id": "scss",
     "name": "SCSS",
-    "extension": null
+    "id": "scss",
+    "extension": "scss"
   },
   {
-    "id": "sql",
-    "name": "SQL",
-    "extension": null
-  },
-  {
-    "id": "stylus",
     "name": "Stylus",
-    "extension": null
+    "id": "stylus",
+    "extension": "styl"
   },
   {
-    "id": "tsx",
+    "name": "Svelte",
+    "id": "svelte",
+    "extension": "svelte"
+  },
+  {
+    "name": "TypeScript with Tags",
+    "id": "ts-tags",
+    "extension": "ts"
+  },
+  {
     "name": "TSX",
-    "extension": null
+    "id": "tsx",
+    "extension": "tsx"
   },
   {
-    "id": "typescript",
     "name": "TypeScript",
-    "extension": null
+    "id": "typescript",
+    "extension": "ts"
   },
   {
+    "name": "Vue",
+    "id": "vue",
+    "extension": "vue"
+  },
+  {
+    "name": "Vue HTML",
+    "id": "vue-html",
+    "extension": "vue"
+  },
+  {
+    "name": "Vue Vine",
+    "id": "vue-vine",
+    "extension": "vine.ts"
+  },
+  {
+    "name": "WebAssembly",
     "id": "wasm",
-    "name": "WASM",
-    "extension": null
+    "extension": "wasm"
   },
   {
-    "id": "yaml",
-    "name": "YAML",
-    "extension": null
+    "name": "WGSL",
+    "id": "wgsl",
+    "extension": "wgsl"
+  },
+  {
+    "name": "WebAssembly Interface Types",
+    "id": "wit",
+    "extension": "wit"
   }
 ]

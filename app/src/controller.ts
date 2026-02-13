@@ -64,7 +64,7 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
   return data;
 }
 
-export async function paste(code: string, language: string | null, expiryDays: string | null, deletable: boolean) {
+export async function paste(code: string, language: NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"], expiryDays: string | null, deletable: boolean) {
   const expires = parseExpiry(expiryDays);
 
   const { data, error } = await client.POST("/api/paste", {

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Send } from "react-feather";
 import { z } from "zod";
 import languages from "../../../languages.json";
+import type { operations } from "../api.g";
 import { paste, zodFormValidator } from "../controller";
 import type { CreateFormProps } from "../types";
 import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
@@ -11,7 +12,7 @@ import { CreateInfo } from "./CreateInfo";
 
 type PasteFormValues = {
   code: string;
-  language: string | null;
+  language: NonNullable<NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"]> | "";
 } & AdvancedControlsFormValues;
 
 export function PasteForm({ onResponse, onError }: CreateFormProps) {
@@ -20,7 +21,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
   const form = useForm<PasteFormValues>({
     initialValues: {
       code: "",
-      language: null,
+      language: "",
       ...initialValues,
     },
     validate: {
@@ -39,12 +40,8 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
     onError(null);
     setLoading(true);
 
-    if (values.language === "") {
-      values.language = null;
-    }
-
     try {
-      const res = await paste(values.code, values.language, values.expireDays, values.deletable || false);
+      const res = await paste(values.code, values.language === "" ? null : values.language, values.expireDays, values.deletable || false);
       onResponse(res);
       form.reset();
     } catch (err) {
