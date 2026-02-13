@@ -4,10 +4,8 @@ import languages from "../../languages.json";
 import * as models from "./models";
 
 const baseRequestSchema = z.object({
-  expires: z.optional(z.coerce
-    .number()
-    .int()
-    .positive()
+  expires: z.coerce
+    .date()
     .nullable()
     .refine(
       (val) => {
@@ -15,22 +13,21 @@ const baseRequestSchema = z.object({
         const min = new Date();
         const max = new Date();
         max.setDate(max.getDate() + 365);
-        return val > min.getTime() && val < max.getTime();
+        return val > min && val < max;
       },
       { message: "Expiry must be between 0 days and 1 year" },
     )
     .default(() => {
       const d = new Date();
       d.setDate(d.getDate() + 60);
-      return d.getTime();
-    }))
+      return d;
+    })
+    .optional()
     .meta({
-      description:
-        "Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).",
-      example: 1735689600000,
+      description: "A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).",
     }),
-  deleteToken: z.string().max(128).optional().nullable().meta({
-    description: "An optional string that allows you to later delete the item before it expires.",
+  deleteToken: z.string().max(128).nullable().optional().meta({
+    description: "An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).",
   }),
 });
 
@@ -80,10 +77,10 @@ const baseEventRequestSchema = z.object({
   title: z.string().meta({
     example: "My event"
   }),
-  description: z.string().optional().nullable(),
-  location: z.string().optional().nullable(),
+  description: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
   startDate: z.coerce.date(),
-  endDate: z.coerce.date().optional().nullable(),
+  endDate: z.coerce.date().nullable().optional(),
   allDay: z.boolean().default(false).optional()
 }).refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, { error: "End date must be after start date" });
 export const eventRequestSchema = baseEventRequestSchema.and(baseRequestSchema);

@@ -135,12 +135,11 @@ export interface operations {
                     url: string;
                 } & {
                     /**
-                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1761000448906
-                     * @example 1735689600000
+                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
+                     * @default 2025-10-21T14:19:54.432Z
                      */
-                    expires?: number | null;
-                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    expires?: string | null;
+                    /** @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route). */
                     deleteToken?: string | null;
                 };
             };
@@ -185,12 +184,11 @@ export interface operations {
                     language?: ("markup" | "bash" | "clike" | "c" | "cpp" | "css" | "css-extras" | "javascript" | "jsx" | "js-extras" | "js-templates" | "coffeescript" | "diff" | "git" | "go" | "graphql" | "markup-templating" | "handlebars" | "json" | "less" | "makefile" | "markdown" | "objectivec" | "ocaml" | "python" | "reason" | "sass" | "scss" | "sql" | "stylus" | "tsx" | "typescript" | "wasm" | "yaml") | null;
                 } & {
                     /**
-                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1761000448907
-                     * @example 1735689600000
+                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
+                     * @default 2025-10-21T14:19:54.434Z
                      */
-                    expires?: number | null;
-                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    expires?: string | null;
+                    /** @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route). */
                     deleteToken?: string | null;
                 };
             };
@@ -230,21 +228,19 @@ export interface operations {
                     file: string;
                 } & {
                     /**
-                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1761000448907
-                     * @example 1735689600000
+                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
+                     * @default 2025-10-21T14:19:54.435Z
                      */
-                    expires?: number | null;
-                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    expires?: string | null;
+                    /** @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route). */
                     deleteToken?: string | null;
                 } & {
                     /**
-                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1761000448907
-                     * @example 1735689600000
+                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
+                     * @default 2025-10-21T14:19:54.435Z
                      */
-                    expires?: number | null;
-                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    expires?: string | null;
+                    /** @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route). */
                     deleteToken?: string | null;
                 };
             };
@@ -291,12 +287,11 @@ export interface operations {
                     allDay?: boolean;
                 } & {
                     /**
-                     * @description Unix timestamp for when the item will expire in milliseconds. Must be between 0 and 1 year (31 days for files).
-                     * @default 1761000448908
-                     * @example 1735689600000
+                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
+                     * @default 2025-10-21T14:19:54.436Z
                      */
-                    expires?: number | null;
-                    /** @description An optional string that allows you to later delete the item before it expires. */
+                    expires?: string | null;
+                    /** @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route). */
                     deleteToken?: string | null;
                 };
             };

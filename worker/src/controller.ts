@@ -74,7 +74,7 @@ export async function createUpload(
   db: DrizzleD1Database<typeof models>,
   bucket: R2Bucket,
   file: File,
-  rawExpires: number | null,
+  rawExpires: Date | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkUpload> {
   const id = nanoid();
@@ -85,8 +85,8 @@ export async function createUpload(
   const maxExpiry = new Date();
   maxExpiry.setDate(maxExpiry.getDate() + 30);
   let expires = rawExpires;
-  if (expires !== null && expires > maxExpiry.getTime()) {
-    expires = maxExpiry.getTime();
+  if (expires !== null && expires > maxExpiry) {
+    expires = maxExpiry;
   }
 
   const stub: models.ShortLink = {

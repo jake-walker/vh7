@@ -4,12 +4,11 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
 import { describeRoute, openAPISpecs } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
-import ics from "ics";
 import z from "zod";
 import languages from "../../languages.json";
 import cleanup from "./cleanup";
 import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, lookup } from "./controller";
-import { checkDirectUserAgent, createIcsEventAsync, isValidId } from "./helpers";
+import { checkDirectUserAgent, isValidId } from "./helpers";
 import { buildIcs } from "./ics";
 import * as models from "./models";
 import {
@@ -164,8 +163,8 @@ app.post(
 
     const max = new Date();
     max.setDate(max.getDate() + 31);
-    if (parsed.expires === null || parsed.expires === undefined || parsed.expires > max.getTime()) {
-      parsed.expires = max.getTime();
+    if (parsed.expires === null || parsed.expires === undefined || parsed.expires > max) {
+      parsed.expires = max;
     }
 
     if (c.var.db === undefined) {
@@ -228,7 +227,9 @@ app.get(
         description: "Successful response",
         content: {
           "application/json": {
-            schema: resolver(z.union([shortLinkResponseSchema, pasteResponseSchema, uploadResponseSchema, eventResponseSchema])),
+            schema: resolver(
+              z.union([shortLinkResponseSchema, pasteResponseSchema, uploadResponseSchema, eventResponseSchema]),
+            ),
           },
         },
       },
@@ -385,14 +386,11 @@ app.get("/:id", withDb, async (c) => {
         });
       }
       case "event": {
-        return c.text(buildIcs(shortlink, new URL(c.req.url).hostname),
-          200,
-          {
-            "Content-Type": "text/calendar",
-            "Content-Disposition": `attachment; filename="vh7-event-${shortlink.id}.ics"`,
-            "Cache-Control": "max-age=86400",
-          }
-        );
+        return c.text(buildIcs(shortlink, new URL(c.req.url).hostname), 200, {
+          "Content-Type": "text/calendar",
+          "Content-Disposition": `attachment; filename="vh7-event-${shortlink.id}.ics"`,
+          "Cache-Control": "max-age=86400",
+        });
       }
       default:
         return c.status(500);

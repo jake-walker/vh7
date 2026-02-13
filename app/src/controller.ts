@@ -31,7 +31,7 @@ export function shortUrl(u: string) {
   return `${ustart}...${uend}`;
 }
 
-function parseExpiry(v: string | null) {
+function parseExpiry(v: string | null): string | null {
   if (v === null) return null;
 
   let expiryDate = null;
@@ -39,10 +39,9 @@ function parseExpiry(v: string | null) {
   if (expiryDays > 0) {
     expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + expiryDays);
-    expiryDate = expiryDate.getTime();
   }
 
-  return expiryDate;
+  return expiryDate?.toISOString() ?? null;
 }
 
 export async function shorten(url: string, expiryDays: string | null, deletable: boolean) {
