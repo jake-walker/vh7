@@ -58,7 +58,7 @@ describe("View Page", () => {
               expect(res.status).to.equal(200);
               expect(res.body).to.equal(code);
               // check the file name of the file would equal this
-              expect(res.headers["content-disposition"]).to.include(`filename="vh7-paste-${id}.txt"`);
+              expect(res.headers["content-disposition"]).to.include(`filename="vh7-paste-${id}.py"`);
             });
           });
       });

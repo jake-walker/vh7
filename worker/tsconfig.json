@@ -2,11 +2,11 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "strict": true,
     "lib": ["esnext"],
-    "types": ["vitest/globals", "@cloudflare/workers-types"],
+    "types": ["./worker-configuration.d.ts"],
     "resolveJsonModule": true
   }
 }

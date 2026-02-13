@@ -2,8 +2,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
 import { Hono, type MiddlewareHandler } from "hono";
 import { cors } from "hono/cors";
-import { describeRoute, openAPISpecs } from "hono-openapi";
-import { resolver, validator as zValidator } from "hono-openapi/zod";
+import { describeRoute, openAPIRouteHandler, resolver, validator as zValidator } from "hono-openapi";
 import z from "zod";
 import languages from "../../languages.json";
 import cleanup from "./cleanup";
@@ -23,21 +22,12 @@ import {
   uploadResponseSchema,
 } from "./schema";
 
-export type Bindings = {
-  DB: D1Database;
-  VH7_ENV: string;
-  UPLOADS: R2Bucket;
-  ASSETS: { fetch: typeof fetch };
-};
-
-type Env = {
-  Bindings: Bindings;
+const app = new Hono<{
+  Bindings: Cloudflare.Env;
   Variables: {
     db?: DrizzleD1Database<typeof models>;
   };
-};
-
-const app = new Hono<Env>();
+}>();
 
 const withDb: MiddlewareHandler = async (c, next) => {
   c.set("db", drizzle(c.env.DB, { schema: models }));
@@ -48,7 +38,7 @@ app.use("*", cors());
 
 app.get(
   "/api/openapi.json",
-  openAPISpecs(app, {
+  openAPIRouteHandler(app, {
     documentation: {
       info: {
         title: "VH7 API",
@@ -404,8 +394,8 @@ app.get("*", (c) => c.env.ASSETS.fetch(c.req.raw));
 
 export default {
   fetch: app.fetch,
-  async scheduled(_controller: ScheduledController, env: Bindings, ctx: ExecutionContext) {
+  async scheduled(_controller, env, ctx) {
     const db = drizzle(env.DB, { schema: models });
     ctx.waitUntil(cleanup(db, env.UPLOADS));
   },
-};
+} satisfies ExportedHandler<Env>;

@@ -15,7 +15,7 @@ export async function sha256(file: File) {
 export async function createShortUrl(
   db: DrizzleD1Database<typeof models>,
   url: string,
-  expires: number | null,
+  expires: Date | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkUrl> {
   const id = nanoid();
@@ -24,7 +24,7 @@ export async function createShortUrl(
     id,
     createdAt: new Date(),
     updatedAt: new Date(),
-    expiresAt: expires ? new Date(expires) : null,
+    expiresAt: expires,
     type: "url",
     deleteToken: deleteToken || null,
   };
@@ -44,7 +44,7 @@ export async function createPaste(
   db: DrizzleD1Database<typeof models>,
   code: string,
   language: string | null,
-  expires: number | null,
+  expires: Date | null,
   deleteToken: string | undefined,
 ): Promise<models.ShortLink & models.ShortLinkPaste> {
   const id = nanoid();
@@ -53,7 +53,7 @@ export async function createPaste(
     id,
     createdAt: new Date(),
     updatedAt: new Date(),
-    expiresAt: expires ? new Date(expires) : null,
+    expiresAt: expires,
     type: "paste",
     deleteToken: deleteToken || null,
   };
@@ -113,7 +113,7 @@ export async function createUpload(
 
 export async function createEvent(
   db: DrizzleD1Database<typeof models>,
-  expires: number | null,
+  expires: Date | null,
   deleteToken: string | undefined,
   data: Omit<models.NewShortLinkEvent, "id">
 ): Promise<models.ShortLink & models.ShortLinkEvent> {
@@ -123,7 +123,7 @@ export async function createEvent(
     id,
     createdAt: new Date(),
     updatedAt: new Date(),
-    expiresAt: expires ? new Date(expires) : null,
+    expiresAt: expires,
     type: "event",
     deleteToken: deleteToken || null,
   };

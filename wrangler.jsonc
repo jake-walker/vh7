@@ -3,7 +3,7 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-	"$schema": "https://unpkg.com/wrangler@4.31.0/config-schema.json",
+	"$schema": "https://unpkg.com/wrangler@4.65.0/config-schema.json",
 	"name": "vh7",
 	"main": "./worker/src/index.ts",
   "workers_dev": true,
@@ -75,6 +75,11 @@
         "custom_domain": true,
         "zone_name": "vh7.uk",
         "pattern": "vh7.uk"
+      },
+      "assets": {
+        "directory": "./app/dist",
+        "binding": "ASSETS",
+        "run_worker_first": true
       },
       "vars": {
         "VH7_ENV": "production",

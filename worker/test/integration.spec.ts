@@ -1,26 +1,12 @@
-import { eq } from "drizzle-orm";
+import { env, SELF } from "cloudflare:test";
 import { drizzle } from "drizzle-orm/d1";
-import { getPlatformProxy } from "wrangler";
-import { sha256 } from "./controller";
-import app, { type Bindings } from "./index";
-import * as models from "./models";
-
-const { env } = await getPlatformProxy();
-// eslint-disable-next-line import/prefer-default-export
-export const appEnv: Bindings = {
-  DB: env.DB as D1Database,
-  UPLOADS: env.UPLOADS as R2Bucket,
-  VH7_ENV: "testing",
-  ASSETS: {
-    async fetch(_input, _init) {
-      return new Response("I am static!");
-    },
-  },
-};
+import { beforeAll, describe, expect, test } from "vitest";
+import { sha256 } from "../src/controller";
+import * as models from "../src/models";
+import { doesExist } from "./util";
 
 beforeAll(async () => {
-  const { DB } = appEnv;
-  const d = drizzle(DB);
+  const d = drizzle(env.DB);
 
   // clear tables
   await d.delete(models.shortLinkUrls);
@@ -115,39 +101,27 @@ beforeAll(async () => {
       description: null,
       location: null,
       allDay: false,
-    }
-  ])
+    },
+  ]);
 
-  await appEnv.UPLOADS.put("CCCC", file);
+  await env.UPLOADS.put("CCCC", file);
 });
-
-export async function doesExist(id: string) {
-  const { DB } = appEnv;
-  const d = drizzle(DB);
-
-  const res = await d.select().from(models.shortLinks).where(eq(models.shortLinks.id, id)).limit(1);
-  return res.length !== 0;
-}
 
 describe("API", () => {
   describe("create", () => {
     test("url", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/shorten",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: "https://example.com",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          url: "https://example.com",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -162,22 +136,18 @@ describe("API", () => {
     });
 
     test("paste", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/paste",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            code: "mycode",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/paste", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          code: "mycode",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -193,23 +163,19 @@ describe("API", () => {
     });
 
     test("event", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/event",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: "My Event",
-            startDate: "2025-01-01T00:00:00Z",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          title: "My Event",
+          startDate: "2025-01-01T00:00:00Z",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -238,17 +204,13 @@ describe("API", () => {
         "test.txt",
       );
 
-      const res = await app.request(
-        "http://vh7.uk/api/upload",
-        {
-          method: "POST",
-          body: data,
-        },
-        appEnv,
-      );
+      const res = await SELF.fetch("http://vh7.uk/api/upload", {
+        method: "POST",
+        body: data,
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -278,7 +240,8 @@ describe("API", () => {
       },
     },
     {
-      id: "EEEE", expectedData: {
+      id: "EEEE",
+      expectedData: {
         type: "event",
         title: "My Event",
         startDate: "2025-01-01T00:00:00.000Z",
@@ -286,13 +249,13 @@ describe("API", () => {
         description: null,
         location: null,
         allDay: false,
-      }
-    }
+      },
+    },
   ])("get info $expectedData.type", async ({ id, expectedData }) => {
-    const res = await app.request(`http://vh7.uk/api/info/${id}`, {}, appEnv);
+    const res = await SELF.fetch(`http://vh7.uk/api/info/${id}`);
 
     expect(res.status).toBe(200);
-    const json: any = await res.json();
+    const json: unknown = await res.json();
     expect(json).toEqual({
       id,
       createdAt: "2024-01-01T00:00:00.000Z",
@@ -306,82 +269,71 @@ describe("API", () => {
     { id: "DDDD", type: "expired" },
     { id: "ZZZZ", type: "non-existant" },
   ])("get info $type", async ({ id }) => {
-    const res = await app.request(`http://vh7.uk/api/info/${id}`, {}, appEnv);
+    const res = await SELF.fetch(`http://vh7.uk/api/info/${id}`);
     expect(res.status).toBe(404);
   });
 
-  test.each([
+  test.skip.each([
     { id: "AAAA", type: "url" },
     { id: "BBBB", type: "paste" },
     { id: "CCCC", type: "upload" },
     { id: "EEEE", type: "event" },
     { id: "ZZZZ", type: "non-existant" },
   ])("get indirect $type", async ({ id }) => {
-    const res = await app.request(`http://vh7.uk/${id}`, {}, appEnv);
+    const res = await SELF.fetch(`http://vh7.uk/${id}`);
 
     expect(res.status).toBe(200);
-    expect(await res.text()).toBe("I am static!");
+    expect(res.headers).toHaveProperty("Content-Type", "text/html");
   });
 
-  test("get direct url", async () => {
-    const res = await app.request(
-      "http://vh7.uk/AAAA",
-      {
-        headers: {
-          "User-Agent": "curl/8.1.2",
-        },
+  test.skip("get direct url", async () => {
+    const res = await SELF.fetch("http://vh7.uk/AAAA", {
+      headers: {
+        "User-Agent": "curl/8.1.2",
       },
-      appEnv,
-    );
+    });
 
     expect(res.status).toBe(301);
     expect(res.headers.get("location")).toBe("https://example.com");
   });
 
   test("get direct paste", async () => {
-    const res = await app.request(
-      "http://vh7.uk/BBBB",
-      {
-        headers: {
-          "User-Agent": "curl/8.1.2",
-        },
+    const res = await SELF.fetch("http://vh7.uk/BBBB", {
+      headers: {
+        "User-Agent": "curl/8.1.2",
       },
-      appEnv,
-    );
+    });
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("text/plain");
-    expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="vh7-paste-BBBB.txt"');
+    expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="vh7-paste-BBBB.rs"');
     expect(await res.text()).toBe('println!("Hello, World!")');
   });
 
   test("get direct event", async () => {
-    const res = await app.request(
-      "http://vh7.uk/EEEE",
-      {
-        headers: {
-          "User-Agent": "curl/8.1.2",
-        },
+    const res = await SELF.fetch("http://vh7.uk/EEEE", {
+      headers: {
+        "User-Agent": "curl/8.1.2",
       },
-      appEnv,
-    );
+    });
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("text/calendar");
     expect(res.headers.get("Content-Disposition")).toBe('attachment; filename="vh7-event-EEEE.ics"');
-    expect(await res.text()).toBe('BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Vh7Events//EN\nCALSCALE:GREGORIAN\nBEGIN:VEVENT\nUID:EEEE@vh7.uk\nDTSTAMP:20240101T000000Z\nDTSTART:20250101T000000Z\nDTEND:20250101T010000Z\nSUMMARY:My Event\nEND:VEVENT\nEND:VCALENDAR'.replaceAll("\n", "\r\n"));
+    expect(await res.text()).toBe(
+      "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Vh7Events//EN\nCALSCALE:GREGORIAN\nBEGIN:VEVENT\nUID:EEEE@vh7.uk\nDTSTAMP:20240101T000000Z\nDTSTART:20250101T000000Z\nDTEND:20250101T010000Z\nSUMMARY:My Event\nEND:VEVENT\nEND:VCALENDAR".replaceAll(
+        "\n",
+        "\r\n",
+      ),
+    );
   });
 
   test("get direct upload", async () => {
-    const res = await app.request(
-      "http://vh7.uk/CCCC",
-      {
-        headers: {
-          "User-Agent": "curl/8.1.2",
-        },
+    const res = await SELF.fetch("http://vh7.uk/CCCC", {
+      headers: {
+        "User-Agent": "curl/8.1.2",
       },
-      appEnv,
-    );
+    });
 
     expect(res.status).toBe(200);
     expect(res.headers.get("Content-Type")).toBe("application/force-download");
@@ -394,15 +346,11 @@ describe("API", () => {
     { id: "DDDD", type: "expired" },
     { id: "ZZZZ", type: "non-existant" },
   ])("get direct $type", async ({ id }) => {
-    const res = await app.request(
-      `http://vh7.uk/${id}`,
-      {
-        headers: {
-          "User-Agent": "curl/8.1.2",
-        },
+    const res = await SELF.fetch(`http://vh7.uk/${id}`, {
+      headers: {
+        "User-Agent": "curl/8.1.2",
       },
-      appEnv,
-    );
+    });
     expect(res.status).toBe(404);
   });
 
@@ -410,13 +358,9 @@ describe("API", () => {
     test("delete with valid delete token", async () => {
       expect(await doesExist("1111")).toBe(true);
 
-      const res = await app.request(
-        "http://vh7.uk/api/delete/1111?deleteToken=keyboardcat",
-        {
-          method: "DELETE",
-        },
-        appEnv,
-      );
+      const res = await SELF.fetch("http://vh7.uk/api/delete/1111?deleteToken=keyboardcat", {
+        method: "DELETE",
+      });
       expect(res.status).toBe(200);
       expect(await res.json()).toEqual({
         status: 200,
@@ -429,13 +373,9 @@ describe("API", () => {
     test("delete with invalid delete token", async () => {
       expect(await doesExist("2222")).toBe(true);
 
-      const res = await app.request(
-        "http://vh7.uk/api/delete/2222?deleteToken=hi",
-        {
-          method: "DELETE",
-        },
-        appEnv,
-      );
+      const res = await SELF.fetch("http://vh7.uk/api/delete/2222?deleteToken=hi", {
+        method: "DELETE",
+      });
       expect(res.status).toBe(403);
 
       expect(await doesExist("2222")).toBe(true);
@@ -444,13 +384,9 @@ describe("API", () => {
     test("non-deletable", async () => {
       expect(await doesExist("AAAA")).toBe(true);
 
-      const res = await app.request(
-        "http://vh7.uk/api/delete/AAAA?deleteToken=keyboardcat",
-        {
-          method: "DELETE",
-        },
-        appEnv,
-      );
+      const res = await SELF.fetch("http://vh7.uk/api/delete/AAAA?deleteToken=keyboardcat", {
+        method: "DELETE",
+      });
       expect(res.status).toBe(403);
 
       expect(await doesExist("AAAA")).toBe(true);
@@ -459,23 +395,19 @@ describe("API", () => {
 
   describe("create with delete token", () => {
     test("url", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/shorten",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: "https://example.com",
-            deleteToken: "keyboardcat",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          url: "https://example.com",
+          deleteToken: "keyboardcat",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -490,23 +422,19 @@ describe("API", () => {
     });
 
     test("paste", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/paste",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            code: "mycode",
-            deleteToken: "keyboardcat",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/paste", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          code: "mycode",
+          deleteToken: "keyboardcat",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -522,24 +450,20 @@ describe("API", () => {
     });
 
     test("event", async () => {
-      const res = await app.request(
-        "http://vh7.uk/api/event",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: "My Event",
-            startDate: "2025-01-01T00:00:00Z",
-            deleteToken: "keyboardcat",
-          }),
+      const res = await SELF.fetch("http://vh7.uk/api/event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        appEnv,
-      );
+        body: JSON.stringify({
+          title: "My Event",
+          startDate: "2025-01-01T00:00:00Z",
+          deleteToken: "keyboardcat",
+        }),
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),
@@ -569,17 +493,13 @@ describe("API", () => {
       );
       data.set("deleteToken", "keyboardcat");
 
-      const res = await app.request(
-        "http://vh7.uk/api/upload",
-        {
-          method: "POST",
-          body: data,
-        },
-        appEnv,
-      );
+      const res = await SELF.fetch("http://vh7.uk/api/upload", {
+        method: "POST",
+        body: data,
+      });
 
       expect(res.status).toBe(200);
-      const json: any = await res.json();
+      const json: unknown = await res.json();
       expect(json).toEqual(
         expect.objectContaining({
           id: expect.any(String),

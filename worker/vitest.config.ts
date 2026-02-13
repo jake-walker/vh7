@@ -1,9 +1,26 @@
-/// <reference types="vitest" />
-import { defineConfig } from "vitest/config";
+import path from "node:path";
+import { defineWorkersProject, readD1Migrations } from "@cloudflare/vitest-pool-workers/config";
 
-export default defineConfig({
-  test: {
-    globals: true,
-    fileParallelism: false,
-  },
+export default defineWorkersProject(async () => {
+  const migrationsPath = path.join(__dirname, "migrations");
+  const migrations = await readD1Migrations(migrationsPath);
+
+  return {
+    test: {
+      setupFiles: ["./test/apply-migrations.ts"],
+      poolOptions: {
+        workers: {
+          wrangler: {
+            configPath: "../wrangler.jsonc",
+          },
+          miniflare: {
+            bindings: {
+              MIGRATIONS: migrations,
+            },
+            compatabilityFlags: ["service_binding_extra_handlers"]
+          },
+        },
+      },
+    },
+  };
 });

@@ -18,7 +18,7 @@ Sentry.init({
 });
 
 async function loadShiki() {
-  const { createHighlighter } = await import("shiki/bundle/web");
+  const { createHighlighter } = await import("shiki/bundle/full");
   const shiki = await createHighlighter({
     langs: languages.map((l) => l.id),
     themes: [],
