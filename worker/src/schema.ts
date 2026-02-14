@@ -6,13 +6,12 @@ import * as models from "./models";
 
 const baseRequestSchema = z.object({
   expires: z.iso.datetime()
-    .nullable()
+    .nullish()
     .default(() => {
       const d = new Date();
       d.setDate(d.getDate() + 60);
       return d.toISOString();
     })
-    .optional()
     .refine((val) => {
       return val === null || val === undefined || !Number.isNaN(Date.parse(val));
     }, {
@@ -34,11 +33,11 @@ const baseRequestSchema = z.object({
     .meta({
       description: "A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).",
     }),
-  deleteToken: z.string().max(128).nullable().optional().meta({
+  deleteToken: z.string().max(128).nullish().meta({
     description: "An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).",
     example: "Z3hH26B7djooPz2EyRYhoj8i"
   }),
-  linkType: z.enum(IdType).nullable().optional().default(() => IdType.Short).meta({
+  linkType: z.enum(IdType).nullish().default(() => IdType.Short).meta({
     description: "The type or algorithm to use for the generated ID of the short link.",
     example: "short",
   }),
@@ -50,7 +49,10 @@ const baseShortLinkRequestSchema = z.object({
   }),
 });
 
-export const shortLinkRequestSchema = baseShortLinkRequestSchema.and(baseRequestSchema);
+export const shortLinkRequestSchema = z.object({
+  ...baseShortLinkRequestSchema.shape,
+  ...baseRequestSchema.shape,
+});
 
 const basePasteRequestSchema = z.object({
   code: z.string().meta({
@@ -58,15 +60,17 @@ const basePasteRequestSchema = z.object({
   }),
   language: z
     .enum(languages.map((lang) => lang.id))
-    .nullable()
-    .optional()
+    .nullish()
     .meta({
       description: "If provided, the code will syntax highlighted for this language.",
       example: "python",
     }),
 });
 
-export const pasteRequestSchema = basePasteRequestSchema.and(baseRequestSchema);
+export const pasteRequestSchema = z.object({
+  ...basePasteRequestSchema.shape,
+  ...baseRequestSchema.shape
+});
 
 const baseUploadRequestSchema = z
   .object({
@@ -82,9 +86,11 @@ const baseUploadRequestSchema = z
         },
       }),
   })
-  .and(baseRequestSchema);
 
-export const uploadRequestSchema = baseUploadRequestSchema.and(baseRequestSchema);
+export const uploadRequestSchema = z.object({
+  ...baseUploadRequestSchema.shape,
+  ...baseRequestSchema.shape
+});
 
 const baseEventRequestSchema = z
   .object({
@@ -92,10 +98,10 @@ const baseEventRequestSchema = z
       description: "The title for the event.",
       example: "Coffee Morning",
     }),
-    description: z.string().nullable().optional().meta({
+    description: z.string().nullish().meta({
       example: "Join us for a delicious hot cup of joe to start your morning!",
     }),
-    location: z.string().nullable().optional().meta({
+    location: z.string().nullish().meta({
       example: "Hacker Cafe",
     }),
     startDate: z.iso
@@ -117,8 +123,7 @@ const baseEventRequestSchema = z
       }),
     endDate: z.iso
       .datetime()
-      .nullable()
-      .optional()
+      .nullish()
       .refine(
         (val) => {
           return val === null || val === undefined || !Number.isNaN(Date.parse(val));
@@ -139,7 +144,11 @@ const baseEventRequestSchema = z
   .refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, {
     error: "End date must be after start date",
   });
-export const eventRequestSchema = baseEventRequestSchema.and(baseRequestSchema);
+
+export const eventRequestSchema = z.object({
+  ...baseEventRequestSchema.shape,
+  ...baseRequestSchema.shape
+});
 
 export const deleteRequestSchema = z.object({
   deleteToken: z.string().max(128),
