@@ -4,9 +4,22 @@ import languages from "../../languages.json";
 import * as models from "./models";
 
 const baseRequestSchema = z.object({
-  expires: z.coerce
-    .date()
+  expires: z.iso.datetime()
     .nullable()
+    .default(() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 60);
+      return d.toISOString();
+    })
+    .optional()
+    .refine((val) => {
+      return val === null || val === undefined || !Number.isNaN(Date.parse(val));
+    }, {
+      message: "Expiry must be a valid ISO date"
+    })
+    .transform((val) => {
+      return (val === null || val === undefined) ? null : new Date(val);
+    })
     .refine(
       (val) => {
         if (val === null || val === undefined) return true;
@@ -17,17 +30,12 @@ const baseRequestSchema = z.object({
       },
       { message: "Expiry must be between 0 days and 1 year" },
     )
-    .default(() => {
-      const d = new Date();
-      d.setDate(d.getDate() + 60);
-      return d;
-    })
-    .optional()
     .meta({
       description: "A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).",
     }),
   deleteToken: z.string().max(128).nullable().optional().meta({
     description: "An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).",
+    example: "Z3hH26B7djooPz2EyRYhoj8i"
   }),
 });
 
@@ -57,8 +65,7 @@ export const pasteRequestSchema = basePasteRequestSchema.and(baseRequestSchema);
 
 const baseUploadRequestSchema = z
   .object({
-    file: z
-      .instanceof(File)
+    file: z.file()
       .refine((val) => val.size <= 2.56e8, {
         message: "File must be less than 256 MB",
       })
@@ -75,12 +82,43 @@ export const uploadRequestSchema = baseUploadRequestSchema.and(baseRequestSchema
 
 const baseEventRequestSchema = z.object({
   title: z.string().meta({
-    example: "My event"
+    description: "The title for the event.",
+    example: "Coffee Morning"
   }),
-  description: z.string().nullable().optional(),
-  location: z.string().nullable().optional(),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date().nullable().optional(),
+  description: z.string().nullable().optional().meta({
+    example: "Join us for a delicious hot cup of joe to start your morning!"
+  }),
+  location: z.string().nullable().optional().meta({
+    example: "Hacker Cafe"
+  }),
+  startDate: z.iso.datetime()
+    .refine((val) => {
+      return !Number.isNaN(Date.parse(val));
+    }, {
+      message: "Expiry must be a valid ISO date"
+    })
+    .transform((val) => {
+      return new Date(val);
+    })
+    .meta({
+      description: "The date when the event starts.",
+      example: "2025-08-01T09:00:00.000Z"
+    }),
+  endDate: z.iso.datetime()
+    .nullable()
+    .optional()
+    .refine((val) => {
+      return val === null || val === undefined || !Number.isNaN(Date.parse(val));
+    }, {
+      message: "Expiry must be a valid ISO date"
+    })
+    .transform((val) => {
+      return (val === null || val === undefined) ? null : new Date(val);
+    })
+    .meta({
+      description: "An optional date for when the event ends.",
+      example: "2025-08-01T10:30:00.000Z"
+    }),
   allDay: z.boolean().default(false).optional()
 }).refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, { error: "End date must be after start date" });
 export const eventRequestSchema = baseEventRequestSchema.and(baseRequestSchema);
@@ -89,13 +127,21 @@ export const deleteRequestSchema = z.object({
   deleteToken: z.string().max(128),
 });
 
-const itemResponseSchema = createSelectSchema(models.shortLinks).omit({ deleteToken: true });
+const itemResponseSchema = z.object({
+  ...createSelectSchema(models.shortLinks).omit({ deleteToken: true }).shape,
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  expiresAt: z.iso.datetime().nullable(),
+});
 export const shortLinkResponseSchema = z
   .object({
     ...createSelectSchema(models.shortLinkUrls).shape,
     ...itemResponseSchema.extend({
       type: z.literal("url"),
     }).shape,
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    expiresAt: z.iso.datetime().nullable(),
   })
   .meta({
     example: {
@@ -113,6 +159,9 @@ export const pasteResponseSchema = z
     ...itemResponseSchema.extend({
       type: z.literal("paste"),
     }).shape,
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    expiresAt: z.iso.datetime().nullable(),
   })
   .meta({
     example: {
@@ -131,6 +180,9 @@ export const uploadResponseSchema = z
     ...itemResponseSchema.extend({
       type: z.literal("upload"),
     }).shape,
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    expiresAt: z.iso.datetime().nullable(),
   })
   .meta({
     example: {
@@ -150,6 +202,11 @@ export const eventResponseSchema = z
     ...itemResponseSchema.extend({
       type: z.literal("event"),
     }).shape,
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    expiresAt: z.iso.datetime().nullable(),
+    startDate: z.iso.datetime(),
+    endDate: z.iso.datetime().nullable()
   })
   .meta({
     example: {

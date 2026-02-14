@@ -164,7 +164,7 @@ app.post(
     const upload = await createUpload(
       c.var.db,
       c.env.UPLOADS,
-      parsed.file,
+      parsed.file as File,
       parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
     );
