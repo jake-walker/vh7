@@ -68,7 +68,7 @@ function Main() {
           <Title order={3} mb={10}>
             History
           </Title>
-          {history.map((item, i) => <HistoryItem key={i} item={item} />).reverse()}
+          {history.map((item) => <HistoryItem key={item.id} item={item} />).reverse()}
         </Box>
       </Container>
     </>

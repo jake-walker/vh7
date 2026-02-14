@@ -15,6 +15,7 @@ export function SuccessAlert({
   const url = idToUrl(response.id);
 
   return (
+    // biome-ignore lint/correctness/useUniqueElementIds: currently used for testing
     <Alert
       id="success-alert"
       icon={<CheckCircle size={32} />}

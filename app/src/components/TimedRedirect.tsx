@@ -11,7 +11,7 @@ function TimedRedirect({ href }: { href: string }) {
     } else {
       window.location.replace(href);
     }
-  }, [timer]);
+  }, [timer, href]);
 
   return (
     <>

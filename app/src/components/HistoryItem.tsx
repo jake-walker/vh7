@@ -80,7 +80,7 @@ export function HistoryItem({ item }: { item: HistoryItemType }) {
               to={`/${item.id}`}
               component={Link}
               c="dimmed"
-              td={expired ? "strikethrough" : undefined}
+              td={expired ? "line-through" : undefined}
             >
               {url}
             </Text>

@@ -15,6 +15,7 @@ Sentry.init({
   integrations: [],
 });
 
+// biome-ignore lint/style/noNonNullAssertion: n/a
 createRoot(document.getElementById("root")!, {
   onUncaughtError: Sentry.reactErrorHandler((error, errorInfo) => {
     console.warn("Uncaught error", error, errorInfo.componentStack);

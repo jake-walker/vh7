@@ -3,9 +3,10 @@ import { Dropzone, type FileRejection, type FileWithPath } from "@mantine/dropzo
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { Upload } from "react-feather";
+import { initialValues, validationRules } from "../advanced-controls";
 import { upload } from "../controller";
 import type { CreateFormProps } from "../types";
-import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
+import { AdvancedControls, type AdvancedControlsFormValues } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 
 type UploadFormValues = {} & AdvancedControlsFormValues;
@@ -38,6 +39,7 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
     setLoading(true);
 
     try {
+      // biome-ignore lint/style/noNonNullAssertion: this is checked above
       const res = await upload(files[0]!, form.values.expireDays, form.values.deletable || false);
       onResponse(res);
     } catch (err) {
@@ -55,6 +57,7 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
 
   return (
     <>
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <Dropzone
         id="upload-file"
         onDrop={onDrop}

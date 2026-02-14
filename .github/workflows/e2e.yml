@@ -17,9 +17,7 @@ jobs:
           node-version: 24
           cache: "pnpm"
       - name: Install dependencies
-        run: |
-          pnpm install
-          pnpm cypress install
+        run: pnpm install
       - name: Migrate database
         run: pnpm dlx wrangler d1 migrations apply DB --local
       - name: Build frontend

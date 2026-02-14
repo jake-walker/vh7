@@ -13,7 +13,7 @@ import NotFound from "./NotFound";
 function View() {
   const { link } = useParams();
   const [data, setData] = useState<Awaited<ReturnType<typeof getInfo>> | null>(null);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
 
   useEffect(() => {
@@ -28,10 +28,10 @@ function View() {
         }
       })
       .catch((err) => {
-        if (err.response && err.response.status == 404) {
+        if (err.response && err.response.status === 404) {
           setNotFound(true);
         } else {
-          setError(error);
+          setError(err);
         }
       });
   }, [link]);
@@ -45,9 +45,9 @@ function View() {
     );
   }
 
-  let title;
-  let subtitle;
-  let content;
+  let title: string = "";
+  let subtitle: string = "";
+  let content: React.ReactElement = <></>;
 
   if (data !== null) {
     if (error) {
@@ -58,20 +58,17 @@ function View() {
       switch (data.type) {
         case "url":
           title = shortUrl(data.url);
-          content = (
-            <>
-              <TimedRedirect href={data.url} />
-            </>
-          );
+          content = <TimedRedirect href={data.url} />;
           break;
         case "paste":
           title = "Paste";
           content = (
             <>
+              {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
               <LazyCodeHighlight language={data.language ?? null} code={data.code} id="paste-content" />
-              <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`} mt={10}>
+              {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} mt={10}>
                 Download
-              </Button>
+              </Button>}
             </>
           );
           break;
@@ -94,6 +91,7 @@ function View() {
               <Box style={{ overflowX: "auto" }}>
                 <ul>
                   <li>
+                    {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
                     <b>SHA256 Hash:</b> <span id="upload-sha256">{data.hash}</span>
                   </li>
                   <li>
@@ -102,9 +100,9 @@ function View() {
                 </ul>
               </Box>
 
-              <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`}>
+              {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`}>
                 Download {data.filename}
-              </Button>
+              </Button>}
             </>
           );
           break;
@@ -151,9 +149,9 @@ function View() {
                 >
                   Add to Outlook
                 </Button>
-                <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link!)}?direct=1`} me={12}>
+                {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} me={12}>
                   Add to iCloud & others (ICS)...
-                </Button>
+                </Button>}
               </Box>
             </Stack>
           );

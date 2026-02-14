@@ -4,15 +4,18 @@ import { useState } from "react";
 import { Send } from "react-feather";
 import { z } from "zod";
 import languages from "../../../languages.json";
+import { initialValues, validationRules } from "../advanced-controls";
 import type { operations } from "../api.g";
 import { paste, zodFormValidator } from "../controller";
 import type { CreateFormProps } from "../types";
-import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
+import { AdvancedControls, type AdvancedControlsFormValues } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 
 type PasteFormValues = {
   code: string;
-  language: NonNullable<NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"]> | "";
+  language:
+  | NonNullable<NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"]>
+  | "";
 } & AdvancedControlsFormValues;
 
 export function PasteForm({ onResponse, onError }: CreateFormProps) {
@@ -41,7 +44,12 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
     setLoading(true);
 
     try {
-      const res = await paste(values.code, values.language === "" ? null : values.language, values.expireDays, values.deletable || false);
+      const res = await paste(
+        values.code,
+        values.language === "" ? null : values.language,
+        values.expireDays,
+        values.deletable || false,
+      );
       onResponse(res);
       form.reset();
     } catch (err) {
@@ -54,6 +62,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
   return (
     <form onSubmit={form.onSubmit(submit)} style={{ position: "relative" }}>
       <LoadingOverlay visible={loading} />
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <Textarea
         id="paste-code"
         required
@@ -70,6 +79,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
         })}
         {...form.getInputProps("code")}
       />
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <Select
         id="paste-language"
         label="Language"
@@ -78,6 +88,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
       />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="paste" />
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <Button id="paste-submit" type="submit" mt={10} leftSection={<Send size={16} />}>
         Paste
       </Button>

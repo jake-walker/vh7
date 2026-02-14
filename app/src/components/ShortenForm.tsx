@@ -3,9 +3,10 @@ import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { Send } from "react-feather";
 import { z } from "zod";
+import { initialValues, validationRules } from "../advanced-controls";
 import { shorten, zodFormValidator } from "../controller";
 import type { CreateFormProps } from "../types";
-import { AdvancedControls, type AdvancedControlsFormValues, initialValues, validationRules } from "./AdvancedControls";
+import { AdvancedControls, type AdvancedControlsFormValues } from "./AdvancedControls";
 import { CreateInfo } from "./CreateInfo";
 
 type ShortenFormValues = {
@@ -44,6 +45,7 @@ export function ShortenForm({ onResponse, onError }: CreateFormProps) {
   return (
     <form onSubmit={form.onSubmit(submit)} style={{ position: "relative" }}>
       <LoadingOverlay visible={loading} />
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <TextInput
         id="shorten-url"
         required
@@ -53,6 +55,7 @@ export function ShortenForm({ onResponse, onError }: CreateFormProps) {
       />
       <AdvancedControls form={form} />
       <CreateInfo form={form} type="short link" />
+      {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
       <Button id="shorten-submit" type="submit" mt={10} leftSection={<Send size={16} />}>
         Shorten
       </Button>

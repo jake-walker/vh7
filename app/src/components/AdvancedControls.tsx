@@ -2,31 +2,11 @@ import { Collapse, Select, Switch, Text } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "react-feather";
-import { z } from "zod";
-import { zodFormValidator } from "../controller";
 
 export interface AdvancedControlsFormValues {
   expireDays: string;
   deletable: boolean;
 }
-
-export const initialValues = {
-  expireDays: "60",
-  deletable: true,
-};
-
-export const validationRules = {
-  expireDays: zodFormValidator(
-    z.string().refine((val) => {
-      try {
-        const n = parseInt(val, 10);
-        return (n > 0 && n < 365) || n === -1;
-      } catch {
-        return false;
-      }
-    }),
-  ),
-};
 
 export function AdvancedControls<T extends AdvancedControlsFormValues>({
   form,
