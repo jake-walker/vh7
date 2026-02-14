@@ -13,5 +13,5 @@ export function checkDirectUserAgent(userAgent: string | undefined): boolean {
 }
 
 export function isValidId(id: string): boolean {
-  return /^[a-zA-Z0-9]{4}$/.test(id);
+  return /^[a-zA-Z0-9]{4}$/.test(id) || /^[a-zA-Z0-9]{9}$/.test(id);
 }

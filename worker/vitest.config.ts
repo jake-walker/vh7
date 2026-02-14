@@ -9,6 +9,7 @@ export default defineWorkersProject(async () => {
     test: {
       setupFiles: ["./test/apply-migrations.ts"],
       poolOptions: {
+        singleWorker: true,
         workers: {
           wrangler: {
             configPath: "../wrangler.jsonc",

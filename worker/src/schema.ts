@@ -1,6 +1,7 @@
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod";
 import languages from "../../languages.json";
+import { IdType } from "./controller";
 import * as models from "./models";
 
 const baseRequestSchema = z.object({
@@ -37,6 +38,10 @@ const baseRequestSchema = z.object({
     description: "An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).",
     example: "Z3hH26B7djooPz2EyRYhoj8i"
   }),
+  linkType: z.enum(IdType).nullable().optional().default(() => IdType.Short).meta({
+    description: "The type or algorithm to use for the generated ID of the short link.",
+    example: "short",
+  }),
 });
 
 const baseShortLinkRequestSchema = z.object({
@@ -65,7 +70,8 @@ export const pasteRequestSchema = basePasteRequestSchema.and(baseRequestSchema);
 
 const baseUploadRequestSchema = z
   .object({
-    file: z.file()
+    file: z
+      .file()
       .refine((val) => val.size <= 2.56e8, {
         message: "File must be less than 256 MB",
       })
@@ -80,47 +86,59 @@ const baseUploadRequestSchema = z
 
 export const uploadRequestSchema = baseUploadRequestSchema.and(baseRequestSchema);
 
-const baseEventRequestSchema = z.object({
-  title: z.string().meta({
-    description: "The title for the event.",
-    example: "Coffee Morning"
-  }),
-  description: z.string().nullable().optional().meta({
-    example: "Join us for a delicious hot cup of joe to start your morning!"
-  }),
-  location: z.string().nullable().optional().meta({
-    example: "Hacker Cafe"
-  }),
-  startDate: z.iso.datetime()
-    .refine((val) => {
-      return !Number.isNaN(Date.parse(val));
-    }, {
-      message: "Expiry must be a valid ISO date"
-    })
-    .transform((val) => {
-      return new Date(val);
-    })
-    .meta({
-      description: "The date when the event starts.",
-      example: "2025-08-01T09:00:00.000Z"
+const baseEventRequestSchema = z
+  .object({
+    title: z.string().meta({
+      description: "The title for the event.",
+      example: "Coffee Morning",
     }),
-  endDate: z.iso.datetime()
-    .nullable()
-    .optional()
-    .refine((val) => {
-      return val === null || val === undefined || !Number.isNaN(Date.parse(val));
-    }, {
-      message: "Expiry must be a valid ISO date"
-    })
-    .transform((val) => {
-      return (val === null || val === undefined) ? null : new Date(val);
-    })
-    .meta({
-      description: "An optional date for when the event ends.",
-      example: "2025-08-01T10:30:00.000Z"
+    description: z.string().nullable().optional().meta({
+      example: "Join us for a delicious hot cup of joe to start your morning!",
     }),
-  allDay: z.boolean().default(false).optional()
-}).refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, { error: "End date must be after start date" });
+    location: z.string().nullable().optional().meta({
+      example: "Hacker Cafe",
+    }),
+    startDate: z.iso
+      .datetime()
+      .refine(
+        (val) => {
+          return !Number.isNaN(Date.parse(val));
+        },
+        {
+          message: "Expiry must be a valid ISO date",
+        },
+      )
+      .transform((val) => {
+        return new Date(val);
+      })
+      .meta({
+        description: "The date when the event starts.",
+        example: "2025-08-01T09:00:00.000Z",
+      }),
+    endDate: z.iso
+      .datetime()
+      .nullable()
+      .optional()
+      .refine(
+        (val) => {
+          return val === null || val === undefined || !Number.isNaN(Date.parse(val));
+        },
+        {
+          message: "Expiry must be a valid ISO date",
+        },
+      )
+      .transform((val) => {
+        return val === null || val === undefined ? null : new Date(val);
+      })
+      .meta({
+        description: "An optional date for when the event ends.",
+        example: "2025-08-01T10:30:00.000Z",
+      }),
+    allDay: z.boolean().default(false).optional(),
+  })
+  .refine(({ startDate, endDate }) => endDate === null || endDate === undefined || endDate > startDate, {
+    error: "End date must be after start date",
+  });
 export const eventRequestSchema = baseEventRequestSchema.and(baseRequestSchema);
 
 export const deleteRequestSchema = z.object({
@@ -206,7 +224,7 @@ export const eventResponseSchema = z
     updatedAt: z.iso.datetime(),
     expiresAt: z.iso.datetime().nullable(),
     startDate: z.iso.datetime(),
-    endDate: z.iso.datetime().nullable()
+    endDate: z.iso.datetime().nullable(),
   })
   .meta({
     example: {

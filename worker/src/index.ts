@@ -6,7 +6,7 @@ import { describeRoute, openAPIRouteHandler, resolver, validator as zValidator }
 import z from "zod";
 import languages from "../../languages.json";
 import cleanup from "./cleanup";
-import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, lookup } from "./controller";
+import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, IdType, lookup } from "./controller";
 import { checkDirectUserAgent, isValidId } from "./helpers";
 import { buildIcs } from "./ics";
 import * as models from "./models";
@@ -95,6 +95,7 @@ app.post(
       parsed.url,
       parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
+      parsed.linkType ?? IdType.Short
     );
     return c.json(shortUrl);
   },
@@ -128,6 +129,7 @@ app.post(
       parsed.language ?? null,
       parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
+      parsed.linkType ?? IdType.Short
     );
     return c.json(paste);
   },
@@ -167,6 +169,7 @@ app.post(
       parsed.file as File,
       parsed.expires ?? null,
       parsed.deleteToken ?? undefined,
+      parsed.linkType ?? IdType.Short
     );
     return c.json(upload);
   },
@@ -202,8 +205,9 @@ app.post(
       allDay: parsed.allDay,
       description: parsed.description,
       endDate: parsed.endDate,
-      location: parsed.location,
-    });
+      location: parsed.location
+    },
+      parsed.linkType ?? IdType.Short);
     return c.json(event);
   },
 );

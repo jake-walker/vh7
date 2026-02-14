@@ -1,9 +1,24 @@
 import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { customAlphabet } from "nanoid";
+import { isValidId } from "./helpers";
 import * as models from "./models";
 
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 4);
+export enum IdType {
+  Short = "short",
+  Long = "long",
+}
+
+function generateId(idType: IdType): string {
+  const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 4);
+
+  switch (idType) {
+    case IdType.Long:
+      return nanoid(9);
+    default:
+      return nanoid(4);
+  }
+}
 
 export async function sha256(file: File) {
   const fileData = await file.arrayBuffer();
@@ -17,8 +32,9 @@ export async function createShortUrl(
   url: string,
   expires: Date | null,
   deleteToken: string | undefined,
+  idType: IdType = IdType.Short,
 ): Promise<models.ShortLink & models.ShortLinkUrl> {
-  const id = nanoid();
+  const id = generateId(idType);
 
   const stub: models.ShortLink = {
     id,
@@ -46,8 +62,9 @@ export async function createPaste(
   language: string | null,
   expires: Date | null,
   deleteToken: string | undefined,
+  idType: IdType = IdType.Short,
 ): Promise<models.ShortLink & models.ShortLinkPaste> {
-  const id = nanoid();
+  const id = generateId(idType);
 
   const stub: models.ShortLink = {
     id,
@@ -76,8 +93,9 @@ export async function createUpload(
   file: File,
   rawExpires: Date | null,
   deleteToken: string | undefined,
+  idType: IdType = IdType.Short,
 ): Promise<models.ShortLink & models.ShortLinkUpload> {
-  const id = nanoid();
+  const id = generateId(idType);
   const hash = await sha256(file);
 
   await bucket.put(id, file);
@@ -115,9 +133,10 @@ export async function createEvent(
   db: DrizzleD1Database<typeof models>,
   expires: Date | null,
   deleteToken: string | undefined,
-  data: Omit<models.NewShortLinkEvent, "id">
+  data: Omit<models.NewShortLinkEvent, "id">,
+  idType: IdType = IdType.Short,
 ): Promise<models.ShortLink & models.ShortLinkEvent> {
-  const id = nanoid();
+  const id = generateId(idType);
 
   const stub: models.ShortLink = {
     id,
@@ -130,20 +149,27 @@ export async function createEvent(
 
   const event: models.NewShortLinkEvent = {
     id,
-    ...data
+    ...data,
   };
 
   await db.insert(models.shortLinks).values(stub).run();
   await db.insert(models.shortLinkEvents).values(event).run();
 
-  return { ...stub, ...event, description: event.description ?? null, location: event.location ?? null, endDate: event.endDate ?? null, allDay: event.allDay ?? false };
+  return {
+    ...stub,
+    ...event,
+    description: event.description ?? null,
+    location: event.location ?? null,
+    endDate: event.endDate ?? null,
+    allDay: event.allDay ?? false,
+  };
 }
 
 export async function lookup(
   db: DrizzleD1Database<typeof models>,
   id: string,
 ): Promise<null | models.JoinedShortLinkAny> {
-  if (!/[a-zA-Z0-9]{4}/.test(id)) {
+  if (!isValidId(id)) {
     return null;
   }
 
@@ -178,7 +204,7 @@ export async function lookup(
       return { ...stub, type: "upload", ...data };
     case "event":
       data = await db.query.shortLinkEvents.findFirst({
-        where: eq(models.shortLinkEvents.id, id)
+        where: eq(models.shortLinkEvents.id, id),
       });
       if (data === undefined) return null;
       return { ...stub, type: "event", ...data };

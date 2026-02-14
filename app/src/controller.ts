@@ -6,6 +6,8 @@ const baseUrl = import.meta.env.MODE === "development" ? "http://localhost:8787"
 
 const client = createClient<paths>({ baseUrl });
 
+type LinkType = NonNullable<operations["postApiShorten"]["requestBody"]>["content"]["application/json"]["linkType"];
+
 export function idToUrl(id: string) {
   const u = new URL(import.meta.env.MODE !== "development" ? window.location.href : baseUrl);
   return `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ""}/${encodeURIComponent(id)}`;
@@ -44,7 +46,7 @@ function parseExpiry(v: string | null): string | null {
   return expiryDate?.toISOString() ?? null;
 }
 
-export async function shorten(url: string, expiryDays: string | null, deletable: boolean) {
+export async function shorten(url: string, expiryDays: string | null, deletable: boolean, linkType: LinkType) {
   const expires = parseExpiry(expiryDays);
 
   const { data, error } = await client.POST("/api/shorten", {
@@ -52,6 +54,7 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
       url,
       expires,
       deleteToken: deletable ? crypto.randomUUID() : null,
+      linkType
     },
   });
 
@@ -63,7 +66,7 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
   return data;
 }
 
-export async function paste(code: string, language: NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"], expiryDays: string | null, deletable: boolean) {
+export async function paste(code: string, language: NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"], expiryDays: string | null, deletable: boolean, linkType: LinkType) {
   const expires = parseExpiry(expiryDays);
 
   const { data, error } = await client.POST("/api/paste", {
@@ -72,6 +75,7 @@ export async function paste(code: string, language: NonNullable<operations["post
       language,
       expires,
       deleteToken: deletable ? crypto.randomUUID() : null,
+      linkType
     },
   });
 
@@ -83,11 +87,15 @@ export async function paste(code: string, language: NonNullable<operations["post
   return data;
 }
 
-export async function upload(file: File, expiryDays: string | null, deletable: boolean) {
+export async function upload(file: File, expiryDays: string | null, deletable: boolean, linkType: LinkType) {
   const expires = parseExpiry(expiryDays);
 
   const form = new FormData();
   form.append("file", file);
+
+  if (linkType !== null && linkType !== undefined) {
+    form.append("linkType", linkType);
+  }
 
   if (expires !== null) {
     form.append("expires", expires.toString());

@@ -2,8 +2,10 @@ import { Collapse, Select, Switch, Text } from "@mantine/core";
 import type { UseFormReturnType } from "@mantine/form";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "react-feather";
+import type { operations } from "../api.g";
 
 export interface AdvancedControlsFormValues {
+  linkType: NonNullable<operations["postApiShorten"]["requestBody"]>["content"]["application/json"]["linkType"];
   expireDays: string;
   deletable: boolean;
 }
@@ -38,6 +40,10 @@ export function AdvancedControls<T extends AdvancedControlsFormValues>({
     <>
       <Collapse in={opened}>
         <Select label="Expires" data={dates} {...form.getInputProps("expireDays")} />
+        <Select label="Link Type" data={[
+          { label: "Short (4 characters)", value: "short" },
+          { label: "Long (9 characters)", value: "long" },
+        ]} {...form.getInputProps("linkType")} />
         <Switch label="Allow deletion?" my="xs" {...form.getInputProps("deletable", { type: "checkbox" })} />
       </Collapse>
       <Text

@@ -49,6 +49,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
         values.language === "" ? null : values.language,
         values.expireDays,
         values.deletable || false,
+        values.linkType
       );
       onResponse(res);
       form.reset();

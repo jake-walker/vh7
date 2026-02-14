@@ -40,7 +40,7 @@ export function UploadForm({ onResponse, onError }: CreateFormProps) {
 
     try {
       // biome-ignore lint/style/noNonNullAssertion: this is checked above
-      const res = await upload(files[0]!, form.values.expireDays, form.values.deletable || false);
+      const res = await upload(files[0]!, form.values.expireDays, form.values.deletable || false, form.values.linkType);
       onResponse(res);
     } catch (err) {
       onError(`Failed·to·upload:·${err}`);

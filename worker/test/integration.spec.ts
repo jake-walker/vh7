@@ -133,6 +133,37 @@ describe("API", () => {
           deleteToken: null,
         }),
       );
+      // biome-ignore lint/suspicious/noExplicitAny: type checking is done above
+      expect((json as any).id).toHaveLength(4);
+    });
+
+    test("url long type", async () => {
+      const res = await SELF.fetch("http://vh7.uk/api/shorten", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: "https://example.com",
+          linkType: "long"
+        }),
+      });
+
+      expect(res.status).toBe(200);
+      const json: unknown = await res.json();
+      expect(json).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          type: "url",
+          url: "https://example.com",
+          createdAt: expect.any(String),
+          expiresAt: expect.any(String),
+          updatedAt: expect.any(String),
+          deleteToken: null,
+        }),
+      );
+      // biome-ignore lint/suspicious/noExplicitAny: type checking is done above
+      expect((json as any).id).toHaveLength(9);
     });
 
     test("paste", async () => {

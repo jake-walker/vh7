@@ -32,7 +32,7 @@ export function ShortenForm({ onResponse, onError }: CreateFormProps) {
     setLoading(true);
 
     try {
-      const res = await shorten(values.url, values.expireDays, values.deletable || false);
+      const res = await shorten(values.url, values.expireDays, values.deletable || false, values.linkType);
       onResponse(res);
       form.reset();
     } catch (err) {
