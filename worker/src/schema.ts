@@ -4,21 +4,20 @@ import languages from "../../languages.json";
 import { IdType } from "./controller";
 import * as models from "./models";
 
+const baseDateFormat = z.iso.datetime({ local: true, offset: true });
+const dateFormat = baseDateFormat.nullish().transform((val) => {
+        return val === null || val === undefined ? null : new Date(val);
+      });
+const requiredDateFormat = baseDateFormat.transform((val) => {
+  return new Date(val);
+});
+
 const baseRequestSchema = z.object({
-  expires: z.iso.datetime()
-    .nullish()
+  expires: dateFormat
     .default(() => {
       const d = new Date();
       d.setDate(d.getDate() + 60);
-      return d.toISOString();
-    })
-    .refine((val) => {
-      return val === null || val === undefined || !Number.isNaN(Date.parse(val));
-    }, {
-      message: "Expiry must be a valid ISO date"
-    })
-    .transform((val) => {
-      return (val === null || val === undefined) ? null : new Date(val);
+      return d
     })
     .refine(
       (val) => {
@@ -104,37 +103,12 @@ const baseEventRequestSchema = z
     location: z.string().nullish().meta({
       example: "Hacker Cafe",
     }),
-    startDate: z.iso
-      .datetime()
-      .refine(
-        (val) => {
-          return !Number.isNaN(Date.parse(val));
-        },
-        {
-          message: "Expiry must be a valid ISO date",
-        },
-      )
-      .transform((val) => {
-        return new Date(val);
-      })
+    startDate: requiredDateFormat
       .meta({
         description: "The date when the event starts.",
         example: "2025-08-01T09:00:00.000Z",
       }),
-    endDate: z.iso
-      .datetime()
-      .nullish()
-      .refine(
-        (val) => {
-          return val === null || val === undefined || !Number.isNaN(Date.parse(val));
-        },
-        {
-          message: "Expiry must be a valid ISO date",
-        },
-      )
-      .transform((val) => {
-        return val === null || val === undefined ? null : new Date(val);
-      })
+    endDate: dateFormat
       .meta({
         description: "An optional date for when the event ends.",
         example: "2025-08-01T10:30:00.000Z",
