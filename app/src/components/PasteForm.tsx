@@ -85,6 +85,7 @@ export function PasteForm({ onResponse, onError }: CreateFormProps) {
         id="paste-language"
         label="Language"
         data={[{ label: "None", value: "" }, ...languages.map((lang) => ({ label: lang.name, value: lang.id }))]}
+        searchable
         {...form.getInputProps("language")}
       />
       <AdvancedControls form={form} />

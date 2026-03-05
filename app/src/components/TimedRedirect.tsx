@@ -1,4 +1,4 @@
-import { Progress, Text } from "@mantine/core";
+import { Anchor, Progress, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 function TimedRedirect({ href }: { href: string }) {
@@ -18,9 +18,9 @@ function TimedRedirect({ href }: { href: string }) {
       <Progress value={(timer / maxTimer) * 100} mb={8} />
       <Text>
         Redirecting to{" "}
-        <Text inherit variant="link" component="a" href={href}>
+        <Anchor inherit component="a" href={href}>
           {href}
-        </Text>{" "}
+        </Anchor>{" "}
         in {timer}...
       </Text>
     </>

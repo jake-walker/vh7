@@ -30,6 +30,7 @@ const baseRequestSchema = z.object({
       { message: "Expiry must be between 0 days and 1 year" },
     )
     .meta({
+      example: null,
       description: "A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).",
     }),
   deleteToken: z.string().max(128).nullish().meta({

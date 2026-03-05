@@ -54,7 +54,7 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
       url,
       expires,
       deleteToken: deletable ? crypto.randomUUID() : null,
-      linkType
+      linkType,
     },
   });
 
@@ -66,7 +66,13 @@ export async function shorten(url: string, expiryDays: string | null, deletable:
   return data;
 }
 
-export async function paste(code: string, language: NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"], expiryDays: string | null, deletable: boolean, linkType: LinkType) {
+export async function paste(
+  code: string,
+  language: NonNullable<operations["postApiPaste"]["requestBody"]>["content"]["application/json"]["language"],
+  expiryDays: string | null,
+  deletable: boolean,
+  linkType: LinkType,
+) {
   const expires = parseExpiry(expiryDays);
 
   const { data, error } = await client.POST("/api/paste", {
@@ -75,7 +81,7 @@ export async function paste(code: string, language: NonNullable<operations["post
       language,
       expires,
       deleteToken: deletable ? crypto.randomUUID() : null,
-      linkType
+      linkType,
     },
   });
 
@@ -131,11 +137,12 @@ export async function deleteWithToken(id: string, token: string) {
   return data;
 }
 
-export async function info(id: string) {
+export async function info(id: string, signal?: AbortSignal) {
   const { data, error, response } = await client.GET("/api/info/{id}", {
     params: {
       path: { id },
     },
+    signal,
   });
 
   if (response.status === 404) {

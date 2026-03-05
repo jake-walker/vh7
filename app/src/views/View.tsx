@@ -1,13 +1,15 @@
-import { Alert, Box, Button, Container, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Button, Container, Stack, Text, Title } from "@mantine/core";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { AlertOctagon, Calendar, Download } from "react-feather";
+import { AlertOctagon, AlignLeft, Calendar, Download, MapPin } from "react-feather";
 import { useParams } from "react-router";
 import { googleCalendarUrl, outlookCalendarUrl } from "../calendarLinks";
 import Header from "../components/Header";
 import { LazyCodeHighlight } from "../components/LazyCodeHighlight";
+import { FilePreview } from "../components/previews/FilePreview";
 import TimedRedirect from "../components/TimedRedirect";
 import { info as getInfo, idToUrl, shortUrl } from "../controller";
+import { formatBytes, getPreviewType } from "../util";
 import NotFound from "./NotFound";
 
 function View() {
@@ -19,7 +21,9 @@ function View() {
   useEffect(() => {
     if (link === undefined) return;
 
-    getInfo(link)
+    const controller = new AbortController();
+
+    getInfo(link, controller.signal)
       .then((data) => {
         if (data === null) {
           setNotFound(true);
@@ -28,12 +32,15 @@ function View() {
         }
       })
       .catch((err) => {
+        if (err.name === "AbortError" || err.name === "CancelError") return;
         if (err.response && err.response.status === 404) {
           setNotFound(true);
         } else {
           setError(err);
         }
       });
+
+    return () => controller.abort();
   }, [link]);
 
   if (notFound) {
@@ -66,27 +73,36 @@ function View() {
             <>
               {/** biome-ignore lint/correctness/useUniqueElementIds: currently used for testing */}
               <LazyCodeHighlight language={data.language ?? null} code={data.code} id="paste-content" />
-              {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} mt={10}>
-                Download
-              </Button>}
+              {link !== undefined && (
+                <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} mt={10}>
+                  Download
+                </Button>
+              )}
             </>
           );
           break;
         case "upload": {
           title = data.filename;
-          let size = `${data.size} bytes`;
-          if (data.size > 1000000) {
-            size = `${(data.size / 1000000).toFixed(1)} MB`;
-          } else if (data.size > 1000) {
-            size = `${(data.size / 1000).toFixed(1)} KB`;
-          }
+          const previewType = getPreviewType(data.mimeType ?? "", data.filename);
 
           content = (
             <>
               <Alert icon={<AlertOctagon size={32} />} color="red">
                 Please note, files uploaded to VH7 are not checked for malware. Be cautious if downloading files from
                 someone you do not know.
+                {previewType !== "unsupported" &&
+                  <span>{" "}<b>This file is shown below as a preview</b> - it may display content (like links or forms) that appear to be part of this website but are not.</span>}
               </Alert>
+
+              {link !== undefined && (
+                <Box my="md">
+                  <FilePreview
+                    url={`${idToUrl(link)}?serve=1`}
+                    filename={data.filename}
+                    mimeType={data.mimeType ?? ""}
+                  />
+                </Box>
+              )}
 
               <Box style={{ overflowX: "auto" }}>
                 <ul>
@@ -95,19 +111,22 @@ function View() {
                     <b>SHA256 Hash:</b> <span id="upload-sha256">{data.hash}</span>
                   </li>
                   <li>
-                    <b>File Size:</b> {size}
+                    <b>File Size:</b> {formatBytes(data.size)}
                   </li>
                   {data.mimeType && (
                     <li>
                       <b>Mime Type:</b> {data.mimeType}
+                      {previewType !== "unsupported" && <Badge variant="light" ms="xs">{previewType}</Badge>}
                     </li>
                   )}
                 </ul>
               </Box>
 
-              {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`}>
-                Download {data.filename}
-              </Button>}
+              {link !== undefined && (
+                <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`}>
+                  Download {data.filename}
+                </Button>
+              )}
             </>
           );
           break;
@@ -125,12 +144,12 @@ function View() {
             <Stack gap="xs">
               {data.location && (
                 <Text>
-                  <strong>Location:</strong> {data.location}
+                  <strong><MapPin size={14} /> Location:</strong> {data.location}
                 </Text>
               )}
               {data.description && (
                 <Text>
-                  <strong>Description:</strong> {data.description}
+                  <strong><AlignLeft size={14} /> Description:</strong> {data.description}
                 </Text>
               )}
               <Text c="dimmed">Created {new Date(data.createdAt).toLocaleDateString()}</Text>
@@ -154,9 +173,11 @@ function View() {
                 >
                   Add to Outlook
                 </Button>
-                {link !== undefined && <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} me={12}>
-                  Add to iCloud & others (ICS)...
-                </Button>}
+                {link !== undefined && (
+                  <Button leftSection={<Download size={16} />} component="a" href={`${idToUrl(link)}?direct=1`} me={12}>
+                    Add to iCloud & others (ICS)...
+                  </Button>
+                )}
               </Box>
             </Stack>
           );

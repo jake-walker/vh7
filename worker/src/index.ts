@@ -7,7 +7,7 @@ import z from "zod";
 import languages from "../../languages.json";
 import cleanup from "./cleanup";
 import { createEvent, createPaste, createShortUrl, createUpload, deleteItem, IdType, lookup } from "./controller";
-import { checkDirectUserAgent, isValidId } from "./helpers";
+import { checkDirectUserAgent, isValidId, parseRangeHeader } from "./helpers";
 import { buildIcs } from "./ics";
 import * as models from "./models";
 import {
@@ -330,13 +330,14 @@ app.delete(
 app.get("/:id", withDb, async (c) => {
   let id: string | undefined = c.req.param("id");
   const direct = c.req.query("direct") !== undefined || checkDirectUserAgent(c.req.header("User-Agent"));
+  const serve = c.req.query("serve") !== undefined;
 
   // sanitise id
   if (!isValidId(id)) {
     id = undefined;
   }
 
-  if (direct === false) {
+  if (direct === false && serve === false) {
     // serve static
     return c.env.ASSETS.fetch(new Request(new URL("/", c.req.url), c.req.raw));
   }
@@ -364,20 +365,47 @@ app.get("/:id", withDb, async (c) => {
         });
       }
       case "upload": {
+        const rangeHeader = c.req.header("Range");
         // eslint-disable-next-line no-case-declarations
-        const obj = await c.env.UPLOADS.get(shortlink.id);
+        const obj = await c.env.UPLOADS.get(shortlink.id, {
+          range: rangeHeader ? parseRangeHeader(rangeHeader) : undefined
+        });
 
         if (obj === null) {
           return c.text("Short link not found", 404);
         }
 
-        return c.body(obj.body, 200, {
-          "Content-Type": "application/force-download",
-          "Content-Transfer-Encoding": "binary",
-          "Content-Disposition": `attachment; filename="${shortlink.filename}"`,
-          "Cache-Control": "max-age=86400",
-          etag: obj.httpEtag,
-        });
+        if (serve && shortlink.mimeType !== null) {
+          const objRange = obj.range as { offset?: number, length?: number } | undefined;
+          const isPartial = !!rangeHeader && objRange?.length !== undefined ? objRange.length < obj.size : false;
+
+          const status = isPartial ? 206 : 200;
+          const headers: Record<string, string> = {
+            "Content-Type": shortlink.mimeType,
+            "Cache-Control": "max-age=86400",
+            "Accept-Ranges": "bytes",
+            etag: obj.httpEtag
+          };
+
+          if (isPartial && obj.range && "offset" in obj.range) {
+            const offset = obj.range.offset ?? 0;
+            const length = obj.range.length ?? (obj.size - offset);
+            headers["Content-Range"] = `bytes ${offset}-${offset + length - 1}/${obj.size}`;
+            headers["Content-Length"] = String(length);
+          } else {
+            headers["Content-Length"] = String(obj.size);
+          }
+
+          return c.body(obj.body, status, headers);
+        } else {
+          return c.body(obj.body, 200, {
+            "Content-Type": "application/force-download",
+            "Content-Transfer-Encoding": "binary",
+            "Content-Disposition": `attachment; filename="${shortlink.filename}"`,
+            "Cache-Control": "max-age=86400",
+            etag: obj.httpEtag,
+          });
+        }
       }
       case "event": {
         return c.text(buildIcs(shortlink, new URL(c.req.url).hostname), 200, {

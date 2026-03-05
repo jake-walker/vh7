@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!, {
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <MantineProvider theme={theme}>
+        <MantineProvider theme={theme} defaultColorScheme="auto">
           <App />
         </MantineProvider>
       </BrowserRouter>
