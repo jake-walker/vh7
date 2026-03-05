@@ -6,8 +6,8 @@ import * as models from "./models";
 
 const baseDateFormat = z.iso.datetime({ local: true, offset: true });
 const dateFormat = baseDateFormat.nullish().transform((val) => {
-        return val === null || val === undefined ? null : new Date(val);
-      });
+  return val === null || val === undefined ? null : new Date(val);
+});
 const requiredDateFormat = baseDateFormat.transform((val) => {
   return new Date(val);
 });
@@ -195,6 +195,7 @@ export const uploadResponseSchema = z
       updatedAt: "2025-01-01T00:00:00.000Z",
       expiresAt: null,
       type: "upload",
+      mimeType: "application/pdf"
     },
   });
 export const eventResponseSchema = z

@@ -31,6 +31,7 @@ export const shortLinkUploads = sqliteTable("short_link_upload", {
     .references(() => shortLinks.id, { onDelete: "cascade", onUpdate: "cascade" }),
   filename: text("filename").notNull(),
   size: integer("size").notNull(),
+  mimeType: text("mime_type"),
   hash: text("hash").notNull(),
 });
 

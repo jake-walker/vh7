@@ -133,11 +133,7 @@ export interface operations {
                      * @example https://example.com
                      */
                     url: string;
-                } & {
-                    /**
-                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
-                     * @default 2026-04-15T12:10:36.422Z
-                     */
+                    /** @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files). */
                     expires?: string | null;
                     /**
                      * @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).
@@ -195,11 +191,7 @@ export interface operations {
                      * @example python
                      */
                     language?: ("text" | "ansi" | "bsl" | "sdbl" | "abap" | "actionscript-3" | "ada" | "angular-html" | "angular-ts" | "apache" | "apex" | "apl" | "applescript" | "ara" | "asciidoc" | "razor" | "asm" | "astro" | "awk" | "ballerina" | "bat" | "beancount" | "berry" | "bibtex" | "bicep" | "blade" | "c" | "csharp" | "cpp" | "c3" | "cadence" | "cairo" | "clarity" | "clojure" | "soy" | "cmake" | "cobol" | "codeowners" | "codeql" | "coffee" | "common-lisp" | "coq" | "crystal" | "css" | "csv" | "cue" | "cypher" | "d" | "dart" | "dax" | "desktop" | "diff" | "docker" | "dotenv" | "dream-maker" | "edge" | "elixir" | "elm" | "emacs-lisp" | "erb" | "erlang" | "fsharp" | "fennel" | "fish" | "fluent" | "fortran-fixed-form" | "fortran-free-form" | "gdresource" | "gdscript" | "gdshader" | "genie" | "po" | "gherkin" | "git-commit" | "git-rebase" | "gleam" | "glimmer-js" | "glimmer-ts" | "glsl" | "gn" | "gnuplot" | "go" | "graphql" | "groovy" | "hack" | "handlebars" | "hcl" | "haskell" | "haxe" | "hjson" | "hlsl" | "html" | "html-derivative" | "http" | "hurl" | "hxml" | "hy" | "imba" | "ini" | "java" | "javascript" | "jinja" | "jison" | "json" | "jsonl" | "jsonc" | "json5" | "jsonnet" | "jssm" | "jsx" | "julia" | "kdl" | "kotlin" | "kusto" | "latex" | "lean" | "less" | "liquid" | "llvm" | "log" | "logo" | "lua" | "luau" | "make" | "markdown" | "marko" | "matlab" | "mdc" | "mdx" | "mermaid" | "mipsasm" | "mojo" | "moonbit" | "move" | "narrat" | "nextflow" | "nginx" | "nim" | "nix" | "nushell" | "objective-c" | "objective-cpp" | "ocaml" | "odin" | "openscad" | "pascal" | "perl" | "php" | "pkl" | "plsql" | "polar" | "postcss" | "powerquery" | "powershell" | "prisma" | "prolog" | "proto" | "pug" | "puppet" | "purescript" | "python" | "qml" | "qmldir" | "qss" | "r" | "racket" | "raku" | "regexp" | "rel" | "rst" | "riscv" | "ron" | "rosmsg" | "ruby" | "haml" | "rust" | "sas" | "sass" | "scala" | "scheme" | "scss" | "shaderlab" | "shellscript" | "shellsession" | "smalltalk" | "solidity" | "sparql" | "splunk" | "sql" | "ssh-config" | "stata" | "stylus" | "surrealql" | "svelte" | "swift" | "systemd" | "system-verilog" | "talonscript" | "tasl" | "tcl" | "templ" | "terraform" | "tex" | "toml" | "tsv" | "tsx" | "turtle" | "twig" | "typescript" | "ts-tags" | "typespec" | "typst" | "v" | "vala" | "verilog" | "vhdl" | "viml" | "vb" | "vue" | "vue-html" | "vue-vine" | "vyper" | "wasm" | "wit" | "wenyan" | "wgsl" | "wikitext" | "reg" | "wolfram" | "xml" | "xsl" | "yaml" | "zenscript" | "zig") | null;
-                } & {
-                    /**
-                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
-                     * @default 2026-04-15T12:10:36.423Z
-                     */
+                    /** @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files). */
                     expires?: string | null;
                     /**
                      * @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).
@@ -250,28 +242,7 @@ export interface operations {
                 "multipart/form-data": {
                     /** Format: binary */
                     file: string;
-                } & {
-                    /**
-                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
-                     * @default 2026-04-15T12:10:36.425Z
-                     */
-                    expires?: string | null;
-                    /**
-                     * @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).
-                     * @example Z3hH26B7djooPz2EyRYhoj8i
-                     */
-                    deleteToken?: string | null;
-                    /**
-                     * @description The type or algorithm to use for the generated ID of the short link.
-                     * @default short
-                     * @example short
-                     */
-                    linkType?: ("short" | "long") | null;
-                } & {
-                    /**
-                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
-                     * @default 2026-04-15T12:10:36.425Z
-                     */
+                    /** @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files). */
                     expires?: string | null;
                     /**
                      * @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).
@@ -298,6 +269,7 @@ export interface operations {
                         id: string;
                         filename: string;
                         size: number;
+                        mimeType: string | null;
                         hash: string;
                         /** Format: date-time */
                         createdAt: string;
@@ -343,11 +315,7 @@ export interface operations {
                     endDate?: string | null;
                     /** @default false */
                     allDay?: boolean;
-                } & {
-                    /**
-                     * @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files).
-                     * @default 2026-04-15T12:10:36.425Z
-                     */
+                    /** @description A date for when the item will expire. The value must be 1 year at the most (31 days for files). Set to `null` to disable expiry of this item (except for files). */
                     expires?: string | null;
                     /**
                      * @description An optional string that allows you to later delete the item before it expires (see the `/api/delete/{id}` route).
@@ -433,6 +401,7 @@ export interface operations {
                         id: string;
                         filename: string;
                         size: number;
+                        mimeType: string | null;
                         hash: string;
                         /** Format: date-time */
                         createdAt: string;

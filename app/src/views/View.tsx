@@ -97,6 +97,11 @@ function View() {
                   <li>
                     <b>File Size:</b> {size}
                   </li>
+                  {data.mimeType && (
+                    <li>
+                      <b>Mime Type:</b> {data.mimeType}
+                    </li>
+                  )}
                 </ul>
               </Box>
 

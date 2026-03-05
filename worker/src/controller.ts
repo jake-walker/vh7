@@ -121,6 +121,7 @@ export async function createUpload(
     filename: file.name,
     size: file.size,
     hash,
+    mimeType: (file.type.length !== 0 ? file.type : null)
   };
 
   await db.insert(models.shortLinks).values(stub).run();

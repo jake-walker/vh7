@@ -1,0 +1,1 @@
+ALTER TABLE `short_link_upload` ADD `mime_type` text;
